@@ -8,6 +8,7 @@
 :after,
 :before {
   box-sizing: border-box;
+  font-family: "SUIT Variable", sans-serif;
 }
 :root {
   -webkit-tap-highlight-color: transparent;

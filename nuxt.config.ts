@@ -11,4 +11,18 @@ export default defineNuxtConfig({
   vite: {
     plugins: [glsl()],
   },
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: "ko",
+      },
+      link: [
+        {
+          rel: "stylesheet",
+          type: "text/css",
+          href: "https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css",
+        },
+      ],
+    },
+  },
 });
