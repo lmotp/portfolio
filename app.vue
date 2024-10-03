@@ -1,7 +1,11 @@
-<script setup lang="ts"></script>
+<script setup>
+const { progress, isLoading } = useLoadingIndicator();
+</script>
 
 <template>
-  <NuxtLoadingIndicator />
+  <NuxtLoadingIndicator ref="loadingIndicator">
+    <Loading :progress="progress" :isLoading="isLoading" />
+  </NuxtLoadingIndicator>
 
   <NuxtLayout>
     <NuxtPage />
