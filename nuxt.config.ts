@@ -5,12 +5,17 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   css: ["@/assets/css/reset.css"],
+
+  modules: ["@pinia/nuxt"],
+
   build: {
     transpile: ["three"],
   },
+
   vite: {
     plugins: [glsl()],
   },
+
   app: {
     head: {
       htmlAttrs: {
@@ -24,5 +29,9 @@ export default defineNuxtConfig({
         },
       ],
     },
+  },
+
+  pinia: {
+    storesDirs: ["./stores/**", "./custom-folder/stores/**"],
   },
 });
