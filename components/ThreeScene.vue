@@ -1,9 +1,7 @@
-<template>
-  <div ref="container"></div>
-</template>
-
 <script setup lang="ts">
 import * as THREE from "three";
+
+const emits = defineEmits(["onLoad"]);
 
 const container = ref<HTMLDivElement | null>(null);
 let scene: THREE.Scene;
@@ -37,9 +35,15 @@ function animate() {
 onMounted(() => {
   init();
   animate();
+
+  emits("onLoad");
 });
 
 onUnmounted(() => {
   renderer.dispose();
 });
 </script>
+
+<template>
+  <div ref="container"></div>
+</template>

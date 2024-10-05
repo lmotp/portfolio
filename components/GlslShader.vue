@@ -1,7 +1,3 @@
-<template>
-  <div ref="container"></div>
-</template>
-
 <script setup lang="ts">
 import * as THREE from "three";
 import fragmentShader from "~/shaders/sample/fragment.glsl";
@@ -54,3 +50,7 @@ onUnmounted(() => {
   renderer.dispose();
 });
 </script>
+
+<template>
+  <div ref="container"></div>
+</template>
