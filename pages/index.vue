@@ -1,11 +1,16 @@
 <script setup lang="ts">
 const isLoading = ref(true);
+
+const handleOnLoad = async () => {
+  await useDelay(5000);
+  isLoading.value = false;
+};
 </script>
 
 <template>
   <div>
     <Loading v-if="isLoading" />
-    <ThreeScene />
+    <ThreeScene @on-load="handleOnLoad" />
   </div>
 </template>
 
