@@ -2,8 +2,8 @@
 const isLoading = ref(true);
 
 const handleOnLoad = async () => {
-  await useDelay(5000);
-  isLoading.value = false;
+  // await useDelay(5000);
+  // isLoading.value = false;
 };
 </script>
 
