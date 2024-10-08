@@ -5,20 +5,33 @@ import step3 from "@/assets/images/step-3.webp";
 import step4 from "@/assets/images/step-4.webp";
 import seed from "@/assets/images/seed.png";
 
-const stepPictures = [step1, step2, step3, step4];
 const step = ref(0);
+const stepPictures = [step1, step2, step3, step4];
 
-onMounted(() => {});
+let test;
+
+watch(step, (val) => {
+  if (val > 5) clearInterval(test);
+});
+
+onMounted(() => {
+  test = setInterval(() => {
+    step.value += 1;
+  }, 5000);
+});
 </script>
 
 <template>
   <div class="custom-loading-indicator">
     <div class="background-wrap">
       <img class="seed" :src="seed" alt="" />
-      <div class="picture-wrap">
+
+      <div class="picture-container">
         <template v-for="(picture, index) of stepPictures" :key="index">
           <Transition name="picture-in">
-            <img class="picture" v-show="step >= index" :src="picture" :alt="`step-${index + 1}`" />
+            <div v-show="step >= index" class="picture-wrap">
+              <img class="picture" :src="picture" :alt="`step-${index + 1}`" />
+            </div>
           </Transition>
         </template>
       </div>
@@ -42,17 +55,35 @@ onMounted(() => {});
     background: linear-gradient(180deg, #d4e0f4 0, #ecf1fa 100%);
     overflow: hidden;
 
-    .picture-wrap {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      .picture {
+    .picture-container {
+      .picture-wrap {
+        position: absolute;
+        left: 50%;
+        top: 50%;
         width: 560px;
-        border-radius: 4px;
-        object-fit: cover;
         aspect-ratio: 1.777 / 1;
+
+        transform: translate(-50%, -50%);
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
+          background-color: rgb(255, 254, 250);
+          z-index: 10;
+          mix-blend-mode: multiply;
+        }
+
+        .picture {
+          position: absolute;
+          inset: 0;
+          border-radius: 4px;
+          object-fit: cover;
+          border: 3px solid rgb(14, 14, 14);
+        }
       }
     }
 
@@ -70,6 +101,23 @@ onMounted(() => {});
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.picture-in-enter-active,
+.picture-in-leave-active {
+  transition: all 0.5s ease;
+  .picture-wrap {
+    transition: all 0.5s ease;
+  }
+}
+
+.picture-in-enter-from,
+.picture-in-leave-to {
+  opacity: 0;
+
+  .picture-wrap {
+    top: 175%;
   }
 }
 </style>
