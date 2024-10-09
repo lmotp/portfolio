@@ -7,6 +7,7 @@ import seed from "@/assets/images/seed.png";
 
 const step = ref(0);
 const stepPictures = [step1, step2, step3, step4];
+const stepPictureRotaion = [0, 3, -4, 6];
 
 let test;
 
@@ -17,7 +18,7 @@ watch(step, (val) => {
 onMounted(() => {
   test = setInterval(() => {
     step.value += 1;
-  }, 5000);
+  }, 2000);
 });
 </script>
 
@@ -28,8 +29,8 @@ onMounted(() => {
 
       <div class="picture-container">
         <template v-for="(picture, index) of stepPictures" :key="index">
-          <Transition name="picture-in">
-            <div v-show="step >= index" class="picture-wrap">
+          <Transition name="fade">
+            <div v-if="step >= index" class="picture-wrap" :style="{ '--rotaion': `${stepPictureRotaion[index]}deg` }">
               <img class="picture" :src="picture" :alt="`step-${index + 1}`" />
             </div>
           </Transition>
@@ -62,8 +63,8 @@ onMounted(() => {
         top: 50%;
         width: 560px;
         aspect-ratio: 1.777 / 1;
-
-        transform: translate(-50%, -50%);
+        border: 3px solid rgb(14, 14, 14);
+        transform: translate(-50%, -50%) rotate(var(--rotaion));
 
         &::before {
           content: "";
@@ -75,6 +76,21 @@ onMounted(() => {
           background-color: rgb(255, 254, 250);
           z-index: 10;
           mix-blend-mode: multiply;
+
+          user-select: none;
+          pointer-events: none;
+        }
+
+        &.fade-enter-active,
+        &.fade-leave-active {
+          transition: all 1000ms ease-in-out;
+        }
+
+        &.fade-enter-from,
+        &.fade-leave-to {
+          top: 175%;
+          transform: translate(-50%, -50%) scale(2) rotate(5deg);
+          filter: blur(3px);
         }
 
         .picture {
@@ -82,7 +98,6 @@ onMounted(() => {
           inset: 0;
           border-radius: 4px;
           object-fit: cover;
-          border: 3px solid rgb(14, 14, 14);
         }
       }
     }
@@ -92,32 +107,6 @@ onMounted(() => {
       height: 50px;
       object-fit: contain;
     }
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.picture-in-enter-active,
-.picture-in-leave-active {
-  transition: all 0.5s ease;
-  .picture-wrap {
-    transition: all 0.5s ease;
-  }
-}
-
-.picture-in-enter-from,
-.picture-in-leave-to {
-  opacity: 0;
-
-  .picture-wrap {
-    top: 175%;
   }
 }
 </style>
