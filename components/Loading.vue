@@ -63,7 +63,6 @@ onMounted(() => {
         top: 50%;
         width: 560px;
         aspect-ratio: 1.777 / 1;
-        border: 3px solid rgb(14, 14, 14);
         transform: translate(-50%, -50%) rotate(var(--rotaion));
 
         &::before {
@@ -73,17 +72,18 @@ onMounted(() => {
           left: 0px;
           width: 100%;
           height: 100%;
+          border: 3px solid rgb(14, 14, 14);
           background-color: rgb(255, 254, 250);
-          z-index: 10;
           mix-blend-mode: multiply;
 
+          z-index: 10;
           user-select: none;
           pointer-events: none;
         }
 
         &.fade-enter-active,
         &.fade-leave-active {
-          transition: all 1000ms ease-in-out;
+          transition: all 1000ms cubic-bezier(0.08, 0.82, 0.17, 1), filter 1000ms ease-in-out;
         }
 
         &.fade-enter-from,
