@@ -3,7 +3,6 @@ import step1 from "@/assets/images/step-1.webp";
 import step2 from "@/assets/images/step-2.webp";
 import step3 from "@/assets/images/step-3.webp";
 import step4 from "@/assets/images/step-4.webp";
-import seed from "@/assets/images/seed.png";
 
 const step = ref(0);
 const stepPictures = [step1, step2, step3, step4];
@@ -25,8 +24,6 @@ onMounted(() => {
 <template>
   <div class="custom-loading-indicator">
     <div class="background-wrap">
-      <img class="seed" :src="seed" alt="" />
-
       <div class="picture-container">
         <template v-for="(picture, index) of stepPictures" :key="index">
           <Transition name="fade">
@@ -36,6 +33,10 @@ onMounted(() => {
           </Transition>
         </template>
       </div>
+    </div>
+
+    <div class="matter-wrap">
+      <MatterCanvas />
     </div>
   </div>
 </template>
@@ -107,6 +108,11 @@ onMounted(() => {
       height: 50px;
       object-fit: contain;
     }
+  }
+
+  .matter-wrap {
+    position: absolute;
+    inset: 0;
   }
 }
 </style>

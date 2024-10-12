@@ -2,56 +2,70 @@
   <div ref="canvasContainer"></div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-import { Engine, Render, World, Bodies, Runner } from "matter-js";
+<script setup>
+import { Engine, Render, World, Bodies, Runner, Common } from "matter-js";
+import seedImgSrc from "@/assets/images/seed.png";
 
-const canvasContainer = ref<HTMLElement | null>(null);
+const canvasContainer = ref(null);
+
+const render = ref(null);
+const runner = ref(null);
+const world = ref(null);
+const engine = ref(null);
 
 onMounted(() => {
-  if (process.client) {
-    const engine = Engine.create();
-    const world = engine.world;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
 
-    const render = Render.create({
-      element: canvasContainer.value!,
-      engine: engine,
-      options: {
-        width: 800,
-        height: 600,
-        wireframes: false,
-        background: "#f0f0f0",
-      },
+  engine.value = Engine.create();
+  world.value = engine.value.world;
+
+  render.value = Render.create({
+    element: canvasContainer.value,
+    engine: engine.value,
+    options: { width, height, wireframes: false, background: "transparent" },
+  });
+
+  const floor = Bodies.rectangle(width / 2, height, width, 15, {
+    isStatic: true,
+    render: { fillStyle: "transparent" },
+  });
+
+  World.add(world.value, floor);
+
+  const createSeed = () => {
+    const x = Common.random(0, 800);
+    const y = Common.random(-600, 0);
+    const size = Common.random(40, 80);
+
+    const seed = Bodies.rectangle(x, y, size, size, {
+      restitution: 0.8,
+      friction: 0.005,
+      render: { sprite: { texture: seedImgSrc, xScale: size / 128, yScale: size / 128 } },
     });
 
-    const ground = Bodies.rectangle(400, 590, 800, 20, { isStatic: true });
-    World.add(world, ground);
+    World.add(world.value, seed);
+  };
 
-    const createCircle = () => {
-      const circle = Bodies.circle(Math.random() * 800, 50, 20, { restitution: 0.5, friction: 0.1 });
-      World.add(world, circle);
-    };
+  setInterval(createSeed, 1000);
 
-    setInterval(createCircle, 1000);
+  Render.run(render.value);
 
-    Render.run(render);
-    const runner = Runner.create();
-    Runner.run(runner, engine);
+  runner.value = Runner.create();
+  Runner.run(runner.value, engine.value);
+});
 
-    onUnmounted(() => {
-      Render.stop(render);
-      Runner.stop(runner);
-      World.clear(world, false);
-      Engine.clear(engine);
-    });
-  }
+onUnmounted(() => {
+  Render.stop(render.value);
+  Runner.stop(runner.value);
+  World.clear(world.value, false);
+  Engine.clear(engine.value);
 });
 </script>
 
 <style scoped>
 div {
-  width: 800px;
-  height: 600px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
 }
 </style>
