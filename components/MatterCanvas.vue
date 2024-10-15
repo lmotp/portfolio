@@ -1,18 +1,17 @@
-<template>
-  <div ref="canvasContainer"></div>
-</template>
-
 <script setup>
 import { Engine, Render, World, Bodies, Runner, Common, Body } from "matter-js";
 import seedImgSrc from "@/assets/images/seed.png";
 
-const canvasContainer = ref(null);
+const props = defineProps("isLoading");
 
+const canvasContainer = ref(null);
 const render = ref(null);
 const runner = ref(null);
 const world = ref(null);
 const engine = ref(null);
 const seedCount = ref(0);
+
+const MAX_SEED_COUNT = 250;
 
 onMounted(() => {
   const seeds = [];
@@ -30,59 +29,16 @@ onMounted(() => {
     options: { width, height, wireframes: false, background: "transparent" },
   });
 
-  const floor = Bodies.rectangle(width / 2, height, width, 15, {
-    isStatic: true,
-    render: { fillStyle: "transparent" },
-  });
-
-  const floorLeft = Bodies.rectangle(0, height / 2, 50, height, {
-    isStatic: true,
-    render: { fillStyle: "transparent" },
-  });
-
-  const floorRight = Bodies.rectangle(width, height / 2, 50, height, {
-    isStatic: true,
-    render: { fillStyle: "transparent" },
-  });
+  // 벽
+  const floor = createFloor(width / 2, height, width, 32);
+  const floorLeft = createFloor(0, height / 2, 50, height);
+  const floorRight = createFloor(width, height / 2, 50, height);
 
   World.add(world.value, [floor, floorLeft, floorRight]);
 
-  const createSeed = () => {
-    if (seedCount.value > 30) {
-      clearInterval(interval);
-      return;
-    }
-
-    const x = Common.random(0, width);
-    const y = Common.random(-50, 0);
-
-    const seed = Bodies.rectangle(x, y, 20, 38, {
-      restitution: 0.35,
-      friction: 0.005,
-      frictionAir: 0.05,
-      render: { sprite: { texture: seedImgSrc, xScale: 0.5, yScale: 0.5 } },
-    });
-
-    seed.angle = 0; // 각도 초기화
-    seed.angleSpeed = Common.random(0.02, 0.05); // 각도 변화 속도
-    seed.maxAngle = Math.PI / 12; // 15도 (라디안)
-
-    World.add(world.value, seed);
-    seeds.push(seed);
-    seedCount.value++;
-  };
-  const updateSeedAngles = () => {
-    seeds.forEach((seed) => {
-      seed.angle += seed.angleSpeed;
-      if (Math.abs(seed.angle) > seed.maxAngle) {
-        seed.angleSpeed = -seed.angleSpeed; // 방향 전환
-      }
-      Body.setAngle(seed, seed.angle);
-    });
-  };
-
-  interval = setInterval(createSeed, 1000);
-  updateInterval = setInterval(updateSeedAngles, 16); // 약 60fps
+  // 씨앗 생성
+  interval = setInterval(() => createSeed(seeds, width), 1000);
+  updateInterval = setInterval(() => updateSeedAngles(seeds), 16); // 약 60fps
 
   Render.run(render.value);
   runner.value = Runner.create();
@@ -95,11 +51,70 @@ onUnmounted(() => {
   World.clear(world.value, false);
   Engine.clear(engine.value);
 });
+
+const createFloor = (x, y, width, height) => {
+  const _floor = Bodies.rectangle(x, y, width, height, {
+    isStatic: true,
+    render: { fillStyle: "transparent" },
+  });
+
+  return _floor;
+};
+
+const createSeed = (seeds, width) => {
+  if (seedCount.value > MAX_SEED_COUNT) {
+    clearInterval(interval);
+    return;
+  }
+
+  const x = Common.random(0, width);
+  const y = Common.random(-50, 0);
+
+  const seed = Bodies.rectangle(x, y, 20, 38, {
+    restitution: 0.35,
+    friction: 0.005,
+    frictionAir: 0.05,
+    render: { sprite: { texture: seedImgSrc, xScale: 0.5, yScale: 0.5 } },
+  });
+
+  seed.angle = 0; // 각도 초기화
+  seed.angleSpeed = Common.random(0.02, 0.05); // 각도 변화 속도
+  seed.maxAngle = Math.PI / 12; // 15도 (라디안)
+
+  World.add(world.value, seed);
+  seeds.push(seed);
+  seedCount.value++;
+};
+const updateSeedAngles = (seeds) => {
+  seeds.forEach((seed) => {
+    seed.angle += seed.angleSpeed;
+
+    if (Math.abs(seed.angle) > seed.maxAngle) {
+      seed.angleSpeed = -seed.angleSpeed; // 방향 전환
+    }
+
+    Body.setAngle(seed, seed.angle);
+  });
+};
 </script>
 
+<template>
+  <div class="matter-wrap">
+    <div ref="canvasContainer" />
+  </div>
+</template>
+
 <style scoped>
-div {
-  width: 100%;
-  height: 100%;
+.matter-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: var(--matter-zIndex);
+  pointer-events: none;
+  user-select: none;
+
+  div {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

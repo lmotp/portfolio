@@ -34,10 +34,6 @@ onMounted(() => {
         </template>
       </div>
     </div>
-
-    <div class="matter-wrap">
-      <MatterCanvas />
-    </div>
   </div>
 </template>
 
@@ -108,11 +104,6 @@ onMounted(() => {
       height: 50px;
       object-fit: contain;
     }
-  }
-
-  .matter-wrap {
-    position: absolute;
-    inset: 0;
   }
 }
 </style>

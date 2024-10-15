@@ -8,8 +8,9 @@ const handleOnLoad = async () => {
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <Loading v-if="isLoading" />
+    <MatterCanvas :is-loading="isLoading" />
     <ThreeScene @on-load="handleOnLoad" />
   </div>
 </template>
