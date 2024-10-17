@@ -8,14 +8,20 @@ const step = ref(0);
 const stepPictures = [step1, step2, step3, step4];
 const stepPictureRotaion = [0, 3, -4, 6];
 
-let test;
+const emits = defineEmits(["onLoad"]);
+
+let interval;
 
 watch(step, (val) => {
-  if (val > 5) clearInterval(test);
+  if (val >= 5) {
+    console.log(123);
+    clearInterval(interval);
+    emits("onLoad");
+  }
 });
 
 onMounted(() => {
-  test = setInterval(() => {
+  interval = setInterval(() => {
     step.value += 1;
   }, 2000);
 });

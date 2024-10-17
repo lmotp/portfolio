@@ -2,7 +2,7 @@
 import { Engine, Render, World, Bodies, Runner, Common, Body } from "matter-js";
 import seedImgSrc from "@/assets/images/seed.png";
 
-const props = defineProps("isLoading");
+const props = defineProps(["isLoading"]);
 
 const canvasContainer = ref(null);
 const render = ref(null);
@@ -10,15 +10,24 @@ const runner = ref(null);
 const world = ref(null);
 const engine = ref(null);
 const seedCount = ref(0);
+const floor = ref([]);
+
+let interval;
+let updateInterval;
 
 const MAX_SEED_COUNT = 250;
+
+watch(
+  toRef(() => props.isLoading),
+  () => {
+    World.remove(world.value, floor.value);
+  }
+);
 
 onMounted(() => {
   const seeds = [];
   const width = window.innerWidth;
   const height = window.innerHeight;
-  let interval;
-  let updateInterval;
 
   engine.value = Engine.create();
   world.value = engine.value.world;
@@ -30,11 +39,13 @@ onMounted(() => {
   });
 
   // 벽
-  const floor = createFloor(width / 2, height, width, 32);
-  const floorLeft = createFloor(0, height / 2, 50, height);
-  const floorRight = createFloor(width, height / 2, 50, height);
+  const _floor = createFloor(width / 2, height, width, 32);
+  const _floorLeft = createFloor(0, height / 2, 50, height);
+  const _floorRight = createFloor(width, height / 2, 50, height);
 
-  World.add(world.value, [floor, floorLeft, floorRight]);
+  floor.value = [_floor, _floorLeft, _floorRight];
+
+  World.add(world.value, floor.value);
 
   // 씨앗 생성
   interval = setInterval(() => createSeed(seeds, width), 1000);
@@ -64,6 +75,7 @@ const createFloor = (x, y, width, height) => {
 const createSeed = (seeds, width) => {
   if (seedCount.value > MAX_SEED_COUNT) {
     clearInterval(interval);
+    clearInterval(updateInterval);
     return;
   }
 
@@ -73,18 +85,19 @@ const createSeed = (seeds, width) => {
   const seed = Bodies.rectangle(x, y, 20, 38, {
     restitution: 0.35,
     friction: 0.005,
-    frictionAir: 0.05,
+    frictionAir: 0.065,
     render: { sprite: { texture: seedImgSrc, xScale: 0.5, yScale: 0.5 } },
   });
 
   seed.angle = 0; // 각도 초기화
-  seed.angleSpeed = Common.random(0.02, 0.05); // 각도 변화 속도
-  seed.maxAngle = Math.PI / 12; // 15도 (라디안)
+  seed.angleSpeed = Common.random(0.025, 0.06); // 각도 변화 속도
+  seed.maxAngle = useTransferDgreeToRadia(2.5); // 15도 (라디안)
 
   World.add(world.value, seed);
   seeds.push(seed);
   seedCount.value++;
 };
+
 const updateSeedAngles = (seeds) => {
   seeds.forEach((seed) => {
     seed.angle += seed.angleSpeed;

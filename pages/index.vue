@@ -2,16 +2,15 @@
 const isLoading = ref(true);
 
 const handleOnLoad = async () => {
-  // await useDelay(5000);
-  // isLoading.value = false;
+  isLoading.value = false;
 };
 </script>
 
 <template>
   <div class="container">
-    <Loading v-if="isLoading" />
-    <MatterCanvas :is-loading="isLoading" />
-    <ThreeScene @on-load="handleOnLoad" />
+    <Loading v-if="isLoading" @onLoad="handleOnLoad" />
+    <MatterCanvas :isLoading="isLoading" />
+    <ThreeScene />
   </div>
 </template>
 
