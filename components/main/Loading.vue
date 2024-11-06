@@ -14,16 +14,13 @@ let interval;
 
 watch(step, (val) => {
   if (val >= 5) {
-    console.log(123);
     clearInterval(interval);
     emits("onLoad");
   }
 });
 
 onMounted(() => {
-  interval = setInterval(() => {
-    step.value += 1;
-  }, 2000);
+  interval = setInterval(() => (step.value += 1), 2000);
 });
 </script>
 

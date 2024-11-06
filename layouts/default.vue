@@ -3,8 +3,8 @@
 <template>
   <div>
     <header>
-      <NuxtLink to="/">test</NuxtLink>
-      <NuxtLink to="/glsl">test</NuxtLink>
+      <NuxtLink to="/">main</NuxtLink>
+      <NuxtLink to="/portfolio">portfolio</NuxtLink>
     </header>
 
     <slot />

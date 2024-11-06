@@ -4,7 +4,7 @@
   <div>
     <h1>GLSL Shader in Nuxt 3</h1>
     <ClientOnly>
-      <GlslShader />
+      <PortfolioGlslShader />
     </ClientOnly>
   </div>
 </template>

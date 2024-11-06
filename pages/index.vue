@@ -8,9 +8,10 @@ const handleOnLoad = async () => {
 
 <template>
   <div class="container">
-    <Loading v-if="isLoading" @onLoad="handleOnLoad" />
-    <MatterCanvas :isLoading="isLoading" />
-    <ThreeScene />
+    <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
+    <MainStars :isLoading="isLoading" />
+    <MainThreeScene />
+    <!-- <MainSeeds :isLoading="isLoading" /> -->
   </div>
 </template>
 
