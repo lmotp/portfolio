@@ -2,13 +2,16 @@
 const isLoading = ref(true);
 
 const handleOnLoad = async () => {
-  isLoading.value = false;
+  isLoading.value = true;
 };
 </script>
 
 <template>
   <div class="container">
-    <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
+    <ClientOnly>
+      <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
+    </ClientOnly>
+
     <MainStars :isLoading="isLoading" />
     <MainThreeScene />
     <!-- <MainSeeds :isLoading="isLoading" /> -->

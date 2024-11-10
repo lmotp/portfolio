@@ -8,6 +8,17 @@ const step = ref(0);
 const stepPictures = [step1, step2, step3, step4];
 const stepPictureRotaion = [0, 3, -4, 6];
 
+const meteor = computed(() => {
+  if (process.client) {
+    return [...Array.from({ length: 20 })].map(() => ({
+      top: -5,
+      left: Math.floor(Math.random() * window.innerWidth) + "px",
+      animationDelay: Math.random() * 1 + 0.5 + "s",
+      animationDuration: Math.floor(Math.random() * 10 + 2) + "s",
+    }));
+  } else return [];
+});
+
 const emits = defineEmits(["onLoad"]);
 
 let interval;
@@ -21,12 +32,19 @@ watch(step, (val) => {
 
 onMounted(() => {
   interval = setInterval(() => (step.value += 1), 2000);
+  console.log(meteor.value);
 });
 </script>
 
 <template>
   <div class="custom-loading-indicator">
     <div class="background-wrap">
+      <div class="meteors-wrap">
+        <span v-for="(s, i) of meteor" :key="i" :style="s" class="wrapper">
+          <div class="tail" />
+        </span>
+      </div>
+
       <div class="picture-container">
         <template v-for="(picture, index) of stepPictures" :key="index">
           <Transition name="fade">
@@ -53,15 +71,46 @@ onMounted(() => {
     width: 100%;
     height: 100%;
     border-radius: 12px;
-    background: linear-gradient(180deg, #d4e0f4 0, #ecf1fa 100%);
+    background-color: #0c0a09;
     overflow: hidden;
+
+    .meteors-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      .wrapper {
+        --tw-shadow: 0 0 0 1px #ffffff10;
+        --tw-ring-shadow: 0 0 #0000;
+        position: absolute;
+        top: 20%;
+        width: 2px;
+        height: 2px;
+        border-radius: 99999px;
+        background-color: #a1a1aa;
+        box-shadow: var(--tw-ring-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        pointer-events: none;
+        isolation: isolate;
+
+        animation: meteor 5s linear infinite;
+
+        .tail {
+          position: absolute;
+          top: 50%;
+          width: 50px;
+          height: 1px;
+          background-image: linear-gradient(to right, rgb(161, 161, 170), rgba(0, 0, 0, 0));
+          z-index: -10;
+        }
+      }
+    }
 
     .picture-container {
       .picture-wrap {
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 560px;
+        width: 510px;
         aspect-ratio: 1.777 / 1;
         transform: translate(-50%, -50%) rotate(var(--rotaion));
 
@@ -101,12 +150,20 @@ onMounted(() => {
         }
       }
     }
+  }
+}
 
-    img.seed {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-    }
+@keyframes meteor {
+  0% {
+    transform: rotate(215deg) translateX(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(215deg) translateX(-1000px);
+    opacity: 0;
   }
 }
 </style>
