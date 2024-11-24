@@ -131,7 +131,7 @@ onMounted(() => {
         }
 
         &:has(.picture[alt="step-4"]) {
-          animation: completed 1900ms forwards cubic-bezier(0.47, 0, 0.83, 0.44);
+          animation: completed 2250ms forwards cubic-bezier(0.47, 0, 0.83, 0.44);
         }
 
         &.fade-enter-active,
@@ -178,10 +178,11 @@ onMounted(() => {
   }
   90% {
     opacity: 1;
+    filter: blur(1px);
+    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(2.15);
   }
   100% {
-    opacity: 0.95;
-    filter: blur(1px);
+    opacity: 0;
     transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(2.25);
   }
 }

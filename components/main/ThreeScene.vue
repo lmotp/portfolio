@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as THREE from "three";
+import { render } from "vue";
 
 const emits = defineEmits(["onLoad"]);
 
@@ -15,6 +16,7 @@ function init() {
   renderer = new THREE.WebGLRenderer();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0xffffff);
   container.value?.appendChild(renderer.domElement);
 
   const geometry = new THREE.BoxGeometry();
