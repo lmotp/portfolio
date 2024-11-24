@@ -11,10 +11,10 @@ const stepPictureRotaion = [0, 3, -4, 6];
 const meteor = computed(() => {
   if (process.client) {
     return [...Array.from({ length: 20 })].map(() => ({
-      top: -5,
+      top: "-5px",
       left: Math.floor(Math.random() * window.innerWidth) + "px",
       animationDelay: Math.random() * 1 + 0.5 + "s",
-      animationDuration: Math.floor(Math.random() * 10 + 2) + "s",
+      animationDuration: Math.floor(Math.random() * 10 + 2.5) + "s",
     }));
   } else return [];
 });
@@ -32,7 +32,6 @@ watch(step, (val) => {
 
 onMounted(() => {
   interval = setInterval(() => (step.value += 1), 2000);
-  console.log(meteor.value);
 });
 </script>
 
@@ -78,12 +77,12 @@ onMounted(() => {
       position: relative;
       width: 100%;
       height: 100%;
+      transform: translateX(-50%);
 
       .wrapper {
         --tw-shadow: 0 0 0 1px #ffffff10;
         --tw-ring-shadow: 0 0 #0000;
         position: absolute;
-        top: 20%;
         width: 2px;
         height: 2px;
         border-radius: 99999px;
@@ -92,7 +91,7 @@ onMounted(() => {
         pointer-events: none;
         isolation: isolate;
 
-        animation: meteor 5s linear infinite;
+        animation: meteor 5s linear infinite forwards;
 
         .tail {
           position: absolute;
