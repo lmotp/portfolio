@@ -24,7 +24,7 @@ const emits = defineEmits(["onLoad"]);
 let interval;
 
 watch(step, (val) => {
-  if (val >= 5) {
+  if (val >= 4) {
     clearInterval(interval);
     emits("onLoad");
   }
@@ -112,6 +112,7 @@ onMounted(() => {
         width: 510px;
         aspect-ratio: 1.777 / 1;
         transform: translate(-50%, -50%) rotate(var(--rotaion));
+        transform-origin: center center;
 
         &::before {
           content: "";
@@ -127,6 +128,10 @@ onMounted(() => {
           z-index: 10;
           user-select: none;
           pointer-events: none;
+        }
+
+        &:has(.picture[alt="step-4"]) {
+          animation: completed 1900ms forwards cubic-bezier(0.47, 0, 0.83, 0.44);
         }
 
         &.fade-enter-active,
@@ -163,6 +168,21 @@ onMounted(() => {
   100% {
     transform: rotate(215deg) translateX(-1000px);
     opacity: 0;
+  }
+}
+
+@keyframes completed {
+  50% {
+    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(1);
+    filter: blur(0px);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.95;
+    filter: blur(1px);
+    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(2.25);
   }
 }
 </style>

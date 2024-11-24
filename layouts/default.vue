@@ -2,13 +2,20 @@
 
 <template>
   <div>
-    <header>
+    <!-- <header>
       <NuxtLink to="/">main</NuxtLink>
       <NuxtLink to="/portfolio">portfolio</NuxtLink>
-    </header>
+    </header> -->
 
     <slot />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+</style>
