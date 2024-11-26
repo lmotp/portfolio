@@ -1,44 +1,68 @@
-<script setup lang="ts">
+<script setup>
 import * as THREE from "three";
-import { render } from "vue";
+import * as dat from "lil-gui";
+
+import fragmentShader from "~/shaders/flip/fragment.glsl";
+import vertexShader from "~/shaders/flip/vertex.glsl";
 
 const emits = defineEmits(["onLoad"]);
 
-const container = ref<HTMLDivElement | null>(null);
-let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
-let renderer: THREE.WebGLRenderer;
-let cube: THREE.Mesh;
+const container = ref(null);
+let scene;
+let camera;
+let renderer;
+let geometry;
+let material;
+let plane;
+let clock;
+
+// Debug
+const gui = new dat.GUI();
+const settings = {
+  progressX: 0,
+  progressY: 0,
+};
+gui.add(settings, "progressX").min(0).max(1).step(0.01);
+gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
 function init() {
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   renderer = new THREE.WebGLRenderer();
+  clock = new THREE.Clock();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0xffffff);
+  renderer.setClearColor(0x0a0b0d);
   container.value?.appendChild(renderer.domElement);
 
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  geometry = new THREE.PlaneGeometry(1, 1);
+  material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      time: { type: "f", value: 0 },
+      progress: { type: "v2", value: new THREE.Vector2(settings.progressX, settings.progressY) },
+      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    },
+  });
 
-  camera.position.z = 5;
+  plane = new THREE.Mesh(geometry, material);
+
+  scene.add(plane);
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  material.uniforms.time.value = clock.getElapsedTime();
+  material.uniforms.progress.value = new THREE.Vector2(settings.progressX, settings.progressY);
+
+  // render;
   renderer.render(scene, camera);
 }
 
 onMounted(() => {
   init();
   animate();
-
-  emits("onLoad");
 });
 
 onUnmounted(() => {

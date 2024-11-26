@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 const handleOnLoad = async () => {
   isLoading.value = false;
@@ -8,13 +8,15 @@ const handleOnLoad = async () => {
 
 <template>
   <div class="container">
-    <ClientOnly>
+    <!-- <ClientOnly>
       <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
-    </ClientOnly>
+    </ClientOnly> -->
 
-    <Transition name="completed">
-      <MainThreeScene v-if="!isLoading" />
-    </Transition>
+    <ClientOnly>
+      <Transition name="completed">
+        <MainThreeScene v-if="!isLoading" />
+      </Transition>
+    </ClientOnly>
     <!-- <MainSeeds :isLoading="isLoading" /> -->
   </div>
 </template>
