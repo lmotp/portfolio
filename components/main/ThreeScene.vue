@@ -40,9 +40,10 @@ function init() {
     vertexShader,
     fragmentShader,
     uniforms: {
-      time: { type: "f", value: 0 },
-      progress: { type: "v2", value: new THREE.Vector2(settings.progressX, settings.progressY) },
-      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uTime: { type: "f", value: 0 },
+      uMouse: { type: "v2", value: new THREE.Vector2() },
+      uProgress: { type: "v2", value: new THREE.Vector2(settings.progressX, settings.progressY) },
+      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     },
   });
 
@@ -53,8 +54,8 @@ function init() {
 
 function animate() {
   requestAnimationFrame(animate);
-  material.uniforms.time.value = clock.getElapsedTime();
-  material.uniforms.progress.value = new THREE.Vector2(settings.progressX, settings.progressY);
+  material.uniforms.uTime.value = clock.getElapsedTime();
+  material.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
 
   // render;
   renderer.render(scene, camera);
