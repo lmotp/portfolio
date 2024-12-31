@@ -19,20 +19,20 @@ vec3 rotate(vec3 v, vec3 axis, float angle) {
 void main() {
   vUv = uv;
   vec3 pos = position;
-  float rollFactor = 0.0;
+  // float rollFactor = 0.0;
 
-  if(pos.x >= 0.8 && pos.x <= 1.0 && pos.y >= 0.8 && pos.y <= 1.0) {
-    float xProgress = (pos.x - 0.8) / 0.2;
-    float yProgress = (pos.y - 0.8) / 0.2;
+  // if(pos.x >= 0.8 && pos.x <= 1.0 && pos.y >= 0.8 && pos.y <= 1.0) {
+  //   float xProgress = (pos.x - 0.8) / 0.2;
+  //   float yProgress = (pos.y - 0.8) / 0.2;
 
-    rollFactor = xProgress * yProgress;
+  //   rollFactor = xProgress * yProgress;
 
-    float angle = rollFactor * PI * 2.0 * sin(uTime);
-    float radius = 0.1 * (1.0 - rollFactor);
+  //   float angle = rollFactor * PI * 2.0 * sin(uTime);
+  //   float radius = 0.1 * (1.0 - rollFactor);
 
-    pos.x = mix(pos.x, 0.9 + radius * cos(angle), rollFactor);
-    pos.z = mix(pos.z, radius * sin(angle), rollFactor);
-  }
+  //   pos.x = mix(pos.x, 0.9 + radius * cos(angle), rollFactor);
+  //   pos.z = mix(pos.z, radius * sin(angle), rollFactor);
+  // }
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }

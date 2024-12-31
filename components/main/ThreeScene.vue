@@ -2,8 +2,11 @@
 import * as THREE from "three";
 import * as dat from "lil-gui";
 
-import fragmentShader from "~/shaders/flip/fragment.glsl";
-import vertexShader from "~/shaders/flip/vertex.glsl";
+import flipFragmentShader from "~/shaders/flip/fragment.glsl";
+import flipVertexShader from "~/shaders/flip/vertex.glsl";
+
+import paperFragmentShader from "~/shaders/paper/fragment.glsl";
+import paperVertexShader from "~/shaders/paper/vertex.glsl";
 
 const emits = defineEmits(["onLoad"]);
 
@@ -11,10 +14,15 @@ const container = ref(null);
 let scene;
 let camera;
 let renderer;
-let geometry;
-let material;
-let plane;
 let clock;
+
+let bgPlane;
+let bgGeometry;
+let bgMaterial;
+
+let paperPlane;
+let paperGeometry;
+let paperMaterial;
 
 // Debug
 const gui = new dat.GUI();
@@ -26,19 +34,30 @@ gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
 function init() {
+  const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
   scene = new THREE.Scene();
-  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
+  camera.position.z = 2; // 카메라 위치 조정
+
+  scene.add(camera);
+
   renderer = new THREE.WebGLRenderer();
   clock = new THREE.Clock();
 
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x0a0b0d);
   container.value?.appendChild(renderer.domElement);
 
-  geometry = new THREE.PlaneGeometry(1, 1);
-  material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
+  // 배경
+  bgGeometry = new THREE.PlaneGeometry(2, 2);
+  bgMaterial = new THREE.ShaderMaterial({
+    vertexShader: flipVertexShader,
+    fragmentShader: flipFragmentShader,
     uniforms: {
       uTime: { type: "f", value: 0 },
       uMouse: { type: "v2", value: new THREE.Vector2() },
@@ -47,15 +66,37 @@ function init() {
     },
   });
 
-  plane = new THREE.Mesh(geometry, material);
+  bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
 
-  scene.add(plane);
+  const distance = Math.abs(camera.position.z - bgPlane.position.z);
+  const vFov = (camera.fov * Math.PI) / 180;
+  const planeHeight = 2 * Math.tan(vFov / 2) * distance;
+  const planeWidth = planeHeight * camera.aspect;
+
+  bgPlane.scale.set(planeWidth, planeHeight, 1);
+
+  // 종이
+  paperGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
+  paperMaterial = new THREE.ShaderMaterial({
+    vertexShader: paperVertexShader,
+    fragmentShader: paperFragmentShader,
+    uniforms: {
+      uTime: { type: "f", value: 0 },
+      uMouse: { type: "v2", value: new THREE.Vector2() },
+      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    },
+  });
+
+  paperPlane = new THREE.Mesh(paperGeometry, paperMaterial);
+
+  scene.add(paperPlane);
+  scene.add(bgPlane);
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  material.uniforms.uTime.value = clock.getElapsedTime();
-  material.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
+  bgMaterial.uniforms.uTime.value = clock.getElapsedTime();
+  bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
 
   // render;
   renderer.render(scene, camera);
