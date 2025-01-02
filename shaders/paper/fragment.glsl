@@ -1,7 +1,12 @@
-uniform float time;
 varying vec2 vUv;
 
 void main() {
-  vec3 color = 0.5 + 0.5 * cos(time + vUv.xyx + vec3(0, 2, 4));
-  gl_FragColor = vec4(color, 1.0);
+  vec4 color;
+
+  if(gl_FrontFacing)
+    color = vec4(1.0, 0.0, 0.0, 1.0); // 앞면은 빨간색
+  else
+    color = vec4(0.0, 0.0, 1.0, 1.0); // 뒷면은 파란색
+
+  gl_FragColor = color;
 }

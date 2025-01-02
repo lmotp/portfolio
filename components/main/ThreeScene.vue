@@ -8,6 +8,8 @@ import flipVertexShader from "~/shaders/flip/vertex.glsl";
 import paperFragmentShader from "~/shaders/paper/fragment.glsl";
 import paperVertexShader from "~/shaders/paper/vertex.glsl";
 
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+
 const emits = defineEmits(["onLoad"]);
 
 const container = ref(null);
@@ -15,6 +17,7 @@ let scene;
 let camera;
 let renderer;
 let clock;
+let controls;
 
 let bgPlane;
 let bgGeometry;
@@ -41,7 +44,7 @@ function init() {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
-  camera.position.z = 2; // 카메라 위치 조정
+  camera.position.z = 3; // 카메라 위치 조정
 
   scene.add(camera);
 
@@ -52,6 +55,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x0a0b0d);
   container.value?.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
 
   // 배경
   bgGeometry = new THREE.PlaneGeometry(2, 2);
@@ -68,6 +73,8 @@ function init() {
 
   bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
 
+  bgPlane.position.z = -0.01;
+
   const distance = Math.abs(camera.position.z - bgPlane.position.z);
   const vFov = (camera.fov * Math.PI) / 180;
   const planeHeight = 2 * Math.tan(vFov / 2) * distance;
@@ -80,6 +87,7 @@ function init() {
   paperMaterial = new THREE.ShaderMaterial({
     vertexShader: paperVertexShader,
     fragmentShader: paperFragmentShader,
+    side: THREE.DoubleSide,
     uniforms: {
       uTime: { type: "f", value: 0 },
       uMouse: { type: "v2", value: new THREE.Vector2() },
