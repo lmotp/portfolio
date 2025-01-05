@@ -61,8 +61,6 @@ function lenisInit() {
     const normalizedProgress = getNormalizedScrollProgress();
     scroll.scrollY = normalizedProgress;
     scroll.scrollVelocity = e.velocity;
-
-    console.log(normalizedProgress);
   });
 }
 
@@ -103,7 +101,7 @@ function init() {
 
   bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
 
-  bgPlane.position.z = -0.01;
+  bgPlane.position.z = -1;
 
   const distance = Math.abs(camera.position.z - bgPlane.position.z);
   const vFov = (camera.fov * Math.PI) / 180;
@@ -141,6 +139,7 @@ function animate(time) {
   bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
 
   paperMaterial.uniforms.uScrollY.value = scroll.scrollY;
+  paperPlane.rotation.y = scroll.scrollY * Math.PI;
 
   // render;
   renderer.render(scene, camera);
