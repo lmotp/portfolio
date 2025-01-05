@@ -1,3 +1,6 @@
+float PI = 3.141592653589793;
+uniform float uScrollY;
+
 varying vec2 vUv;
 
 void main() {

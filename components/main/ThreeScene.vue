@@ -1,4 +1,6 @@
 <script setup>
+import Lenis from "lenis";
+
 import * as THREE from "three";
 import * as dat from "lil-gui";
 
@@ -26,6 +28,12 @@ let bgMaterial;
 let paperPlane;
 let paperGeometry;
 let paperMaterial;
+let lenis;
+
+const scroll = {
+  scrollY: 0,
+  scrollVelocity: 0,
+};
 
 // Debug
 const gui = new dat.GUI();
@@ -33,8 +41,30 @@ const settings = {
   progressX: 0,
   progressY: 0,
 };
+
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
+
+function getNormalizedScrollProgress() {
+  const scrollTop = lenis.scroll;
+  const scrollHeight = document.documentElement.scrollHeight;
+  const clientHeight = document.documentElement.clientHeight;
+
+  const scrollProgress = scrollTop / (scrollHeight - clientHeight);
+  return Math.min(Math.max(scrollProgress, 0), 1);
+}
+
+function lenisInit() {
+  lenis = new Lenis();
+
+  lenis.on("scroll", (e) => {
+    const normalizedProgress = getNormalizedScrollProgress();
+    scroll.scrollY = normalizedProgress;
+    scroll.scrollVelocity = e.velocity;
+
+    console.log(normalizedProgress);
+  });
+}
 
 function init() {
   const sizes = {
@@ -56,7 +86,7 @@ function init() {
   renderer.setClearColor(0x0a0b0d);
   container.value?.appendChild(renderer.domElement);
 
-  controls = new OrbitControls(camera, renderer.domElement);
+  // controls = new OrbitControls(camera, renderer.domElement);
 
   // 배경
   bgGeometry = new THREE.PlaneGeometry(2, 2);
@@ -90,6 +120,7 @@ function init() {
     side: THREE.DoubleSide,
     uniforms: {
       uTime: { type: "f", value: 0 },
+      uScrollY: { type: "f", value: 0 },
       uMouse: { type: "v2", value: new THREE.Vector2() },
       resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     },
@@ -101,10 +132,15 @@ function init() {
   scene.add(bgPlane);
 }
 
-function animate() {
+function animate(time) {
   requestAnimationFrame(animate);
+
+  if (lenis) lenis.raf(time);
+
   bgMaterial.uniforms.uTime.value = clock.getElapsedTime();
   bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
+
+  paperMaterial.uniforms.uScrollY.value = scroll.scrollY;
 
   // render;
   renderer.render(scene, camera);
@@ -113,6 +149,7 @@ function animate() {
 onMounted(() => {
   init();
   animate();
+  lenisInit();
 });
 
 onUnmounted(() => {
@@ -121,5 +158,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container"></div>
+  <div ref="container" style="height: 300vh"></div>
 </template>
+
+<style>
+canvas {
+  position: fixed;
+  inset: 0;
+}
+</style>

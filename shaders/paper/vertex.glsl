@@ -1,5 +1,7 @@
-varying vec2 vUv;
 float PI = 3.141592653589793;
+uniform float uScrollY;
+
+varying vec2 vUv;
 
 vec3 deformationCurve(vec3 pos, vec2 uv) {
   pos.y = pos.y - (sin(uv.x * PI) * 10.0 * -0.01);
