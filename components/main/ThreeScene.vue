@@ -11,6 +11,7 @@ import paperFragmentShader from "~/shaders/paper/fragment.glsl";
 import paperVertexShader from "~/shaders/paper/vertex.glsl";
 
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const emits = defineEmits(["onLoad"]);
 
@@ -45,24 +46,24 @@ const settings = {
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
-function getNormalizedScrollProgress() {
-  const scrollTop = lenis.scroll;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const clientHeight = document.documentElement.clientHeight;
+// function getNormalizedScrollProgress() {
+//   const scrollTop = lenis.scroll;
+//   const scrollHeight = document.documentElement.scrollHeight;
+//   const clientHeight = document.documentElement.clientHeight;
 
-  const scrollProgress = scrollTop / (scrollHeight - clientHeight);
-  return Math.min(Math.max(scrollProgress, 0), 1);
-}
+//   const scrollProgress = scrollTop / (scrollHeight - clientHeight);
+//   return Math.min(Math.max(scrollProgress, 0), 1);
+// }
 
-function lenisInit() {
-  lenis = new Lenis();
+// function lenisInit() {
+//   lenis = new Lenis();
 
-  lenis.on("scroll", (e) => {
-    const normalizedProgress = getNormalizedScrollProgress();
-    scroll.scrollY = normalizedProgress;
-    scroll.scrollVelocity = e.velocity;
-  });
-}
+//   lenis.on("scroll", (e) => {
+//     const normalizedProgress = getNormalizedScrollProgress();
+//     scroll.scrollY = normalizedProgress;
+//     scroll.scrollVelocity = e.velocity;
+//   });
+// }
 
 function init() {
   const sizes = {
@@ -72,7 +73,8 @@ function init() {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
-  camera.position.z = 3; // 카메라 위치 조정
+  // 카메라 위치 조정
+  camera.position.z = 1;
 
   scene.add(camera);
 
@@ -84,8 +86,13 @@ function init() {
   renderer.setClearColor(0x0a0b0d);
   container.value?.appendChild(renderer.domElement);
 
-  // controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
 
+  //Add light
+  const light = new THREE.AmbientLight(0xffffff);
+  scene.add(light);
+
+  // models ////////////////////////////
   // 배경
   bgGeometry = new THREE.PlaneGeometry(2, 2);
   bgMaterial = new THREE.ShaderMaterial({
@@ -126,8 +133,23 @@ function init() {
 
   paperPlane = new THREE.Mesh(paperGeometry, paperMaterial);
 
-  scene.add(paperPlane);
-  scene.add(bgPlane);
+  const loader = new GLTFLoader();
+
+  loader.load(
+    "/models/chicken_gun_western/scene.gltf",
+    function (gltf) {
+      console.log(gltf);
+
+      scene.add(gltf.scene);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
+
+  // scene.add(paperPlane);
+  // scene.add(bgPlane);
 }
 
 function animate(time) {
@@ -148,7 +170,7 @@ function animate(time) {
 onMounted(() => {
   init();
   animate();
-  lenisInit();
+  // lenisInit();
 });
 
 onUnmounted(() => {
@@ -157,7 +179,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container" style="height: 300vh"></div>
+  <div ref="container"></div>
 </template>
 
 <style>
