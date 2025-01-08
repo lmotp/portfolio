@@ -1,11 +1,6 @@
 <script setup>
-import Lenis from "lenis";
-
 import * as THREE from "three";
 import * as dat from "lil-gui";
-
-import flipFragmentShader from "~/shaders/flip/fragment.glsl";
-import flipVertexShader from "~/shaders/flip/vertex.glsl";
 
 import paperFragmentShader from "~/shaders/paper/fragment.glsl";
 import paperVertexShader from "~/shaders/paper/vertex.glsl";
@@ -22,14 +17,9 @@ let renderer;
 let clock;
 let controls;
 
-let bgPlane;
-let bgGeometry;
-let bgMaterial;
-
 let paperPlane;
 let paperGeometry;
 let paperMaterial;
-let lenis;
 
 const scroll = {
   scrollY: 0,
@@ -45,25 +35,6 @@ const settings = {
 
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
-
-// function getNormalizedScrollProgress() {
-//   const scrollTop = lenis.scroll;
-//   const scrollHeight = document.documentElement.scrollHeight;
-//   const clientHeight = document.documentElement.clientHeight;
-
-//   const scrollProgress = scrollTop / (scrollHeight - clientHeight);
-//   return Math.min(Math.max(scrollProgress, 0), 1);
-// }
-
-// function lenisInit() {
-//   lenis = new Lenis();
-
-//   lenis.on("scroll", (e) => {
-//     const normalizedProgress = getNormalizedScrollProgress();
-//     scroll.scrollY = normalizedProgress;
-//     scroll.scrollVelocity = e.velocity;
-//   });
-// }
 
 function init() {
   const sizes = {
@@ -93,29 +64,20 @@ function init() {
   scene.add(light);
 
   // models ////////////////////////////
-  // 배경
-  bgGeometry = new THREE.PlaneGeometry(2, 2);
-  bgMaterial = new THREE.ShaderMaterial({
-    vertexShader: flipVertexShader,
-    fragmentShader: flipFragmentShader,
-    uniforms: {
-      uTime: { type: "f", value: 0 },
-      uMouse: { type: "v2", value: new THREE.Vector2() },
-      uProgress: { type: "v2", value: new THREE.Vector2(settings.progressX, settings.progressY) },
-      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+  const loader = new GLTFLoader();
+
+  loader.load(
+    "/models/chicken_gun_western/scene.gltf",
+    function (gltf) {
+      console.log(gltf);
+
+      scene.add(gltf.scene);
     },
-  });
-
-  bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
-
-  bgPlane.position.z = -1;
-
-  const distance = Math.abs(camera.position.z - bgPlane.position.z);
-  const vFov = (camera.fov * Math.PI) / 180;
-  const planeHeight = 2 * Math.tan(vFov / 2) * distance;
-  const planeWidth = planeHeight * camera.aspect;
-
-  bgPlane.scale.set(planeWidth, planeHeight, 1);
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
 
   // 종이
   paperGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
@@ -133,32 +95,11 @@ function init() {
 
   paperPlane = new THREE.Mesh(paperGeometry, paperMaterial);
 
-  const loader = new GLTFLoader();
-
-  loader.load(
-    "/models/chicken_gun_western/scene.gltf",
-    function (gltf) {
-      console.log(gltf);
-
-      scene.add(gltf.scene);
-    },
-    undefined,
-    function (error) {
-      console.error(error);
-    }
-  );
-
-  // scene.add(paperPlane);
-  // scene.add(bgPlane);
+  scene.add(paperPlane);
 }
 
 function animate(time) {
   requestAnimationFrame(animate);
-
-  if (lenis) lenis.raf(time);
-
-  bgMaterial.uniforms.uTime.value = clock.getElapsedTime();
-  bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
 
   paperMaterial.uniforms.uScrollY.value = scroll.scrollY;
   paperPlane.rotation.y = scroll.scrollY * Math.PI;
@@ -170,7 +111,6 @@ function animate(time) {
 onMounted(() => {
   init();
   animate();
-  // lenisInit();
 });
 
 onUnmounted(() => {
