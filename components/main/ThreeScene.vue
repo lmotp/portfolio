@@ -36,9 +36,7 @@ const settings = {
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
-function loadModel(path) {
-  const loader = new GLTFLoader();
-
+function loadModel(loader, path) {
   loader.load(
     path,
     function (gltf) {
@@ -48,6 +46,8 @@ function loadModel(path) {
 
       box.getCenter(center);
       model.position.sub(center);
+
+      scene.add(model);
     },
     function (xhr) {
       console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -87,20 +87,17 @@ function init() {
 
   // models ////////////////////////////
   const manager = new THREE.LoadingManager();
+  const loader = new GLTFLoader(manager);
 
   manager.onProgress = (url, loaded, total) => {
     console.log(`${(loaded / total) * 100}% 로드됨`);
   };
-
   manager.onLoad = () => {
     console.log("모든 모델 로드 완료");
   };
 
-  const townModel = loadModel("/models/western_city/scene.gltf");
-  const noticeBoardModel = loadModel("/models/old_styled_wooden_info_stand/scene.gltf");
-
-  scene.add(townModel);
-  scene.add(noticeBoardModel);
+  loadModel(loader, "/models/western_city/scene.gltf");
+  loadModel(loader, "/models/old_styled_wooden_info_stand/scene.gltf");
 
   // 종이
   paperGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
