@@ -36,6 +36,28 @@ const settings = {
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
+function loadModel(path) {
+  const loader = new GLTFLoader();
+
+  loader.load(
+    path,
+    function (gltf) {
+      const model = gltf.scene; // Use gltf.scene instead of gltf
+      const box = new THREE.Box3().setFromObject(model);
+      const center = new THREE.Vector3();
+
+      box.getCenter(center);
+      model.position.sub(center);
+    },
+    function (xhr) {
+      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+    },
+    function (error) {
+      console.error(error);
+    }
+  );
+}
+
 function init() {
   const sizes = {
     width: window.innerWidth,
@@ -45,7 +67,7 @@ function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
   // 카메라 위치 조정
-  camera.position.z = 1;
+  camera.position.z = 4;
 
   scene.add(camera);
 
@@ -64,20 +86,21 @@ function init() {
   scene.add(light);
 
   // models ////////////////////////////
-  const loader = new GLTFLoader();
+  const manager = new THREE.LoadingManager();
 
-  loader.load(
-    "/models/chicken_gun_western/scene.gltf",
-    function (gltf) {
-      console.log(gltf);
+  manager.onProgress = (url, loaded, total) => {
+    console.log(`${(loaded / total) * 100}% 로드됨`);
+  };
 
-      scene.add(gltf.scene);
-    },
-    undefined,
-    function (error) {
-      console.error(error);
-    }
-  );
+  manager.onLoad = () => {
+    console.log("모든 모델 로드 완료");
+  };
+
+  const townModel = loadModel("/models/western_city/scene.gltf");
+  const noticeBoardModel = loadModel("/models/old_styled_wooden_info_stand/scene.gltf");
+
+  scene.add(townModel);
+  scene.add(noticeBoardModel);
 
   // 종이
   paperGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
@@ -94,6 +117,7 @@ function init() {
   });
 
   paperPlane = new THREE.Mesh(paperGeometry, paperMaterial);
+  paperPlane.scale.set(0.4, 0.4, 0.4);
 
   scene.add(paperPlane);
 }
