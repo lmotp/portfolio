@@ -2,11 +2,13 @@
 import * as THREE from "three";
 import * as dat from "lil-gui";
 
-import paperFragmentShader from "~/shaders/paper/fragment.glsl";
-import paperVertexShader from "~/shaders/paper/vertex.glsl";
+import bgFragmentShader from "~/shaders/bg/fragment.glsl";
+import bgVertexShader from "~/shaders/bg/vertex.glsl";
 
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+import bg1 from "@/assets/images/western/bg_2.jpg";
 
 const emits = defineEmits(["onLoad"]);
 
@@ -17,14 +19,9 @@ let renderer;
 let clock;
 let controls;
 
-let paperPlane;
-let paperGeometry;
-let paperMaterial;
-
-const scroll = {
-  scrollY: 0,
-  scrollVelocity: 0,
-};
+let bgPlane;
+let bgGeometry;
+let bgMaterial;
 
 // Debug
 const gui = new dat.GUI();
@@ -36,28 +33,6 @@ const settings = {
 gui.add(settings, "progressX").min(0).max(1).step(0.01);
 gui.add(settings, "progressY").min(0).max(1).step(0.01);
 
-function loadModel(loader, path) {
-  loader.load(
-    path,
-    function (gltf) {
-      const model = gltf.scene; // Use gltf.scene instead of gltf
-      const box = new THREE.Box3().setFromObject(model);
-      const center = new THREE.Vector3();
-
-      box.getCenter(center);
-      model.position.sub(center);
-
-      scene.add(model);
-    },
-    function (xhr) {
-      console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-    },
-    function (error) {
-      console.error(error);
-    }
-  );
-}
-
 function init() {
   const sizes = {
     width: window.innerWidth,
@@ -65,10 +40,11 @@ function init() {
   };
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
-  // 카메라 위치 조정
-  camera.position.z = 4;
 
+  // 카메라 설정
+  // camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+  camera.position.z = 4;
   scene.add(camera);
 
   renderer = new THREE.WebGLRenderer();
@@ -76,54 +52,36 @@ function init() {
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x0a0b0d);
+  renderer.setClearColor(0xffffff);
   container.value?.appendChild(renderer.domElement);
 
-  controls = new OrbitControls(camera, renderer.domElement);
-
-  //Add light
+  // 조명 설정
   const light = new THREE.AmbientLight(0xffffff);
   scene.add(light);
 
-  // models ////////////////////////////
-  const manager = new THREE.LoadingManager();
-  const loader = new GLTFLoader(manager);
-
-  manager.onProgress = (url, loaded, total) => {
-    console.log(`${(loaded / total) * 100}% 로드됨`);
-  };
-  manager.onLoad = () => {
-    console.log("모든 모델 로드 완료");
-  };
-
-  loadModel(loader, "/models/western_city/scene.gltf");
-  loadModel(loader, "/models/old_styled_wooden_info_stand/scene.gltf");
-
-  // 종이
-  paperGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
-  paperMaterial = new THREE.ShaderMaterial({
-    vertexShader: paperVertexShader,
-    fragmentShader: paperFragmentShader,
-    side: THREE.DoubleSide,
+  // // models ////////////////////////////
+  // 배경
+  bgGeometry = new THREE.PlaneGeometry(2, 2);
+  bgMaterial = new THREE.ShaderMaterial({
+    vertexShader: bgVertexShader,
+    fragmentShader: bgFragmentShader,
     uniforms: {
-      uTime: { type: "f", value: 0 },
-      uScrollY: { type: "f", value: 0 },
-      uMouse: { type: "v2", value: new THREE.Vector2() },
-      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2() },
+      uProgress: { value: new THREE.Vector2(settings.progressX, settings.progressY) },
+      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     },
   });
 
-  paperPlane = new THREE.Mesh(paperGeometry, paperMaterial);
-  paperPlane.scale.set(0.4, 0.4, 0.4);
+  bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
 
-  scene.add(paperPlane);
+  scene.add(bgPlane);
 }
 
 function animate(time) {
   requestAnimationFrame(animate);
 
-  paperMaterial.uniforms.uScrollY.value = scroll.scrollY;
-  paperPlane.rotation.y = scroll.scrollY * Math.PI;
+  bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
 
   // render;
   renderer.render(scene, camera);

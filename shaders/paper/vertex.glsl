@@ -12,6 +12,6 @@ vec3 deformationCurve(vec3 pos, vec2 uv) {
 void main() {
   vUv = uv;
   vec3 newPosition = deformationCurve(position, uv);
-  
+
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
 }
