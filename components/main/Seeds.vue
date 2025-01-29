@@ -48,7 +48,7 @@ onMounted(() => {
   World.add(world.value, floor.value);
 
   // 씨앗 생성
-  interval = setInterval(() => createSeed(seeds, width), 1000);
+  interval =setInterval(() => createSeed(seeds, width), 1000);
   updateInterval = setInterval(() => updateSeedAngles(seeds), 16); // 약 60fps
 
   Render.run(render.value);

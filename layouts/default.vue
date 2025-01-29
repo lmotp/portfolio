@@ -1,21 +1,28 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
-    <!-- <header>
-      <NuxtLink to="/">main</NuxtLink>
-      <NuxtLink to="/portfolio">portfolio</NuxtLink>
-    </header> -->
-
-    <slot />
-  </div>
+  <main>
+    <div class="inner">
+      <slot />
+    </div>
+  </main>
 </template>
 
 <style scoped>
-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+main {
+  position: fixed;
+  inset: 0;
+  border: 15px solid #fff;
+  background-color: white;
+  z-index: 9999;
+
+  .inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    background-color: #0c0a09;
+    overflow: hidden;
+  }
 }
 </style>
