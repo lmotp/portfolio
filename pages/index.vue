@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 const handleOnLoad = async () => {
   isLoading.value = false;
@@ -8,7 +8,7 @@ const handleOnLoad = async () => {
 
 <template>
   <ClientOnly>
-    <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
+    <!-- <MainLoading v-if="isLoading" @onLoad="handleOnLoad" /> -->
 
     <Transition name="completed">
       <Portfolio v-if="!isLoading" />
