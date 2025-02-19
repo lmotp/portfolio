@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <footer>안녕하세요</footer>
+  <div></div>
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,17 +1,20 @@
 <script setup>
-import ThreeScene from "./ThreeScene.vue";
-import Footer from "./Footer.vue";
+import SideMenu from "./SideMenu.vue";
+import PlayerStatus from "./PlayerStatus.vue";
+import CardTile from "./CardTile.vue";
 </script>
 
 <template>
   <section class="portfolio">
-    <ThreeScene />
-    <Footer />
+    <PlayerStatus />
+    <SideMenu />
+    <CardTile />
   </section>
 </template>
 
 <style lang="scss" scoped>
 .portfolio {
+  position: absolute;
   width: 100%;
   height: 100%;
 }

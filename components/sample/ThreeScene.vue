@@ -70,24 +70,11 @@ function handleMouseHighlight() {
   }
 }
 function handleMouseMove(event) {
-  // const bounds = renderer.domElement.getBoundingClientRect();
-  // const { clientX, clientY } = event;
-  // const x = clientX - bounds.left;
-  // const y = clientY - bounds.top;
-  // const position = [x, y];
-
-  // const uv = [position[0] / bounds.width, position[1] / bounds.height];
-
-  // 0.5를 빼준 이유는 uv의 좌표를 중앙으로 옮기기 위함.
-  // mouse.x = uv[0];
-  // mouse.y = 1 - uv[1];
-
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   handleMouseHighlight();
 }
-
 function handleMouseDown() {
   const objectExist = objects.find(function (object) {
     return object.position.x === highlightPlane.position.x && object.position.z === highlightPlane.position.z;
@@ -102,7 +89,6 @@ function handleMouseDown() {
       highlightPlane.material.color.setHex(0xff0000);
     }
   }
-  console.log(scene.children.length);
 }
 
 // threejs 기본셋팅
@@ -122,60 +108,33 @@ function init() {
   container.value?.appendChild(renderer.domElement);
 
   // 조명 설정
-  // const light = new THREE.AmbientLight(0xffffff);
-  // scene.add(light);
+
+  // // models ////////////////////////////
+  // 배경
+  bgGeometry = new THREE.PlaneGeometry(1, 1, 5, 5);
+  bgMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, wireframe: true });
+  bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
+
+  scene.add(bgPlane);
+  // scene.add(highlightPlane);
 
   // 카메라 설정
-  // camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  // camera.position.z = 1;
-  camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 1000);
-  camera.position.set(10, 15, -22);
+  const frustumSize = 1;
+  camera = new THREE.OrthographicCamera(
+    frustumSize / -2,
+    frustumSize / 2,
+    frustumSize / 2,
+    frustumSize / -2,
+    -1000,
+    1000
+  );
+  camera.position.set(0, 0, 1);
+  camera.zoom = 1;
+  camera.updateProjectionMatrix(); // 프로젝션 매트릭스 업데이트
   scene.add(camera);
 
   controls = new OrbitControls(camera, renderer.domElement);
-
-  // // models ////////////////////////////
-
-  // 배경
-  bgGeometry = new THREE.PlaneGeometry(20, 20);
-  bgMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, visible: false });
-  // bgMaterial = new THREE.ShaderMaterial({
-  //   vertexShader: bgVertexShader,
-  //   fragmentShader: bgFragmentShader,
-  //   uniforms: {
-  //     uTime: { value: 0 },
-  //     uMouse: { value: new THREE.Vector2() },
-  //     uTexture: { value: new THREE.TextureLoader().load(bg1) },
-  //     uNoise: { value: new THREE.TextureLoader().load(noise2) },
-  //     uProgress: { value: new THREE.Vector2(settings.progressX, settings.progressY) },
-  //     uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-  //   },
-  // });
-
-  bgPlane = new THREE.Mesh(bgGeometry, bgMaterial);
-  bgPlane.rotateX(-Math.PI / 2);
-
-  highlightGeometry = new THREE.PlaneGeometry(1, 1);
-  highlightMaterial = new THREE.MeshBasicMaterial({
-    side: THREE.DoubleSide,
-    transparent: true,
-  });
-  highlightPlane = new THREE.Mesh(highlightGeometry, highlightMaterial);
-  highlightPlane.rotateX(-Math.PI / 2);
-  highlightPlane.position.set(0.5, 0, 0.5);
-
-  sphereGeometry = new THREE.SphereGeometry(0.4, 4, 2);
-  sphereMaterial = new THREE.MeshBasicMaterial({
-    wireframe: true,
-    color: 0xffea00,
-  });
-  sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-
-  grid = new THREE.GridHelper(20, 20);
-
-  scene.add(bgPlane);
-  scene.add(grid);
-  scene.add(highlightPlane);
+  controls.enableDamping = true;
 }
 
 // threejs 반복
@@ -183,10 +142,6 @@ function animate() {
   const time = clock.getElapsedTime();
 
   requestAnimationFrame(animate);
-
-  // bgMaterial.uniforms.uTime.value = time;
-  // bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
-  // bgMaterial.uniforms.uMouse.value = mouse;
 
   // render;
   renderer.render(scene, camera);
@@ -196,8 +151,8 @@ onMounted(() => {
   init();
   animate();
 
-  renderer.domElement.addEventListener("mousemove", handleMouseMove);
-  renderer.domElement.addEventListener("mousedown", handleMouseDown);
+  // renderer.domElement.addEventListener("mousemove", handleMouseMove);
+  // renderer.domElement.addEventListener("mousedown", handleMouseDown);
 });
 
 onUnmounted(() => {

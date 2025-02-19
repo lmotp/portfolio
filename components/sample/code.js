@@ -55,3 +55,35 @@ function getXFOV() {
   let xFovAngle = (xFovRadiant * 180) / Math.PI;
   return xFovAngle;
 }
+
+// bgMaterial = new THREE.ShaderMaterial({
+//   vertexShader: bgVertexShader,
+//   fragmentShader: bgFragmentShader,
+//   uniforms: {
+//     uTime: { value: 0 },
+//     uMouse: { value: new THREE.Vector2() },
+//     uTexture: { value: new THREE.TextureLoader().load(bg1) },
+//     uNoise: { value: new THREE.TextureLoader().load(noise2) },
+//     uProgress: { value: new THREE.Vector2(settings.progressX, settings.progressY) },
+//     uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+//   },
+// });
+
+// bgMaterial.uniforms.uTime.value = time;
+// bgMaterial.uniforms.uProgress.value = new THREE.Vector2(settings.progressX, settings.progressY);
+// bgMaterial.uniforms.uMouse.value = mouse;
+
+highlightGeometry = new THREE.PlaneGeometry(1, 1);
+highlightMaterial = new THREE.MeshBasicMaterial({
+  side: THREE.DoubleSide,
+  transparent: true,
+});
+highlightPlane = new THREE.Mesh(highlightGeometry, highlightMaterial);
+highlightPlane.position.set(0.5, 0, 0.5);
+
+sphereGeometry = new THREE.SphereGeometry(0.4, 4, 2);
+sphereMaterial = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  color: 0xffea00,
+});
+sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
