@@ -20,7 +20,9 @@ main {
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+
+    clip-path: inset(0 0 round 12px 12px 12px 12px);
+    filter: drop-shadow(0 0 0 white);
     background-color: #0c0a09;
     overflow: hidden;
   }
