@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["@/assets/css/main.css"],
 
-  modules: ["@pinia/nuxt", "@nuxt/image"],
+  modules: ["@pinia/nuxt", "@nuxt/image", "@vueuse/nuxt"],
 
   build: {
     transpile: ["three"],

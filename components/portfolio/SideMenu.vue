@@ -1,5 +1,14 @@
 <script setup lang="ts">
-const isToggle = ref(false);
+import { useDraggable } from "@vueuse/core";
+
+const menuRef = ref<HTMLElement | null>(null);
+const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
+
+// 초기 위치 설정
+const initialX = -784; // 메뉴가 숨겨진 상태 (px)
+const openX = 0; // 메뉴가 열린 상태 (px)
+const closeThreshold = -125; // 닫힘/열림 결정 기준 (px)
+
 const cards = [
   { key: 0, imgSrc: "/images/card/sample_1.png" },
   { key: 1, imgSrc: "/images/card/sample_2.png" },
@@ -9,20 +18,40 @@ const cards = [
   { key: 5, imgSrc: "/images/card/sample_6.png" },
 ];
 
-const handleMenuToggle = () => {
-  isToggle.value = !isToggle.value;
-};
+// useDraggable 설정
+const { x } = useDraggable(menuRef, {
+  initialValue: { x: initialX, y: 0 }, // 초기 위치
+
+  onEnd: (position) => {
+    // 드래그 종료 시 위치에 따라 열림/닫힘 결정
+    if (position.x > closeThreshold) {
+      x.value = openX; // 메뉴 열기
+      isMenuOpen.value = true;
+    } else {
+      x.value = initialX; // 메뉴 닫기
+      isMenuOpen.value = false;
+    }
+  },
+});
+
+console.log(x.value);
+
+// 메뉴 닫기 함수
+// const closeMenu = () => {
+//   x.value = initialX;
+//   isMenuOpen.value = false;
+// };
 </script>
 
 <template>
   <aside id="side" class="side">
-    <div :class="['side__menu', isToggle && 'is-open']">
+    <div ref="menuRef" :class="['side__menu']" :style="{ transform: `translateX(${x}px)` }">
       <div v-for="card of cards" :key="`card-${card.key}`" class="card">
         <NuxtImg :src="card.imgSrc" alt="" />
       </div>
 
       <div class="side__toggle">
-        <button class="side__toggle-btn" @click="handleMenuToggle">
+        <button class="side__toggle-btn">
           <div class="btn-inner">
             <span class="line"></span>
             <span class="line"></span>
@@ -57,11 +86,13 @@ const handleMenuToggle = () => {
     height: 100%;
     padding: 10px;
     background-color: var(--white);
-    transform: translateX(-100%);
+    transform: translateX(-250px);
     transition: transform 750ms cubic-bezier(0.08, 0.82, 0.17, 1);
 
-    &.is-open {
-      transform: translateX(0);
+    &.is-down {
+      .side__toggle .side__toggle-btn {
+        cursor: grabbing;
+      }
     }
 
     .card {
@@ -90,6 +121,7 @@ const handleMenuToggle = () => {
         width: 168px;
         height: 34px;
         filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.05));
+        cursor: grab;
 
         .btn-inner {
           display: flex;
