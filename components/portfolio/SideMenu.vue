@@ -5,9 +5,11 @@ const menuRef = ref<HTMLElement | null>(null);
 const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
 
 // 초기 위치 설정
-const initialX = -784; // 메뉴가 숨겨진 상태 (px)
-const openX = 0; // 메뉴가 열린 상태 (px)
-const closeThreshold = -125; // 닫힘/열림 결정 기준 (px)
+const OPEN_X = 0; // 메뉴가 열린 상태 (px)
+
+const initialX = ref(-785); // 메뉴가 숨겨진 상태 (px)
+const closeThreshold = ref(-125); // 닫힘/열림 결정 기준 (px)
+const menuWidth = ref(0);
 
 const cards = [
   { key: 0, imgSrc: "/images/card/sample_1.png" },
@@ -18,29 +20,54 @@ const cards = [
   { key: 5, imgSrc: "/images/card/sample_6.png" },
 ];
 
+const drabbleOnMove = (position: any) => {
+  if (!menuWidth.value) return;
+
+  // 열린 상태에서 오른쪽으로 드래그하지 못하도록 제한
+  if (isMenuOpen.value && position.x > OPEN_X) {
+    x.value = OPEN_X; // x 값을 고정
+    return;
+  }
+  // 닫힌 상태에서 메뉴의 clientWidth를 넘어가면 즉시 열기
+  if (!isMenuOpen.value && position.x >= menuWidth) {
+    x.value = OPEN_X; // 메뉴를 열기 위치로 이동
+    isMenuOpen.value = true;
+  }
+};
+// 드래그 종료 시 위치에 따라 열림/닫힘 결정
+const drabbleOnEnd = (position: any) => {
+  const isOpen = position.x > closeThreshold.value;
+
+  if (isOpen) {
+    // 메뉴 열기
+    x.value = OPEN_X;
+    isMenuOpen.value = true;
+  } else {
+    // 메뉴 닫기
+    x.value = initialX.value;
+    isMenuOpen.value = false;
+  }
+};
+
 // useDraggable 설정
 const { x } = useDraggable(menuRef, {
-  initialValue: { x: initialX, y: 0 }, // 초기 위치
+  initialValue: { x: initialX.value, y: 0 }, // 초기 위치
+  onMove: drabbleOnMove,
 
-  onEnd: (position) => {
-    // 드래그 종료 시 위치에 따라 열림/닫힘 결정
-    if (position.x > closeThreshold) {
-      x.value = openX; // 메뉴 열기
-      isMenuOpen.value = true;
-    } else {
-      x.value = initialX; // 메뉴 닫기
-      isMenuOpen.value = false;
-    }
-  },
+  onEnd: drabbleOnEnd,
 });
 
-console.log(x.value);
+onMounted(() => {
+  nextTick(() => {
+    if (menuRef.value) {
+      menuWidth.value = menuRef.value.clientWidth;
 
-// 메뉴 닫기 함수
-// const closeMenu = () => {
-//   x.value = initialX;
-//   isMenuOpen.value = false;
-// };
+      initialX.value = -menuWidth.value; // 메뉴 너비를 기준으로 초기 위치 설정
+      closeThreshold.value = -menuWidth.value / 3; // 닫힘/열림 기준도 업데이트
+      x.value = initialX.value; // 드래그 초기값 동기화
+    }
+  });
+});
 </script>
 
 <template>
