@@ -3,6 +3,7 @@ import { useDraggable } from "@vueuse/core";
 
 const menuRef = ref<HTMLElement | null>(null);
 const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
+const isGrabbing = ref(false);
 
 // 초기 위치 설정
 const OPEN_X = 0; // 메뉴가 열린 상태 (px)
@@ -22,6 +23,8 @@ const cards = [
 ];
 
 const drabbleOnMove = (position: any) => {
+  isGrabbing.value = true;
+
   // 열린 상태에서 오른쪽으로 드래그하지 못하도록 제한
   if (position.x > OPEN_X && menuWidth.value) {
     x.value = OPEN_X; // x 값을 고정
@@ -31,6 +34,7 @@ const drabbleOnMove = (position: any) => {
 // 드래그 종료 시 위치에 따라 열림/닫힘 결정
 const drabbleOnEnd = (position: any) => {
   const isOpen = position.x > closeThreshold.value;
+  isGrabbing.value = false;
 
   if (isOpen) {
     // 메뉴 열기
@@ -70,7 +74,11 @@ onMounted(() => {
 
 <template>
   <aside id="side" class="side">
-    <div ref="menuRef" :class="['side__menu']" :style="{ transform: `translateX(${x}px)` }">
+    <div
+      ref="menuRef"
+      :class="['side__menu', isGrabbing && 'is-grabbing']"
+      :style="{ transform: `translateX(${x}px)` }"
+    >
       <div v-for="card of cards" :key="`card-${card.key}`" class="card">
         <NuxtImg :src="card.imgSrc" alt="" />
       </div>
@@ -111,10 +119,12 @@ onMounted(() => {
     height: 100%;
     padding: 10px;
     background-color: var(--white);
+    box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.2);
+
     transform: translateX(-250px);
     transition: transform 750ms cubic-bezier(0.08, 0.82, 0.17, 1);
 
-    &.is-down {
+    &.is-grabbing {
       .side__toggle .side__toggle-btn {
         cursor: grabbing;
       }
@@ -137,7 +147,7 @@ onMounted(() => {
       top: 50%;
       left: 100%;
       z-index: 101;
-      transform: translate(calc(-50% + 15px), -50%) rotate(-90deg);
+      transform: translate(calc(-50% + 16px), -50%) rotate(-90deg);
 
       .side__toggle-btn {
         display: flex;
@@ -158,7 +168,6 @@ onMounted(() => {
           height: 34px;
           clip-path: url(#menuButtonClip);
           background-color: var(--white);
-          border-radius: 0;
 
           .line {
             display: inline-block;
