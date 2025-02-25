@@ -8,8 +8,9 @@ const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
 const OPEN_X = 0; // 메뉴가 열린 상태 (px)
 
 const initialX = ref(-785); // 메뉴가 숨겨진 상태 (px)
-const closeThreshold = ref(-125); // 닫힘/열림 결정 기준 (px)
+const closeThreshold = ref(-785); // 닫힘/열림 결정 기준 (px)
 const menuWidth = ref(0);
+const audio = ref<HTMLAudioElement | null>(null);
 
 const cards = [
   { key: 0, imgSrc: "/images/card/sample_1.png" },
@@ -28,8 +29,8 @@ const drabbleOnMove = (position: any) => {
     x.value = OPEN_X; // x 값을 고정
     return;
   }
-  // 닫힌 상태에서 메뉴의 clientWidth를 넘어가면 즉시 열기
-  if (!isMenuOpen.value && position.x >= menuWidth) {
+
+  if (!isMenuOpen.value && position.x >= OPEN_X) {
     x.value = OPEN_X; // 메뉴를 열기 위치로 이동
     isMenuOpen.value = true;
   }
@@ -53,17 +54,21 @@ const drabbleOnEnd = (position: any) => {
 const { x } = useDraggable(menuRef, {
   initialValue: { x: initialX.value, y: 0 }, // 초기 위치
   onMove: drabbleOnMove,
-
   onEnd: drabbleOnEnd,
+});
+
+watch(isMenuOpen, () => {
+  audio.value?.play();
 });
 
 onMounted(() => {
   nextTick(() => {
     if (menuRef.value) {
       menuWidth.value = menuRef.value.clientWidth;
+      audio.value = new Audio("/sounds/drawer.mp3");
 
       initialX.value = -menuWidth.value; // 메뉴 너비를 기준으로 초기 위치 설정
-      closeThreshold.value = -menuWidth.value / 3; // 닫힘/열림 기준도 업데이트
+      closeThreshold.value = -menuWidth.value / 2; // 닫힘/열림 기준도 업데이트
       x.value = initialX.value; // 드래그 초기값 동기화
     }
   });
