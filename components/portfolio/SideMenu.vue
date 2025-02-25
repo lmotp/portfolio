@@ -22,16 +22,9 @@ const cards = [
 ];
 
 const drabbleOnMove = (position: any) => {
-  if (!menuWidth.value) return;
-
   // 열린 상태에서 오른쪽으로 드래그하지 못하도록 제한
-  if (isMenuOpen.value && position.x > OPEN_X) {
+  if (position.x > OPEN_X && menuWidth.value) {
     x.value = OPEN_X; // x 값을 고정
-    return;
-  }
-
-  if (!isMenuOpen.value && position.x >= OPEN_X) {
-    x.value = OPEN_X; // 메뉴를 열기 위치로 이동
     isMenuOpen.value = true;
   }
 };
