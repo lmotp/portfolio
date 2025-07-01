@@ -1,14 +1,12 @@
 <script setup>
 import SideMenu from "./SideMenu.vue";
-import PlayerStatus from "./PlayerStatus.vue";
-import CardTile from "./CardTile.vue";
+import MainView from "./MainView.vue";
 </script>
 
 <template>
   <section class="portfolio">
-    <PlayerStatus />
+    <MainView />
     <SideMenu />
-    <CardTile />
   </section>
 </template>
 
