@@ -2,9 +2,18 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { PlaneShader } from "@/shaders/PlaneShader.js";
-import uvChecker from "/images/checker.jpg";
+import { EffectComposer } from "three/examples/jsm/Addons.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { DotScreenPass } from "three/examples/jsm/postprocessing/DotScreenPass.js";
+import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
+import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 const container = ref<HTMLElement | null>(null);
+let effectComposer: EffectComposer;
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -23,7 +32,7 @@ const setupScene = () => {
       uTime: { value: 0.0 },
       uSpeed: { value: 0.5 },
       uScale: { value: 10.0 },
-      uTexture: { value: new THREE.TextureLoader().load(uvChecker) },
+      uTexture: { value: new THREE.TextureLoader().load("/images/checker.jpg") },
     },
     vertexShader: PlaneShader.vertexShader,
     fragmentShader: PlaneShader.fragmentShader,
@@ -58,7 +67,73 @@ const setupRenderer = () => {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.value!.clientWidth, container.value!.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ReinhardToneMapping;
   container.value!.appendChild(renderer.domElement);
+
+  const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+    samples: renderer.getPixelRatio() === 1 ? 2 : 0,
+  });
+
+  effectComposer = new EffectComposer(renderer, renderTarget);
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  effectComposer.setSize(container.value!.clientWidth, container.value!.clientHeight);
+
+  const renderPass = new RenderPass(scene, camera);
+  effectComposer.addPass(renderPass);
+
+  const dotScreenPass = new DotScreenPass();
+  dotScreenPass.enabled = false;
+  effectComposer.addPass(dotScreenPass);
+
+  const glitchPass = new GlitchPass();
+  glitchPass.goWild = false;
+  glitchPass.enabled = true;
+  effectComposer.addPass(glitchPass);
+
+  const rgbShiftPass = new ShaderPass(RGBShiftShader);
+  rgbShiftPass.uniforms["amount"].value = 0.005;
+  rgbShiftPass.enabled = false;
+  effectComposer.addPass(rgbShiftPass);
+
+  const unrealBloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.3, 1, 0.6);
+  unrealBloomPass.enabled = false;
+  effectComposer.addPass(unrealBloomPass);
+
+  const TintShader = {
+    uniforms: {
+      tDiffuse: { value: null },
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform sampler2D tDiffuse;
+      
+      void main() {
+        vec4 color = texture2D(tDiffuse, vUv);
+        color.r += 0.1;
+
+        gl_FragColor = color;
+      }
+    `,
+  };
+  const tintPass = new ShaderPass(TintShader);
+  effectComposer.addPass(tintPass);
+
+  const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
+  effectComposer.addPass(gammaCorrectionPass);
+
+  if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
+    const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
+    effectComposer.addPass(smaaPass);
+  }
 
   // OrbitControls 설정
   controls = new OrbitControls(camera, renderer.domElement);
@@ -74,6 +149,9 @@ const setupRenderer = () => {
 const handleWindowResize = () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.updateProjectionMatrix();
+
+  effectComposer.setSize(window.innerWidth, window.innerHeight);
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 };
 
 // 애니메이션 루프
@@ -86,7 +164,7 @@ const animate = () => {
   // OrbitControls 업데이트
   controls.update();
 
-  renderer.render(scene, camera);
+  effectComposer.render();
 };
 
 // 초기화 함수
