@@ -11,6 +11,10 @@ import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
 import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+
+const aspect = window.innerWidth / window.innerHeight;
+const cameraHeight = 10; // 카메라가 볼 월드 공간의 "높이"를 정의합니다.
 
 const container = ref<HTMLElement | null>(null);
 let effectComposer: EffectComposer;
@@ -18,12 +22,15 @@ let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
+let transformControls: TransformControls;
 let planeMaterial: THREE.ShaderMaterial;
+let line: THREE.Mesh;
+let sphere: THREE.Mesh;
 
 // Scene 설정
 const setupScene = () => {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x000000);
+  scene.background = new THREE.Color(0x008080);
 
   // ShaderMaterial 생성
   planeMaterial = new THREE.ShaderMaterial({
@@ -32,7 +39,7 @@ const setupScene = () => {
       uTime: { value: 0.0 },
       uSpeed: { value: 0.5 },
       uScale: { value: 10.0 },
-      uTexture: { value: new THREE.TextureLoader().load("/images/checker.jpg") },
+      uTexture: { value: new THREE.TextureLoader().load("/images/plane/windows98.png") },
     },
     vertexShader: PlaneShader.vertexShader,
     fragmentShader: PlaneShader.fragmentShader,
@@ -41,9 +48,21 @@ const setupScene = () => {
   });
 
   // 화면 전체를 채우는 plane 생성
-  const planeGeometry = new THREE.PlaneGeometry(2, 2);
+  const planeGeometry = new THREE.PlaneGeometry(cameraHeight * aspect, cameraHeight);
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.position.z = -0.251;
   scene.add(plane);
+
+  const lineGeometry = new THREE.BoxGeometry(10, 0.25, 0.5);
+  const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  line = new THREE.Mesh(lineGeometry, lineMaterial);
+  scene.add(line);
+
+  const sphereGeometry = new THREE.SphereGeometry(0.3, 64, 64);
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  sphere.position.set(0, 0.4, 0);
+  scene.add(sphere);
 
   // 기본 조명 추가
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // 전체 조명
@@ -56,8 +75,15 @@ const setupScene = () => {
 
 // 카메라 설정
 const setupCamera = () => {
-  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
-  camera.position.set(0, 0, 1);
+  camera = new THREE.OrthographicCamera(
+    (-cameraHeight * aspect) / 2, // left
+    (cameraHeight * aspect) / 2, // right
+    cameraHeight / 2, // top
+    -cameraHeight / 2, // bottom
+    0.1, // near
+    1000 // far
+  );
+  camera.position.set(0, 0, 1); // 카메라 위치 (z값이 중요합니다. 객체가 near-far 안에 들어오도록)
   camera.updateProjectionMatrix(); // 프로젝션 매트릭스 업데이트
   scene.add(camera);
 };
@@ -88,7 +114,7 @@ const setupRenderer = () => {
 
   const glitchPass = new GlitchPass();
   glitchPass.goWild = false;
-  glitchPass.enabled = true;
+  glitchPass.enabled = false;
   effectComposer.addPass(glitchPass);
 
   const rgbShiftPass = new ShaderPass(RGBShiftShader);
@@ -106,7 +132,7 @@ const setupRenderer = () => {
     },
     vertexShader: `
       varying vec2 vUv;
-      
+
       void main() {
         vUv = uv;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -115,7 +141,7 @@ const setupRenderer = () => {
     fragmentShader: `
       varying vec2 vUv;
       uniform sampler2D tDiffuse;
-      
+
       void main() {
         vec4 color = texture2D(tDiffuse, vUv);
         color.r += 0.1;
@@ -134,7 +160,9 @@ const setupRenderer = () => {
     const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
     effectComposer.addPass(smaaPass);
   }
+};
 
+const setupControls = () => {
   // OrbitControls 설정
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enabled = true; // 카메라 조작 활성화
@@ -143,15 +171,17 @@ const setupRenderer = () => {
   controls.enableZoom = true;
   controls.minDistance = 1;
   controls.maxDistance = 100;
-};
 
-// 창 크기 변경 이벤트 리스너
-const handleWindowResize = () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.updateProjectionMatrix();
+  // TransformControls 설정
+  transformControls = new TransformControls(camera, renderer.domElement);
+  transformControls.addEventListener("change", () => {
+    renderer.render(scene, camera);
+  });
 
-  effectComposer.setSize(window.innerWidth, window.innerHeight);
-  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // transformControls.attach(line);
+  // transformControls.setMode("rotate");
+
+  scene.add(transformControls.getHelper());
 };
 
 // 애니메이션 루프
@@ -167,11 +197,23 @@ const animate = () => {
   effectComposer.render();
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 창 크기 변경 이벤트 리스너
+const handleWindowResize = () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.updateProjectionMatrix();
+
+  effectComposer.setSize(window.innerWidth, window.innerHeight);
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+};
+
 // 초기화 함수
 const init = () => {
   setupScene();
   setupCamera();
   setupRenderer();
+  setupControls();
 
   // DOM에 추가
   container.value?.appendChild(renderer.domElement);

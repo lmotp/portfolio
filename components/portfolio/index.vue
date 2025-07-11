@@ -6,7 +6,7 @@ import MainView from "./MainView.vue";
 <template>
   <section class="portfolio">
     <MainView />
-    <SideMenu />
+    <!-- <SideMenu /> -->
   </section>
 </template>
 
