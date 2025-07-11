@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { PlaneShader } from "@/shaders/PlaneShader.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
@@ -27,6 +28,11 @@ let planeMaterial: THREE.ShaderMaterial;
 let line: THREE.Mesh;
 let sphere: THREE.Mesh;
 
+// Cannon.js physics world
+let world: CANNON.World;
+let sphereBody: CANNON.Body;
+let groundBody: CANNON.Body;
+
 // Scene 설정
 const setupScene = () => {
   scene = new THREE.Scene();
@@ -50,12 +56,13 @@ const setupScene = () => {
   // 화면 전체를 채우는 plane 생성
   const planeGeometry = new THREE.PlaneGeometry(cameraHeight * aspect, cameraHeight);
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.position.z = -0.251;
+  plane.position.z = -0.51;
   scene.add(plane);
 
-  const lineGeometry = new THREE.BoxGeometry(10, 0.25, 0.5);
+  const lineGeometry = new THREE.BoxGeometry(10, 0.25, 1);
   const lineMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
   line = new THREE.Mesh(lineGeometry, lineMaterial);
+  line.rotateZ(THREE.MathUtils.degToRad(-7));
   scene.add(line);
 
   const sphereGeometry = new THREE.SphereGeometry(0.3, 64, 64);
@@ -71,6 +78,31 @@ const setupScene = () => {
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
   directionalLight.position.set(1, 1, 1);
   scene.add(directionalLight);
+
+  // Cannon.js physics setup
+  world = new CANNON.World();
+  world.gravity.set(0, -9.82, 0);
+
+  // Create sphere body
+  const sphereShape = new CANNON.Sphere(0.3);
+  sphereBody = new CANNON.Body({
+    mass: 1,
+    shape: sphereShape,
+    position: new CANNON.Vec3(0, 0.4, 0),
+    material: new CANNON.Material(),
+  });
+  world.addBody(sphereBody);
+
+  // Create ground body (line)
+  const groundShape = new CANNON.Box(new CANNON.Vec3(5, 0.125, 0.5));
+  groundBody = new CANNON.Body({
+    mass: 0,
+    shape: groundShape,
+    position: new CANNON.Vec3(0, 0, 0),
+    material: new CANNON.Material(),
+  });
+  groundBody.quaternion.setFromEuler(THREE.MathUtils.degToRad(-7), 0, 0);
+  world.addBody(groundBody);
 };
 
 // 카메라 설정
@@ -154,6 +186,7 @@ const setupRenderer = () => {
   effectComposer.addPass(tintPass);
 
   const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
+  gammaCorrectionPass.enabled = false;
   effectComposer.addPass(gammaCorrectionPass);
 
   if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
@@ -188,8 +221,20 @@ const setupControls = () => {
 const animate = () => {
   requestAnimationFrame(animate);
 
-  // 시간 업데이트
-  planeMaterial.uniforms.uTime.value = performance.now() * 0.001;
+  // Update physics
+  world.step(1 / 60);
+
+  // Update sphere position from physics
+  sphere.position.set(sphereBody.position.x, sphereBody.position.y, sphereBody.position.z);
+  sphere.quaternion.set(
+    sphereBody.quaternion.x,
+    sphereBody.quaternion.y,
+    sphereBody.quaternion.z,
+    sphereBody.quaternion.w
+  );
+
+  planeMaterial.uniforms.uTime.value += 0.01;
+  renderer.render(scene, camera);
 
   // OrbitControls 업데이트
   controls.update();
