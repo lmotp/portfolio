@@ -4,16 +4,8 @@ import MainView from "./MainView.vue";
 </script>
 
 <template>
-  <section class="portfolio">
-    <MainView />
-    <!-- <SideMenu /> -->
-  </section>
+  <SideMenu />
+  <MainView />
 </template>
 
-<style lang="scss" scoped>
-.portfolio {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-</style>
+<style lang="scss" scoped></style>

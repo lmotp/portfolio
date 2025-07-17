@@ -109,6 +109,7 @@ onMounted(() => {
   position: absolute;
   height: 100%;
   isolation: isolate;
+  z-index: 100;
 
   .side__menu {
     display: grid;
