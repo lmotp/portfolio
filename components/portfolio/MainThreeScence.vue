@@ -4,14 +4,15 @@ import { PlaneShader } from "@/shaders/PlaneShader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GlitchPass } from "three/examples/jsm/Addons.js";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
-const props = defineProps<{ scrollPercentage: number; physicsCanvas: HTMLCanvasElement | undefined }>();
-const imgTexture = ref("/images/plane/windows98.png");
+const props = defineProps<{
+  scrollPercentage: number;
+  physicsCanvas: { canvas: HTMLCanvasElement; count: number } | undefined;
+}>();
 const container = ref<HTMLElement | null>(null);
-const physicsTexture = ref<HTMLCanvasElement | undefined>(undefined);
+const imgTexture = ref("/images/plane/windows98.png");
+const physicsTexture = ref<THREE.Texture | undefined>(undefined);
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -70,9 +71,6 @@ const init = () => {
   glitchPass.goWild = false;
   effectComposer.addPass(glitchPass);
 
-  const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
-  effectComposer.addPass(gammaCorrectionPass);
-
   // Add SMAA anti-aliasing pass
   if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
     const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
@@ -111,6 +109,22 @@ const handleWindowResize = () => {
   }
 };
 
+watch(
+  () => props.physicsCanvas,
+  (canvas) => {
+    if (!canvas) return;
+
+    const canvasTexture = new THREE.CanvasTexture(canvas.canvas);
+    canvasTexture.needsUpdate = true;
+
+    planeMaterial.uniforms.uTexture.value = canvasTexture;
+    planeMaterial.uniforms.uTexture.value.needsUpdate = true;
+  },
+  {
+    deep: true,
+  }
+);
+
 onMounted(() => {
   init();
 });
@@ -122,6 +136,7 @@ onUnmounted(() => {
 
 <template>
   <div ref="container" class="three-container"></div>
+  <div ref="physicsCanvas" class="physics-container"></div>
 </template>
 
 <style scoped></style>
