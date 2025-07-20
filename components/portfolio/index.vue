@@ -1,6 +1,6 @@
 <script setup>
-import SideMenu from "./SideMenu.vue";
-import MainView from "./MainView.vue";
+import SideMenu from "./side/index.vue";
+import MainView from "./view/index.vue";
 </script>
 
 <template>

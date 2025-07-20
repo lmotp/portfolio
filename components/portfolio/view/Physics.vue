@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Matter from "matter-js";
 
-const count = ref(0);
-const emit = defineEmits(["physicsCanvas"]);
+const emit = defineEmits(["initPhysics"]);
+
 const container = ref<HTMLElement | null>(null);
 const barConfig = [
   { x: 200, y: 100, width: 700, height: 20, angle: 10.8 },
@@ -78,10 +78,7 @@ const init = async () => {
 
   render.canvas.style.visibility = "hidden";
 
-  Events.on(engine, "afterUpdate", () => {
-    count.value++;
-    emit("physicsCanvas", { canvas: render.canvas, count: count.value });
-  });
+  emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 
 onMounted(() => {

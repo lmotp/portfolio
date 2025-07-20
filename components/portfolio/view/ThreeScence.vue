@@ -6,13 +6,9 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GlitchPass } from "three/examples/jsm/Addons.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
-const props = defineProps<{
-  scrollPercentage: number;
-  physicsCanvas: { canvas: HTMLCanvasElement; count: number } | undefined;
-}>();
+const props = defineProps<{ scrollPercentage: number; initPhysicsObj: InitPhysicsObj | null }>();
 const container = ref<HTMLElement | null>(null);
 const imgTexture = ref("/images/plane/windows98.png");
-const physicsTexture = ref<THREE.Texture | undefined>(undefined);
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -110,19 +106,20 @@ const handleWindowResize = () => {
 };
 
 watch(
-  () => props.physicsCanvas,
-  (canvas) => {
-    if (!canvas) return;
+  () => props.initPhysicsObj,
+  (obj) => {
+    if (obj) {
+      // 물리 엔진 업데이트 후 캔버스 텍스처 업데이트
+      const { Events, canvas, engine } = obj;
 
-    const canvasTexture = new THREE.CanvasTexture(canvas.canvas);
-    canvasTexture.needsUpdate = true;
-
-    planeMaterial.uniforms.uTexture.value = canvasTexture;
-    planeMaterial.uniforms.uTexture.value.needsUpdate = true;
+      Events.on(engine, "afterUpdate", () => {
+        const canvasTexture = new THREE.CanvasTexture(canvas);
+        canvasTexture.needsUpdate = true;
+        planeMaterial.uniforms.uTexture.value = canvasTexture;
+      });
+    }
   },
-  {
-    deep: true,
-  }
+  { immediate: true }
 );
 
 onMounted(() => {
@@ -136,7 +133,6 @@ onUnmounted(() => {
 
 <template>
   <div ref="container" class="three-container"></div>
-  <div ref="physicsCanvas" class="physics-container"></div>
 </template>
 
 <style scoped></style>
