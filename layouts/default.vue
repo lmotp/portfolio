@@ -2,28 +2,41 @@
 
 <template>
   <main>
-    <section class="inner">
-      <slot />
-    </section>
+    <div class="frame">
+      <section class="inner">
+        <slot />
+      </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
 main {
-  position: fixed;
-  inset: 0;
-  border: 15px solid #fff;
-  z-index: 9999;
+  width: 100%;
+  height: 300dvh;
 
-  .inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
-    clip-path: inset(0 0 round 15px 15px 15px 15px);
-    filter: drop-shadow(0 0 0 white);
-    background-color: #0c0a09;
-    overflow: hidden;
+  .frame {
+    position: fixed;
+    inset: 0;
+    border: 15px solid #fff;
+    z-index: 101;
+
+    .inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      clip-path: inset(0 0 round 15px 15px 15px 15px);
+      filter: drop-shadow(0 0 0 white);
+      background-color: white;
+      overflow: hidden;
+    }
   }
 }
 </style>

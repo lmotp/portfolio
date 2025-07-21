@@ -22,7 +22,6 @@ const init = async () => {
   const Common = Matter.Common;
   const World = Matter.World;
   const Bodies = Matter.Bodies;
-  const Events = Matter.Events;
 
   // create an engine
   const engine = Engine.create();
@@ -49,7 +48,7 @@ const init = async () => {
   // run the engine
   Runner.run(runner, engine);
 
-  const stack = Composites.stack(20, 20, 20, 5, 0, 0, function (x: number, y: number) {
+  const stack = Composites.stack(20, 20, 1, 1, 0, 0, function (x: number, y: number) {
     return Bodies.circle(x, y, Common.random(10, 20), { friction: 0.00001, restitution: 0.5, density: 0.001 });
   });
 
@@ -59,6 +58,7 @@ const init = async () => {
     const body = Bodies.rectangle(bar.x, bar.y, bar.width, bar.height, {
       isStatic: true,
       angle: useTransferDgreeToRadia(bar.angle),
+      render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
     });
     return body;
   });

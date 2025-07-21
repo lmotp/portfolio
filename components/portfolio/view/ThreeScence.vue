@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import * as THREE from "three";
-import { PlaneShader } from "@/shaders/PlaneShader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GlitchPass } from "three/examples/jsm/Addons.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
+import * as dat from "lil-gui";
+
+import vertexShader from "./shaders/plane/vertexShader.glsl";
+import fragmentShader from "./shaders/plane/fragmentShader.glsl";
+
+const gui = new dat.GUI();
+const test = { value: 0.5 };
+
+const clock = new THREE.Clock();
+
 const props = defineProps<{ scrollPercentage: number; initPhysicsObj: InitPhysicsObj | null }>();
 const container = ref<HTMLElement | null>(null);
-const imgTexture = ref("/images/plane/windows98.png");
+
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -27,17 +36,18 @@ const init = () => {
   camera.position.z = 1;
 
   // Plane
+
   const planeGeometry = new THREE.PlaneGeometry(2, 2);
   planeMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      uColor: { value: new THREE.Color(0xffffff) },
-      uSpeed: { value: 0.5 },
-      uScale: { value: 10.0 },
+      uRes: { value: new THREE.Vector2(container.value.clientWidth, container.value.clientHeight) },
+      uTime: { value: 0.0 },
+      uProgress: { value: 0.0 },
       uPercentage: { value: props.scrollPercentage },
       uTexture: { value: null },
     },
-    vertexShader: PlaneShader.vertexShader,
-    fragmentShader: PlaneShader.fragmentShader,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
     side: THREE.DoubleSide,
     transparent: true,
   });
@@ -73,6 +83,8 @@ const init = () => {
     effectComposer.addPass(smaaPass);
   }
 
+  gui.add(test, "value").min(0.5).max(1).step(0.01);
+
   // Animation
   animate();
 
@@ -84,7 +96,9 @@ const animate = () => {
   requestAnimationFrame(animate);
 
   // Update uniforms
+  planeMaterial.uniforms.uTime.value = clock.getElapsedTime();
   planeMaterial.uniforms.uPercentage.value = props.scrollPercentage;
+  planeMaterial.uniforms.uProgress.value = test.value;
 
   // Render effect composer
   effectComposer.render();

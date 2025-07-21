@@ -45,7 +45,7 @@ onUnmounted(() => {
   }
   .main-phy {
     position: absolute;
-    inset: 20px;
+    inset: 0;
     z-index: -1;
   }
 }
