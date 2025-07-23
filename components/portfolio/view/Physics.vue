@@ -11,7 +11,8 @@ const barConfig = [
   { x: -100, y: -200, width: 700, height: 20, angle: 10.8 },
   { x: 150, y: 0, width: 700, height: 20, angle: -10.8 },
   { x: -100, y: 200, width: 700, height: 20, angle: 7.2 },
-  { x: 0, y: 370, width: window.innerWidth, height: 20, angle: 0 },
+  { x: -(window.innerWidth / 2 / 2 + 50), y: 450, width: window.innerWidth / 2 - 50, height: 20, angle: 3 },
+  { x: window.innerWidth / 2 / 2 + 50, y: 450, width: window.innerWidth / 2 - 50, height: 20, angle: -3 },
 ];
 let render: Matter.Render;
 
@@ -83,7 +84,7 @@ const init = async () => {
   World.add(engineWorld, [...bars, sensorBar, circle]);
 
   Events.on(render, "beforeRender", () => {
-    const targetY = 70;
+    const targetY = 300;
     const currentY = render.bounds.min.y;
     const lerpAmount = 0.05;
 

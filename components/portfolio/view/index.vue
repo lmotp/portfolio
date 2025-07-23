@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ThreeScence from "./ThreeScence.vue";
 import Physics from "./Physics.vue";
-import Matter from "matter-js";
 
 const scrollPercentage = ref(0);
 const viewRef = ref<HTMLElement | null>(null);
