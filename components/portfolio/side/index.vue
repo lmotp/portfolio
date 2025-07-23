@@ -76,7 +76,7 @@ onMounted(() => {
   <aside id="side" class="side">
     <div
       ref="menuRef"
-      :class="['side__menu', isGrabbing && 'is-grabbing']"
+      :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']"
       :style="{ transform: `translateX(${x}px)` }"
     >
       <div v-for="card of cards" :key="`card-${card.key}`" class="card">

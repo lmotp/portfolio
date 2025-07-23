@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import Matter from "matter-js";
+import Matter, { Events } from "matter-js";
 
 const emit = defineEmits(["initPhysics"]);
 
+const isSensorDetected = ref(false);
+
+const sensorCount = ref(1);
 const container = ref<HTMLElement | null>(null);
 const barConfig = [
-  { x: 200, y: 100, width: 700, height: 20, angle: 10.8 },
-  { x: 500, y: 250, width: 700, height: 20, angle: -10.8 },
-  { x: 340, y: 400, width: 700, height: 20, angle: 7.2 },
+  { x: -100, y: -200, width: 700, height: 20, angle: 10.8 },
+  { x: 150, y: 0, width: 700, height: 20, angle: -10.8 },
+  { x: -100, y: 200, width: 700, height: 20, angle: 7.2 },
+  { x: 0, y: 370, width: window.innerWidth, height: 20, angle: 0 },
 ];
 let render: Matter.Render;
 
@@ -17,11 +21,11 @@ const init = async () => {
   const Engine = Matter.Engine;
   const Render = Matter.Render;
   const Runner = Matter.Runner;
-  const Composite = Matter.Composite;
-  const Composites = Matter.Composites;
   const Common = Matter.Common;
   const World = Matter.World;
   const Bodies = Matter.Bodies;
+  const Body = Matter.Body;
+  const Bounds = Matter.Bounds;
 
   // create an engine
   const engine = Engine.create();
@@ -35,7 +39,8 @@ const init = async () => {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
       wireframes: false,
-      background: "transparent",
+      background: "#008080",
+      hasBounds: true,
     },
   });
 
@@ -48,33 +53,69 @@ const init = async () => {
   // run the engine
   Runner.run(runner, engine);
 
-  const stack = Composites.stack(20, 20, 1, 1, 0, 0, function (x: number, y: number) {
-    return Bodies.circle(x, y, Common.random(10, 20), { friction: 0.00001, restitution: 0.5, density: 0.001 });
+  const BALL_OFFSET = 20;
+  const centerX = container.value!.clientWidth / 2;
+  const centerY = container.value!.clientHeight / 2;
+  const startCircleX = centerX + BALL_OFFSET + barConfig[0].x - barConfig[0].width / 2;
+  const startCircleY = BALL_OFFSET;
+
+  const circle = Bodies.circle(startCircleX, startCircleY, Common.random(10, 20), {
+    friction: 0.00001,
+    restitution: 0.5,
+    density: 0.001,
+    isSleeping: false,
   });
-
-  World.add(engineWorld, stack);
-
   const bars = barConfig.map((bar) => {
-    const body = Bodies.rectangle(bar.x, bar.y, bar.width, bar.height, {
+    const body = Bodies.rectangle(centerX + bar.x, centerY + bar.y, bar.width, bar.height, {
       isStatic: true,
       angle: useTransferDgreeToRadia(bar.angle),
       render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
     });
+
     return body;
   });
+  const sensorBar = Bodies.rectangle(centerX, centerY, window.innerWidth, 1, {
+    isSensor: true,
+    isStatic: true,
+    render: { fillStyle: "transparent", lineWidth: 0, strokeStyle: "transparent" },
+  });
 
-  World.add(engineWorld, bars);
+  World.add(engineWorld, [...bars, sensorBar, circle]);
 
-  // fit the render viewport to the scene
-  Render.lookAt(render, Composite.allBodies(engineWorld));
+  Events.on(render, "beforeRender", () => {
+    const targetY = 70;
+    const currentY = render.bounds.min.y;
+    const lerpAmount = 0.05;
 
-  // wrapping using matter-wrap plugin
-  for (let i = 0; i < stack.bodies.length; i++) {
-    stack.bodies[i].plugin.wrap = {
-      min: { x: render.bounds.min.x, y: render.bounds.min.y },
-      max: { x: render.bounds.max.x, y: render.bounds.max.y },
-    };
-  }
+    if (isSensorDetected.value) {
+      const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
+      const isMove = Math.abs(currentY - targetY) > tolerance;
+
+      if (isMove) {
+        const newYPosition = useLerp(currentY, targetY, lerpAmount);
+
+        console.log(newYPosition);
+        const moveAmount = newYPosition - currentY;
+        Bounds.translate(render.bounds, { x: 0, y: moveAmount });
+      }
+    }
+  });
+
+  Events.on(engine, "collisionStart", (event) => {
+    const pairs = event.pairs;
+
+    pairs.forEach((pair) => {
+      const bodyA = pair.bodyA;
+      const bodyB = pair.bodyB;
+
+      // 센서가 true인 rectangle 감지
+      if (bodyB.isSensor && bodyA === circle) {
+        Body.setPosition(sensorBar, { x: centerX, y: centerY + 70 * sensorCount.value });
+        sensorCount.value++;
+        isSensorDetected.value = true;
+      }
+    });
+  });
 
   render.canvas.style.visibility = "hidden";
 

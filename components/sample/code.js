@@ -87,3 +87,9 @@ sphereMaterial = new THREE.MeshBasicMaterial({
   color: 0xffea00,
 });
 sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+// matter-wrap 플러그인을 사용하여 래핑
+circle.plugin.wrap = {
+  min: { x: render.bounds.min.x, y: render.bounds.min.y },
+  max: { x: render.bounds.max.x, y: render.bounds.max.y },
+};

@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { GlitchPass } from "three/examples/jsm/Addons.js";
+import { GlitchPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 import * as dat from "lil-gui";
@@ -10,8 +10,11 @@ import * as dat from "lil-gui";
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
 
+import effectVertexShader from "./shaders/plane/effect/vertexShader.glsl";
+import effectFragmentShader from "./shaders/plane/effect/fragmentShader.glsl";
+
 const gui = new dat.GUI();
-const test = { value: 0.5 };
+const test = { value: 1.0 };
 
 const clock = new THREE.Clock();
 
@@ -40,16 +43,15 @@ const init = () => {
   const planeGeometry = new THREE.PlaneGeometry(2, 2);
   planeMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      uRes: { value: new THREE.Vector2(container.value.clientWidth, container.value.clientHeight) },
       uTime: { value: 0.0 },
       uProgress: { value: 0.0 },
-      uPercentage: { value: props.scrollPercentage },
+      uPercentage: { value: 0.0 },
       uTexture: { value: null },
     },
+    transparent: true,
+    side: THREE.DoubleSide,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-    side: THREE.DoubleSide,
-    transparent: true,
   });
 
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -76,6 +78,15 @@ const init = () => {
   const glitchPass = new GlitchPass();
   glitchPass.goWild = false;
   effectComposer.addPass(glitchPass);
+
+  const customPass = new ShaderPass({
+    uniforms: {
+      tDiffuse: { value: null },
+    },
+    vertexShader: effectVertexShader,
+    fragmentShader: effectFragmentShader,
+  });
+  effectComposer.addPass(customPass);
 
   // Add SMAA anti-aliasing pass
   if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
