@@ -94,9 +94,8 @@ const init = async () => {
 
       if (isMove) {
         const newYPosition = useLerp(currentY, targetY, lerpAmount);
-
-        console.log(newYPosition);
         const moveAmount = newYPosition - currentY;
+
         Bounds.translate(render.bounds, { x: 0, y: moveAmount });
       }
     }

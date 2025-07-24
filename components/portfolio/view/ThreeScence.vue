@@ -2,7 +2,8 @@
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { GlitchPass, ShaderPass } from "three/examples/jsm/Addons.js";
+import { DotScreenPass, ShaderPass } from "three/examples/jsm/Addons.js";
+
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 import * as dat from "lil-gui";
@@ -75,18 +76,10 @@ const init = () => {
   const renderPass = new RenderPass(scene, camera);
   effectComposer.addPass(renderPass);
 
-  const glitchPass = new GlitchPass();
-  glitchPass.goWild = false;
-  effectComposer.addPass(glitchPass);
-
-  const customPass = new ShaderPass({
-    uniforms: {
-      tDiffuse: { value: null },
-    },
-    vertexShader: effectVertexShader,
-    fragmentShader: effectFragmentShader,
-  });
-  effectComposer.addPass(customPass);
+  const dotPass = new DotScreenPass() as any;
+  dotPass.uniforms["scale"].value = 2.0;
+  dotPass.uniforms["angle"].value = THREE.MathUtils.degToRad(45);
+  effectComposer.addPass(dotPass);
 
   // Add SMAA anti-aliasing pass
   if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
