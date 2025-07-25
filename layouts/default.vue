@@ -13,7 +13,7 @@
 <style scoped>
 main {
   width: 100%;
-  height: 300dvh;
+  height: 100dvh;
 
   &::-webkit-scrollbar {
     display: none;
@@ -33,8 +33,8 @@ main {
       height: 100%;
 
       clip-path: inset(0 0 round 15px 15px 15px 15px);
-      filter: drop-shadow(0 0 0 white);
       background-color: white;
+      box-shadow: inset 0px 4px 10px rgba(11, 13, 15, 0.2);
       overflow: hidden;
     }
   }

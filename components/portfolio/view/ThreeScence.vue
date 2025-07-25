@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { DotScreenPass, ShaderPass } from "three/examples/jsm/Addons.js";
+import { DotScreenPass } from "three/examples/jsm/Addons.js";
 
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
@@ -11,11 +11,8 @@ import * as dat from "lil-gui";
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
 
-import effectVertexShader from "./shaders/plane/effect/vertexShader.glsl";
-import effectFragmentShader from "./shaders/plane/effect/fragmentShader.glsl";
-
-const gui = new dat.GUI();
-const test = { value: 1.0 };
+// const gui = new dat.GUI();
+// const guiInfo = { value: 0.85 };
 
 const clock = new THREE.Clock();
 
@@ -40,12 +37,11 @@ const init = () => {
   camera.position.z = 1;
 
   // Plane
-
   const planeGeometry = new THREE.PlaneGeometry(2, 2);
   planeMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0.0 },
-      uProgress: { value: 0.0 },
+      uProgress: { value: 0.85 },
       uPercentage: { value: 0.0 },
       uTexture: { value: null },
     },
@@ -77,7 +73,7 @@ const init = () => {
   effectComposer.addPass(renderPass);
 
   const dotPass = new DotScreenPass() as any;
-  dotPass.uniforms["scale"].value = 2.0;
+  dotPass.uniforms["scale"].value = 2;
   dotPass.uniforms["angle"].value = THREE.MathUtils.degToRad(45);
   effectComposer.addPass(dotPass);
 
@@ -87,7 +83,7 @@ const init = () => {
     effectComposer.addPass(smaaPass);
   }
 
-  gui.add(test, "value").min(0.5).max(1).step(0.01);
+  // gui.add(guiInfo, "value").min(0.5).max(1).step(0.01);
 
   // Animation
   animate();
@@ -102,7 +98,6 @@ const animate = () => {
   // Update uniforms
   planeMaterial.uniforms.uTime.value = clock.getElapsedTime();
   planeMaterial.uniforms.uPercentage.value = props.scrollPercentage;
-  planeMaterial.uniforms.uProgress.value = test.value;
 
   // Render effect composer
   effectComposer.render();

@@ -8,19 +8,10 @@ const isGrabbing = ref(false);
 // 초기 위치 설정
 const OPEN_X = 0; // 메뉴가 열린 상태 (px)
 
-const initialX = ref(-785); // 메뉴가 숨겨진 상태 (px)
-const closeThreshold = ref(-785); // 닫힘/열림 결정 기준 (px)
+const initialX = ref(-450); // 메뉴가 숨겨진 상태 (px)
+const closeThreshold = ref(-450); // 닫힘/열림 결정 기준 (px)
 const menuWidth = ref(0);
 const audio = ref<HTMLAudioElement | null>(null);
-
-const cards = [
-  { key: 0, imgSrc: "/images/card/sample_1.png" },
-  { key: 1, imgSrc: "/images/card/sample_2.png" },
-  { key: 2, imgSrc: "/images/card/sample_3.png" },
-  { key: 3, imgSrc: "/images/card/sample_4.png" },
-  { key: 4, imgSrc: "/images/card/sample_5.png" },
-  { key: 5, imgSrc: "/images/card/sample_6.png" },
-];
 
 const drabbleOnMove = (position: any) => {
   isGrabbing.value = true;
@@ -73,16 +64,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside id="side" class="side">
-    <div
-      ref="menuRef"
-      :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']"
-      :style="{ transform: `translateX(${x}px)` }"
-    >
-      <div v-for="card of cards" :key="`card-${card.key}`" class="card">
-        <NuxtImg :src="card.imgSrc" alt="" />
+  <aside id="side" class="side" :style="{ translate: `${x}px` }">
+    <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
+      <div class="side__content">
+        <button>Home</button>
+        <button>Portfolio</button>
+        <button>Skills</button>
+        <button>중심잡기</button>
+        <button>중심잡기</button>
       </div>
-
       <div class="side__toggle">
         <button class="side__toggle-btn">
           <div class="btn-inner">
@@ -95,7 +85,25 @@ onMounted(() => {
           <clipPath id="menuButtonClip">
             <path
               d="M0.988281 -0.12793H167.016L145.491 25.1077C141.691 29.5627 136.13 32.1288 130.274 32.1288H38.4755C32.7372 32.1288 27.2753 29.664 23.4787 25.3612L0.988281 -0.12793Z"
-              fill="white"
+            ></path>
+          </clipPath>
+        </svg>
+      </div>
+    </div>
+
+    <div ref="menuRef2" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
+      <div class="side__toggle">
+        <button class="side__toggle-btn">
+          <div class="btn-inner">
+            <span class="line"></span>
+            <span class="line"></span>
+          </div>
+        </button>
+
+        <svg width="168" height="34" viewBox="0 0 168 34" fill="none" class="MenuButtonClip_svg">
+          <clipPath id="menuButtonClip">
+            <path
+              d="M0.988281 -0.12793H167.016L145.491 25.1077C141.691 29.5627 136.13 32.1288 130.274 32.1288H38.4755C32.7372 32.1288 27.2753 29.664 23.4787 25.3612L0.988281 -0.12793Z"
             ></path>
           </clipPath>
         </svg>
@@ -106,24 +114,31 @@ onMounted(() => {
 
 <style scoped>
 .side {
+  --back-color: rgba(255, 255, 255, 0.925);
+  --blur: 4px;
+
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   height: 100%;
-  isolation: isolate;
+  background-color: gray;
   z-index: 100;
 
   .side__menu {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 8px;
-    width: 54.5dvw;
-    height: 100%;
+    position: relative;
+    width: calc(450px + 34px);
+    height: 60%;
     padding: 10px;
-    background-color: var(--white);
-    box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: inset -3px 0px 10px 3px rgba(0, 0, 0, 0.2);
+    isolation: isolate;
 
-    transform: translateX(-250px);
-    transition: transform 750ms cubic-bezier(0.08, 0.82, 0.17, 1);
+    background-color: var(--back-color);
+    backdrop-filter: blur(var(--blur));
+
+    &:last-child {
+      height: 40%;
+    }
 
     &.is-grabbing {
       .side__toggle .side__toggle-btn {
@@ -131,15 +146,17 @@ onMounted(() => {
       }
     }
 
-    .card {
-      width: 100%;
-      max-width: 250px;
-      aspect-ratio: var(--card-aspect);
-      border-radius: var(--card-radius);
+    .side__content {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-direction: column;
+      gap: 10px;
 
-      img {
-        width: 100%;
-        height: 100%;
+      button {
+        color: #0b0d0f;
+        font-weight: 700;
+        font-size: 32px;
       }
     }
 
@@ -168,7 +185,7 @@ onMounted(() => {
           width: 100%;
           height: 34px;
           clip-path: url(#menuButtonClip);
-          background-color: var(--white);
+          background-color: var(--back-color);
 
           .line {
             display: inline-block;

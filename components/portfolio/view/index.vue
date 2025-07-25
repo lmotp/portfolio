@@ -39,14 +39,15 @@ onUnmounted(() => {
   height: 100%;
   isolation: isolate;
 
-  .main-bg {
-    position: absolute;
-    inset: 0;
-  }
   .main-phy {
     position: absolute;
     inset: 0;
     z-index: -1;
+  }
+  .main-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
 }
 </style>
