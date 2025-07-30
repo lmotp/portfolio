@@ -1,11 +1,15 @@
 <script setup>
-import SideMenu from "./side/index.vue";
+import Side from "./side/index.vue";
+import Inventory from "./inventory/index.vue";
 import MainView from "./view/index.vue";
+import CardView from "./card/index.vue";
 </script>
 
 <template>
-  <SideMenu />
-  <MainView />
+  <!-- <Side /> -->
+  <!-- <Inventory /> -->
+  <!-- <MainView /> -->
+  <CardView />
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

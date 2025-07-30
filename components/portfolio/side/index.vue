@@ -8,8 +8,8 @@ const isGrabbing = ref(false);
 // 초기 위치 설정
 const OPEN_X = 0; // 메뉴가 열린 상태 (px)
 
-const initialX = ref(-450); // 메뉴가 숨겨진 상태 (px)
-const closeThreshold = ref(-450); // 닫힘/열림 결정 기준 (px)
+const initialX = ref(-350); // 메뉴가 숨겨진 상태 (px)
+const closeThreshold = ref(-350); // 닫힘/열림 결정 기준 (px)
 const menuWidth = ref(0);
 const audio = ref<HTMLAudioElement | null>(null);
 
@@ -67,31 +67,11 @@ onMounted(() => {
   <aside id="side" class="side" :style="{ translate: `${x}px` }">
     <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
       <div class="side__content">
-        <button>Home</button>
+        <button>About Me</button>
         <button>Portfolio</button>
         <button>Skills</button>
-        <button>중심잡기</button>
-        <button>중심잡기</button>
       </div>
-      <div class="side__toggle">
-        <button class="side__toggle-btn">
-          <div class="btn-inner">
-            <span class="line"></span>
-            <span class="line"></span>
-          </div>
-        </button>
 
-        <svg width="168" height="34" viewBox="0 0 168 34" fill="none" class="MenuButtonClip_svg">
-          <clipPath id="menuButtonClip">
-            <path
-              d="M0.988281 -0.12793H167.016L145.491 25.1077C141.691 29.5627 136.13 32.1288 130.274 32.1288H38.4755C32.7372 32.1288 27.2753 29.664 23.4787 25.3612L0.988281 -0.12793Z"
-            ></path>
-          </clipPath>
-        </svg>
-      </div>
-    </div>
-
-    <div ref="menuRef2" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
       <div class="side__toggle">
         <button class="side__toggle-btn">
           <div class="btn-inner">
@@ -118,27 +98,19 @@ onMounted(() => {
   --blur: 4px;
 
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   height: 100%;
   background-color: gray;
   z-index: 100;
 
   .side__menu {
     position: relative;
-    width: calc(450px + 34px);
-    height: 60%;
-    padding: 10px;
-    box-shadow: inset -3px 0px 10px 3px rgba(0, 0, 0, 0.2);
-    isolation: isolate;
-
+    padding: 21px 16px;
+    width: calc(350px + 34px);
+    height: 100%;
     background-color: var(--back-color);
     backdrop-filter: blur(var(--blur));
-
-    &:last-child {
-      height: 40%;
-    }
+    box-shadow: inset -3px 0px 10px 3px rgba(0, 0, 0, 0.2);
+    isolation: isolate;
 
     &.is-grabbing {
       .side__toggle .side__toggle-btn {
@@ -154,9 +126,29 @@ onMounted(() => {
       gap: 10px;
 
       button {
-        color: #0b0d0f;
+        position: relative;
         font-weight: 700;
         font-size: 32px;
+        color: #0b0d0f;
+        box-shadow: inset 0 -20px 0 transparent;
+        isolation: isolate;
+
+        &::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          width: 0;
+          box-shadow: inset 0 -20px 0 rgba(191, 255, 161, 0.7);
+          z-index: -1;
+          user-select: none;
+          pointer-events: none;
+
+          transition: width 0.3s ease-in-out;
+        }
+
+        &:hover::before {
+          width: 100%;
+        }
       }
     }
 
