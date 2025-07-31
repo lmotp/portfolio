@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 const handleOnLoad = () => {
   isLoading.value = false;

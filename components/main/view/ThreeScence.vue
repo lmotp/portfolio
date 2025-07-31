@@ -3,13 +3,16 @@ import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { DotScreenPass } from "three/examples/jsm/Addons.js";
-
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 
 import * as dat from "lil-gui";
 
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
+
+import customVertexShader from "./shaders/plane/effect/vertexShader.glsl";
+import customFragmentShader from "./shaders/plane/effect/fragmentShader.glsl";
 
 // const gui = new dat.GUI();
 // const guiInfo = { value: 0.85 };
@@ -24,6 +27,14 @@ let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
 let effectComposer: EffectComposer;
 let planeMaterial: THREE.ShaderMaterial;
+
+const CustomEffect = {
+  uniforms: {
+    tDiffuse: { value: null },
+  },
+  vertexShader: customVertexShader,
+  fragmentShader: customFragmentShader,
+};
 
 const init = () => {
   if (!container.value) return;
@@ -76,6 +87,9 @@ const init = () => {
   dotPass.uniforms["scale"].value = 2;
   dotPass.uniforms["angle"].value = THREE.MathUtils.degToRad(45);
   effectComposer.addPass(dotPass);
+
+  const customPass = new ShaderPass(CustomEffect);
+  effectComposer.addPass(customPass);
 
   // Add SMAA anti-aliasing pass
   if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
