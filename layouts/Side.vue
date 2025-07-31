@@ -8,7 +8,7 @@ const isGrabbing = ref(false);
 // 초기 위치 설정
 const OPEN_X = 0; // 메뉴가 열린 상태 (px)
 
-const initialX = ref(-350); // 메뉴가 숨겨진 상태 (px)
+const initialX = ref(-384); // 메뉴가 숨겨진 상태 (px)
 const closeThreshold = ref(-350); // 닫힘/열림 결정 기준 (px)
 const menuWidth = ref(0);
 const audio = ref<HTMLAudioElement | null>(null);
@@ -67,9 +67,8 @@ onMounted(() => {
   <aside id="side" class="side" :style="{ translate: `${x}px` }">
     <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
       <div class="side__content">
-        <button>About Me</button>
-        <button>Portfolio</button>
-        <button>Skills</button>
+        <NuxtLink to="/" class="side__content-link">Main</NuxtLink>
+        <NuxtLink to="/portfolio" class="side__content-link">Portfolio</NuxtLink>
       </div>
 
       <div class="side__toggle">
@@ -94,12 +93,12 @@ onMounted(() => {
 
 <style scoped>
 .side {
-  --back-color: rgba(255, 255, 255, 0.925);
+  --back-color: rgba(255, 255, 255, 0.9);
   --blur: 4px;
 
   position: absolute;
   height: 100%;
-  background-color: gray;
+  background-color: transparent;
   z-index: 100;
 
   .side__menu {
@@ -125,7 +124,7 @@ onMounted(() => {
       flex-direction: column;
       gap: 10px;
 
-      button {
+      .side__content-link {
         position: relative;
         font-weight: 700;
         font-size: 32px;
@@ -146,7 +145,8 @@ onMounted(() => {
           transition: width 0.3s ease-in-out;
         }
 
-        &:hover::before {
+        &:hover::before,
+        &.router-link-active::before {
           width: 100%;
         }
       }

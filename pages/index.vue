@@ -9,7 +9,7 @@ const handleOnLoad = () => {
 <template>
   <ClientOnly>
     <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
-    <Portfolio v-else />
+    <Main v-else />
   </ClientOnly>
 </template>
 

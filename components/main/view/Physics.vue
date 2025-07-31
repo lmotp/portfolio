@@ -5,14 +5,45 @@ const emit = defineEmits(["initPhysics"]);
 
 const isSensorDetected = ref(false);
 
-const sensorCount = ref(1);
 const container = ref<HTMLElement | null>(null);
+const targetY = ref(300);
+const cardConfig = [
+  {
+    x: 75,
+    y: 58,
+    w: 300,
+    h: 200,
+  },
+  {
+    x: 100,
+    y: 255,
+    w: 300,
+    h: 200,
+  },
+  {
+    x: -75,
+    y: 158,
+    w: 300,
+    h: 200,
+  },
+  {
+    x: -123,
+    y: 350,
+    w: 300,
+    h: 200,
+  },
+];
+
 const barConfig = [
   { x: -100, y: -200, width: 700, height: 20, angle: 10.8 },
   { x: 125, y: 0, width: 700, height: 20, angle: -12 },
   { x: -100, y: 200, width: 700, height: 20, angle: 7.2 },
   { x: -(window.innerWidth / 2 / 2 + 50), y: 450, width: window.innerWidth / 2 - 50, height: 20, angle: 4 },
   { x: window.innerWidth / 2 / 2 + 50, y: 450, width: window.innerWidth / 2 - 50, height: 20, angle: -4 },
+];
+const sensorConfig = [
+  { x: 0, y: 0 },
+  { x: 0, y: 500 },
 ];
 const pointConfig = [{ x: -300, y: 70 }];
 
@@ -22,7 +53,6 @@ const Render = Matter.Render;
 const Runner = Matter.Runner;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
 const Bounds = Matter.Bounds;
 const Composite = Matter.Composite;
 
@@ -44,6 +74,15 @@ const createCross = ({ x, y, width, height, thickness, options }: crossType) => 
   return cross;
 };
 
+const loadImage = async (url: string): Promise<HTMLImageElement> => {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+
 const init = async () => {
   if (!container.value) return;
   // create a renderer
@@ -54,7 +93,7 @@ const init = async () => {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
       wireframes: false,
-      background: "#008080",
+      background: "#fff",
       hasBounds: true,
     },
   });
@@ -90,20 +129,6 @@ const init = async () => {
     });
     return body;
   });
-  const bars = barConfig.map((bar) => {
-    const body = Bodies.rectangle(centerX + bar.x, centerY + bar.y, bar.width, bar.height, {
-      isStatic: true,
-      angle: useTransferDgreeToRadia(bar.angle),
-      render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
-    });
-
-    return body;
-  });
-  const sensorBar = Bodies.rectangle(centerX, centerY, window.innerWidth, 1, {
-    isSensor: true,
-    isStatic: true,
-    render: { fillStyle: "transparent", lineWidth: 0, strokeStyle: "transparent" },
-  });
   const cross = createCross({
     x: centerX - 300,
     y: centerY + 70,
@@ -113,20 +138,63 @@ const init = async () => {
     options: { isStatic: true, render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" } },
   });
 
-  World.add(engineWorld, [...bars, sensorBar, circle, ...points, cross]);
+  const bars = barConfig.map((bar) => {
+    const body = Bodies.rectangle(centerX + bar.x, centerY + bar.y, bar.width, bar.height, {
+      isStatic: true,
+      angle: useTransferDgreeToRadia(bar.angle),
+      render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
+    });
+
+    return body;
+  });
+
+  const sensorBars = sensorConfig.map((sensor, index) => {
+    const body = Bodies.rectangle(centerX + sensor.x, centerY + sensor.y, window.innerWidth, 1, {
+      isSensor: true,
+      isStatic: true,
+      label: `sensor-${index + 1}`,
+      render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
+    });
+
+    return body;
+  });
+
+  const cards = await Promise.all(
+    cardConfig.map(async (card, index) => {
+      const y = sensorBars[1].position.y + 200 + card.y;
+      const imageUrl = `/images/card/image-${index + 1}.jpg`;
+      const img = await loadImage(imageUrl);
+
+      const originalWidth = img.naturalWidth;
+      const originalHeight = img.naturalHeight;
+
+      const xScale = card.w / originalWidth;
+      const yScale = card.h / originalHeight;
+
+      const body = Bodies.rectangle(centerX + card.x, y, card.w, card.h, {
+        isStatic: true,
+        render: {
+          sprite: { texture: imageUrl, xScale: xScale, yScale: yScale },
+        },
+      });
+
+      return body;
+    })
+  );
+
+  World.add(engineWorld, [...bars, ...points, ...sensorBars, ...cards, circle, cross]);
 
   //이벤트
   Events.on(render, "beforeRender", () => {
-    const targetY = 300;
     const currentY = render.bounds.min.y;
     const lerpAmount = 0.05;
 
     if (isSensorDetected.value) {
       const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
-      const isMove = Math.abs(currentY - targetY) > tolerance;
+      const isMove = Math.abs(currentY - targetY.value) > tolerance;
 
       if (isMove) {
-        const newYPosition = useLerp(currentY, targetY, lerpAmount);
+        const newYPosition = useLerp(currentY, targetY.value, lerpAmount);
         const moveAmount = newYPosition - currentY;
 
         Bounds.translate(render.bounds, { x: 0, y: moveAmount });
@@ -144,10 +212,9 @@ const init = async () => {
       const bodyB = pair.bodyB;
 
       // 센서가 true인 rectangle 감지
-      if (bodyB.isSensor && bodyA === circle) {
-        Body.setPosition(sensorBar, { x: centerX, y: centerY + 70 * sensorCount.value });
-        sensorCount.value++;
+      if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         isSensorDetected.value = true;
+        targetY.value = Number(bodyB.label.split("-")[1]) * 300;
       }
     });
   });

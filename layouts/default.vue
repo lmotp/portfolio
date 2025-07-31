@@ -1,9 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Side from "./Side.vue";
+</script>
 
 <template>
   <main>
     <div class="frame">
       <section class="inner">
+        <Side />
         <slot />
       </section>
     </div>
