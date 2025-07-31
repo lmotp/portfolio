@@ -57,6 +57,10 @@ onMounted(() => {
 
 <style scoped>
 .background-wrap {
+  width: 100%;
+  height: 100%;
+  background-color: #0b0d0f;
+
   .meteors-wrap {
     position: relative;
     width: 100%;
@@ -112,10 +116,6 @@ onMounted(() => {
         z-index: 10;
         user-select: none;
         pointer-events: none;
-      }
-
-      &:has(.picture[alt="step-4"]) {
-        animation: completed 2250ms forwards cubic-bezier(0.47, 0, 0.83, 0.44);
       }
 
       &.fade-enter-active,

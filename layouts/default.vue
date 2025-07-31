@@ -36,7 +36,7 @@ main {
       height: 100%;
 
       clip-path: inset(0 0 round 15px 15px 15px 15px);
-      background-color: white;
+      background-color: #fff;
       box-shadow: inset 0px 4px 10px rgba(11, 13, 15, 0.2);
       overflow: hidden;
     }
