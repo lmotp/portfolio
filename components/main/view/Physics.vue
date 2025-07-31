@@ -257,7 +257,7 @@ const init = async () => {
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
         console.log(currentSensorCount);
-        const offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
+        const offsetY = currentSensorCount === TOTAL_SENSOR ? 380 : 300;
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
 
