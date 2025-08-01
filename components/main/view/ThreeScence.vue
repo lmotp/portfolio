@@ -162,4 +162,8 @@ onUnmounted(() => {
   <div ref="container" class="three-container"></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.three-container {
+  pointer-events: none;
+}
+</style>

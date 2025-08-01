@@ -53,6 +53,8 @@ const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Bounds = Matter.Bounds;
 const Composite = Matter.Composite;
+const Composites = Matter.Composites;
+const Constraint = Matter.Constraint;
 
 const engine = Engine.create();
 const engineWorld = engine.world;
@@ -199,6 +201,7 @@ const init = async () => {
     const y = sensorBars.at(-1)!.position.y + 550;
     const paths = select(root, "path");
     const vertexSets = paths.map((path) => pathToVertices(path, 30));
+    console.log(vertexSets);
     const options = {
       isStatic: true,
       render: {
@@ -211,6 +214,40 @@ const init = async () => {
     return Bodies.fromVertices(centerX, y, vertexSets, options, true);
   });
 
+  const group = Body.nextGroup(true);
+
+  const bridge = Composites.stack(100, 300, 30, 1, 0, 0, function (x: number, y: number) {
+    return Bodies.rectangle(x, y, 30, 10, {
+      collisionFilter: { group: group },
+      chamfer: { radius: 5 },
+      density: 0.005,
+      frictionAir: 0.05,
+      render: {
+        fillStyle: "#42a5f5", // 파란색으로 변경
+      },
+    });
+  });
+
+  Composites.chain(bridge, 0.5, 0, -0.5, 0, {
+    stiffness: 0.1, // 강성을 낮춰 유연한 파도 효과
+    damping: 0.05, // 파동이 자연스럽게 사라지도록 감쇠 추가
+    length: 0.0001,
+    render: {
+      visible: true, // 연결 선을 보이게 할 수도 있습니다
+    },
+  });
+
+  Composite.add(engineWorld, [
+    bridge,
+    Constraint.create({
+      pointA: { x: 100, y: 300 }, // 고정점
+      bodyB: bridge.bodies[0],
+      pointB: { x: -15, y: 0 },
+      length: 2,
+      stiffness: 0.9,
+    }),
+  ]);
+
   World.add(engineWorld, [...bars, ...points, ...sensorBars, ...cards, circle, cross, wave]);
 
   //이벤트
@@ -222,7 +259,7 @@ const init = async () => {
     const vy = velocity.y;
     const speed = Math.sqrt(vx * vx + vy * vy);
 
-    // if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
+    if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
 
     if (isSensorDetected.value) {
       const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
@@ -244,6 +281,19 @@ const init = async () => {
     const waveX = Math.sin(time) * amplitude;
 
     Body.translate(wave, { x: waveX, y: 0 });
+
+
+    // 테스트용
+    const amplitude2 = 0.005; // 힘의 진폭
+    const frequency2 = 0.05; // 힘의 주기
+    const forceY2 = amplitude2 * Math.sin(time * frequency2);
+
+    const firstBody = bridge.bodies[0];
+    Body.applyForce(
+      firstBody,
+      { x: firstBody.position.x, y: firstBody.position.y },
+      { x: 0, y: forceY2 } // Y축 방향으로만 힘을 가함
+    );
   });
 
   Events.on(engine, "collisionStart", (event) => {
@@ -256,8 +306,7 @@ const init = async () => {
       // 센서가 true인 rectangle 감지
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
-        console.log(currentSensorCount);
-        const offsetY = currentSensorCount === TOTAL_SENSOR ? 380 : 300;
+        const offsetY = currentSensorCount === TOTAL_SENSOR ? 370 : 300;
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
 
