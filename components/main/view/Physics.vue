@@ -54,7 +54,6 @@ const Body = Matter.Body;
 const Bounds = Matter.Bounds;
 const Composite = Matter.Composite;
 const Composites = Matter.Composites;
-const Constraint = Matter.Constraint;
 
 const engine = Engine.create();
 const engineWorld = engine.world;
@@ -201,7 +200,6 @@ const init = async () => {
     const y = sensorBars.at(-1)!.position.y + 550;
     const paths = select(root, "path");
     const vertexSets = paths.map((path) => pathToVertices(path, 30));
-    console.log(vertexSets);
     const options = {
       isStatic: true,
       render: {
@@ -214,41 +212,22 @@ const init = async () => {
     return Bodies.fromVertices(centerX, y, vertexSets, options, true);
   });
 
-  const group = Body.nextGroup(true);
+  const numSegments = 100;
+  const segmentWidth = window.innerWidth / numSegments;
+  const waveHeight = 1000; // 파도 바디의 전체 높이
+  const waveY = sensorBars.at(-1)!.position.y + 550; // 파도 바디의 기준 y 위치
+  let wavePhase = 0;
 
-  const bridge = Composites.stack(100, 300, 30, 1, 0, 0, function (x: number, y: number) {
-    return Bodies.rectangle(x, y, 30, 10, {
-      collisionFilter: { group: group },
-      chamfer: { radius: 5 },
-      density: 0.005,
-      frictionAir: 0.05,
-      render: {
-        fillStyle: "#42a5f5", // 파란색으로 변경
-      },
+  const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
+    return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
+      isStatic: true,
+      render: { fillStyle: "#455A64" },
     });
-  });
+  }).bodies;
 
-  Composites.chain(bridge, 0.5, 0, -0.5, 0, {
-    stiffness: 0.1, // 강성을 낮춰 유연한 파도 효과
-    damping: 0.05, // 파동이 자연스럽게 사라지도록 감쇠 추가
-    length: 0.0001,
-    render: {
-      visible: true, // 연결 선을 보이게 할 수도 있습니다
-    },
-  });
+  Composite.add(engineWorld, waveBodies);
 
-  Composite.add(engineWorld, [
-    bridge,
-    Constraint.create({
-      pointA: { x: 100, y: 300 }, // 고정점
-      bodyB: bridge.bodies[0],
-      pointB: { x: -15, y: 0 },
-      length: 2,
-      stiffness: 0.9,
-    }),
-  ]);
-
-  World.add(engineWorld, [...bars, ...points, ...sensorBars, ...cards, circle, cross, wave]);
+  World.add(engineWorld, [...bars, ...points, ...sensorBars, ...cards, circle, cross]);
 
   //이벤트
   Events.on(render, "beforeRender", () => {
@@ -259,7 +238,7 @@ const init = async () => {
     const vy = velocity.y;
     const speed = Math.sqrt(vx * vx + vy * vy);
 
-    if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
+    // if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
 
     if (isSensorDetected.value) {
       const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
@@ -274,26 +253,17 @@ const init = async () => {
     }
 
     Composite.rotate(cross, useTransferDgreeToRadia(10), { x: centerX - 300, y: centerY + 70 });
-    // Calculate wave movement with more natural parameters
-    const amplitude = 3; // 움직임의 폭 (더 큰 값으로 더 넓게 움직임)
-    const frequency = 0.002; // 움직임의 속도 (더 작은 값으로 더 느리게 움직임)
-    const time = engine.timing.timestamp * frequency;
-    const waveX = Math.sin(time) * amplitude;
 
-    Body.translate(wave, { x: waveX, y: 0 });
+    // 1. 파도의 움직임 업데이트 (파도 바디의 위치 변경)
+    const waveAmplitude = 30; // 파도 움직임의 진폭
+    const waveFrequency = 0.005; // 파도 움직임의 빈도
+    const waveSpeed = 0.05; // 파도 움직임의 속도
 
-
-    // 테스트용
-    const amplitude2 = 0.005; // 힘의 진폭
-    const frequency2 = 0.05; // 힘의 주기
-    const forceY2 = amplitude2 * Math.sin(time * frequency2);
-
-    const firstBody = bridge.bodies[0];
-    Body.applyForce(
-      firstBody,
-      { x: firstBody.position.x, y: firstBody.position.y },
-      { x: 0, y: forceY2 } // Y축 방향으로만 힘을 가함
-    );
+    wavePhase += waveSpeed;
+    waveBodies.forEach((body) => {
+      const yOffset = waveAmplitude * Math.sin(body.position.x * waveFrequency + wavePhase);
+      Body.setPosition(body, { x: body.position.x, y: waveY + yOffset + waveHeight / 2 });
+    });
   });
 
   Events.on(engine, "collisionStart", (event) => {
