@@ -6,20 +6,6 @@ import * as polyDecomp from "poly-decomp";
 Matter.Common.setDecomp(polyDecomp);
 const emit = defineEmits(["initPhysics"]);
 
-// SVG path to vertices converter
-const pathToVertices = (path: SVGPathElement, segments: number) => {
-  const pathLength = path.getTotalLength();
-  const vertices: Matter.Vector[] = [];
-
-  for (let i = 0; i <= segments; i++) {
-    const t = i / segments;
-    const point = path.getPointAtLength(t * pathLength);
-    vertices.push({ x: point.x, y: point.y });
-  }
-
-  return vertices;
-};
-
 const TOTAL_SENSOR = 6;
 const isSensorDetected = ref(false);
 const sensorCount = ref(1);
@@ -32,6 +18,13 @@ const cardConfig = [
   { x: -215, y: 430, w: 300, h: 150, angle: 13.2 },
   { x: 273, y: 650, w: 500, h: 200, angle: -13.2 },
   { x: -273, y: 850, w: 600, h: 300, angle: -15.2 },
+];
+
+const textConfig = [
+  { x: 210, y: 58 },
+  { x: -110, y: 58 },
+  { x: 10, y: 58 },
+  { x: -10, y: 58 },
 ];
 
 const barConfig = [
@@ -82,20 +75,6 @@ const loadImage = async (url: string): Promise<HTMLImageElement> => {
   });
 };
 
-const loadSvg = async (url: string) => {
-  return fetch(url)
-    .then((response) => {
-      return response.text();
-    })
-    .then((raw) => {
-      return new window.DOMParser().parseFromString(raw, "image/svg+xml");
-    });
-};
-
-const select = function (root: any, selector: any) {
-  return Array.prototype.slice.call(root.querySelectorAll(selector));
-};
-
 const init = async () => {
   if (!container.value) return;
   // create a renderer
@@ -119,6 +98,30 @@ const init = async () => {
 
   // run the engine
   Runner.run(runner, engine);
+
+  // 양쪽 벽 추가
+  const wallThickness = 50;
+  const leftWall = Bodies.rectangle(
+    0,
+    container.value!.clientHeight / 2,
+    wallThickness,
+    container.value!.clientHeight,
+    {
+      isStatic: true,
+      render: { fillStyle: "transparent" },
+    }
+  );
+
+  const rightWall = Bodies.rectangle(
+    container.value!.clientWidth,
+    container.value!.clientHeight / 2,
+    wallThickness,
+    container.value!.clientHeight,
+    {
+      isStatic: true,
+      render: { fillStyle: "transparent" },
+    }
+  );
 
   //물체 생성
   const BALL_OFFSET = 20;
@@ -196,21 +199,27 @@ const init = async () => {
     })
   );
 
-  const wave = await loadSvg("/images/physics/wave.svg").then(function (root) {
-    const y = sensorBars.at(-1)!.position.y + 550;
-    const paths = select(root, "path");
-    const vertexSets = paths.map((path) => pathToVertices(path, 30));
-    const options = {
-      isStatic: true,
-      render: {
-        fillStyle: "#060a19",
-        strokeStyle: "#060a19",
-        lineWidth: 1,
-      },
-    };
+  const textCards = await Promise.all(
+    textConfig.map(async (text) => {
+      const y = sensorBars.at(-1)!.position.y + 550;
+      const imageUrl = `/images/physics/test_text.png`;
+      const img = await loadImage(imageUrl);
 
-    return Bodies.fromVertices(centerX, y, vertexSets, options, true);
-  });
+      const originalWidth = img.naturalWidth;
+      const originalHeight = img.naturalHeight;
+
+      const body = Bodies.rectangle(centerX + text.x, y, originalWidth, originalHeight, {
+        render: {
+          sprite: { texture: imageUrl, xScale: 1, yScale: 1 },
+        },
+        density: 0.001, // 가벼운 물체로 설정
+        restitution: 0.5, // 탄성 추가
+        friction: 0.01, // 마찰력 최소화
+      });
+
+      return body;
+    })
+  );
 
   const numSegments = 100;
   const segmentWidth = window.innerWidth / numSegments;
@@ -221,15 +230,24 @@ const init = async () => {
   const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
     return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
       isStatic: true,
-      render: { fillStyle: "#455A64" },
+      render: { fillStyle: "black" },
+      label: "wave",
     });
   }).bodies;
 
   Composite.add(engineWorld, waveBodies);
+  World.add(engineWorld, [
+    ...bars,
+    ...points,
+    ...sensorBars,
+    ...cards,
+    circle,
+    cross,
+    leftWall,
+    rightWall,
+    ...textCards,
+  ]);
 
-  World.add(engineWorld, [...bars, ...points, ...sensorBars, ...cards, circle, cross]);
-
-  //이벤트
   Events.on(render, "beforeRender", () => {
     const currentY = render.bounds.min.y;
     const lerpAmount = 0.05;
@@ -276,7 +294,7 @@ const init = async () => {
       // 센서가 true인 rectangle 감지
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
-        const offsetY = currentSensorCount === TOTAL_SENSOR ? 370 : 300;
+        const offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
 
@@ -298,4 +316,10 @@ onMounted(() => {
   <div ref="container" class="container"></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+</style>

@@ -27,6 +27,7 @@ onUnmounted(() => {
 
 <template>
   <div ref="viewRef" class="view" @scroll="handleScroll">
+    <!-- <img src="/images/physics/test.svg" alt="" /> -->
     <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
     <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" />
   </div>
@@ -42,12 +43,14 @@ onUnmounted(() => {
   .main-phy {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    pointer-events: none;
+    z-index: 1;
   }
   .main-bg {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    z-index: 0;
   }
 }
 </style>

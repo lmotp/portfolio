@@ -93,3 +93,49 @@ circle.plugin.wrap = {
   min: { x: render.bounds.min.x, y: render.bounds.min.y },
   max: { x: render.bounds.max.x, y: render.bounds.max.y },
 };
+
+// Add SVG wave
+
+// SVG path to vertices converter
+const pathToVertices = (path, segments) => {
+  const pathLength = path.getTotalLength();
+  const vertices = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const point = path.getPointAtLength(t * pathLength);
+    vertices.push({ x: point.x, y: point.y });
+  }
+
+  return vertices;
+};
+
+const loadSvg = async (url) => {
+  return fetch(url)
+    .then((response) => {
+      return response.text();
+    })
+    .then((raw) => {
+      return new window.DOMParser().parseFromString(raw, "image/svg+xml");
+    });
+};
+
+const select = function (root, selector) {
+  return Array.prototype.slice.call(root.querySelectorAll(selector));
+};
+
+const wave = await loadSvg("/images/physics/wave.svg").then(function (root) {
+  const y = 550;
+  const paths = select(root, "path");
+  const vertexSets = paths.map((path) => pathToVertices(path, 30));
+  const options = {
+    isStatic: true,
+    render: {
+      fillStyle: "#060a19",
+      strokeStyle: "#060a19",
+      lineWidth: 1,
+    },
+  };
+
+  return Bodies.fromVertices(centerX, y, vertexSets, options, true);
+});
