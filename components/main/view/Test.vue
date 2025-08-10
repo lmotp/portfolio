@@ -30,7 +30,7 @@ const init = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const vertices = new Float32Array([-0.65, 0, 0, 0.65, 0, 0, 0, 1, 0]);
+  const vertices = new Float32Array([-0.4, 0, 0, 0.4, 0, 0, 0, 1, 0]);
   const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
@@ -43,19 +43,19 @@ const init = () => {
 
   for (let i = 0; i < LINE_COUNT; i++) {
     const angle = (i / LINE_COUNT) * Math.PI * 2;
-    const radius = 40;
+    const radius = 45;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
     const z = 1;
     const position = new THREE.Vector3(x, y, z);
     const velocity = position.clone().negate().normalize();
-    const scaleY = Math.random() * 10 + 10;
+    const scaleY = Math.random() * 10 + 12;
 
     lines.push({
       position,
       velocity,
       scaleY,
-      scaleSpeed: 0.05 + Math.random() * 0.05,
+      scaleSpeed: 1 + Math.random(),
       initialScaleY: scaleY,
     });
 
