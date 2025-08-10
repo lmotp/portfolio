@@ -30,7 +30,7 @@ const init = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const vertices = new Float32Array([-0.4, 0, 0, 0.4, 0, 0, 0, 1, 0]);
+  const vertices = new Float32Array([-0.3, 0, 0, 0.3, 0, 0, 0, 1, 0]);
   const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
