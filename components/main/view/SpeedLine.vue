@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import * as THREE from "three";
-import { ref, onMounted, onUnmounted } from "vue";
 
 const container = ref<HTMLDivElement | null>(null);
 const LINE_COUNT = 100;
@@ -19,8 +18,9 @@ let instancedMesh: THREE.InstancedMesh;
 const init = () => {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
   container.value?.appendChild(renderer.domElement);
   camera.position.z = 20;
 
@@ -76,7 +76,7 @@ const animate = () => {
     const line = lines[i];
 
     line.scaleY -= line.scaleSpeed;
-    if (line.scaleY < 0) line.scaleY = line.initialScaleY;
+    if (line.scaleY <= 0) line.scaleY = line.initialScaleY;
 
     dummy.position.copy(line.position);
     dummy.rotation.z = Math.atan2(line.velocity.y, line.velocity.x) - Math.PI / 2;

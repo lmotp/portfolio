@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ThreeScence from "./ThreeScence.vue";
 import Physics from "./Physics.vue";
-import Test from "./Test.vue"; 
+import SpeedLine from "./SpeedLine.vue";
 
 const scrollPercentage = ref(0);
 const viewRef = ref<HTMLElement | null>(null);
@@ -28,9 +28,9 @@ onUnmounted(() => {
 
 <template>
   <div ref="viewRef" class="view" @scroll="handleScroll">
-    <!-- <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
-    <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" /> -->
-    <Test />
+    <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
+    <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" />
+    <SpeedLine class="speed-line" />
   </div>
 </template>
 
@@ -52,6 +52,12 @@ onUnmounted(() => {
     inset: 0;
     pointer-events: none;
     z-index: 0;
+  }
+  .speed-line {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
   }
 }
 </style>
