@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ThreeScence from "./ThreeScence.vue";
 import Physics from "./Physics.vue";
+import Test from "./Test.vue"; 
 
 const scrollPercentage = ref(0);
 const viewRef = ref<HTMLElement | null>(null);
@@ -27,9 +28,9 @@ onUnmounted(() => {
 
 <template>
   <div ref="viewRef" class="view" @scroll="handleScroll">
-    <!-- <img src="/images/physics/test.svg" alt="" /> -->
-    <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
-    <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" />
+    <!-- <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
+    <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" /> -->
+    <Test />
   </div>
 </template>
 

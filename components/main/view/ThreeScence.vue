@@ -21,6 +21,7 @@ const clock = new THREE.Clock();
 
 const props = defineProps<{ scrollPercentage: number; initPhysicsObj: InitPhysicsObj | null }>();
 const container = ref<HTMLElement | null>(null);
+const lines = ref<THREE.LineSegments[]>([]);
 
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
@@ -36,6 +37,32 @@ const CustomEffect = {
   fragmentShader: customFragmentShader,
 };
 
+const makeLine = () => {
+  // 라인 생성
+  const numberOfLines = 500;
+  const lineLength = 5;
+
+  for (let i = 0; i < numberOfLines; i++) {
+    const geometry = new THREE.BufferGeometry();
+    const vertices = new Float32Array([0, 0, 0, lineLength, 0, 0]);
+    geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
+
+    const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+    const line = new THREE.LineSegments(geometry, material);
+
+    // 초기 위치 설정 (카메라 앞에서 시작)
+    line.position.set(
+      (Math.random() - 0.5) * 100, // x축 범위를 줄임
+      (Math.random() - 0.5) * 100, // y축 범위를 줄임
+      -500 + Math.random() * 100 // z축을 카메라 뒤쪽으로 위치
+    );
+    line.userData.speed = Math.random() * 2 + 1; // 라인별 속도 저장
+
+    lines.value.push(line);
+    scene.add(line);
+  }
+};
+
 const init = () => {
   if (!container.value) return;
 
@@ -44,8 +71,8 @@ const init = () => {
   scene.background = null;
 
   // Camera
-  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  camera.position.z = 1;
+  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
+  camera.position.z = 500;
 
   // Plane
   const planeGeometry = new THREE.PlaneGeometry(2, 2);
@@ -100,6 +127,8 @@ const init = () => {
 
   // gui.add(guiInfo, "value").min(0.5).max(1).step(0.01);
 
+  makeLine();
+
   // Animation
   animate();
 
@@ -109,6 +138,15 @@ const init = () => {
 
 const animate = () => {
   requestAnimationFrame(animate);
+
+  lines.value.forEach((line) => {
+    line.position.z += line.userData.speed;
+
+    // 라인이 카메라를 지나가면 다시 멀리 보냄
+    if (line.position.z > camera.position.z) {
+      line.position.z = -200;
+    }
+  });
 
   // Update uniforms
   planeMaterial.uniforms.uTime.value = clock.getElapsedTime();
@@ -138,9 +176,16 @@ watch(
   (obj) => {
     if (obj) {
       // 물리 엔진 업데이트 후 캔버스 텍스처 업데이트
-      const { Events, canvas, engine } = obj;
+      const { Events, canvas, engine, circle } = obj;
 
       Events.on(engine, "afterUpdate", () => {
+        const velocity = circle.velocity;
+        const vx = velocity.x;
+        const vy = velocity.y;
+        const speed = Math.sqrt(vx * vx + vy * vy);
+
+        // if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
+
         const canvasTexture = new THREE.CanvasTexture(canvas);
         canvasTexture.needsUpdate = true;
         planeMaterial.uniforms.uTexture.value = canvasTexture;

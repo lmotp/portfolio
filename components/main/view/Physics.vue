@@ -251,12 +251,6 @@ const init = async () => {
   Events.on(render, "beforeRender", () => {
     const currentY = render.bounds.min.y;
     const lerpAmount = 0.05;
-    const velocity = circle.velocity;
-    const vx = velocity.x;
-    const vy = velocity.y;
-    const speed = Math.sqrt(vx * vx + vy * vy);
-
-    // if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
 
     if (isSensorDetected.value) {
       const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
@@ -304,7 +298,7 @@ const init = async () => {
   });
 
   render.canvas.style.visibility = "hidden";
-  emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
+  emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine, circle });
 };
 
 onMounted(() => {

@@ -23,5 +23,5 @@ void main() {
   vec3 bgColor = vec3(0.0, 0.50196, 0.50196);
   vec3 finalColor = vec3(color.a == 0.0 ? bgColor : color.rgb);
 
-  gl_FragColor = vec4(finalColor, opacity);
+  gl_FragColor = vec4(finalColor, 1.0);
 }

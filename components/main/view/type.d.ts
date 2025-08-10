@@ -2,6 +2,7 @@ type InitPhysicsObj = {
   Events: any;
   canvas: HTMLCanvasElement;
   engine: any;
+  circle: Matter.Body;
 };
 
 type crossType = {
