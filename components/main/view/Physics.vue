@@ -310,7 +310,7 @@ const init = async () => {
     });
   });
 
-  render.canvas.style.visibility = "hidden";
+  // render.canvas.style.visibility = "hidden";
   emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 

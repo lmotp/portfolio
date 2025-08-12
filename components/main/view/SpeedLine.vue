@@ -58,8 +58,8 @@ const init = () => {
     const z = 1;
     const position = new THREE.Vector3(x, y, z);
     const velocity = position.clone().negate().normalize();
-    const offset = isTopBottom ? 2 : 0;
-    const scaleY = Math.random() * 10 + 12 + offset;
+    const offset = isTopBottom ? 5 : 0;
+    const scaleY = Math.random() * 10 + 10 + offset;
 
     lines.push({
       position,
