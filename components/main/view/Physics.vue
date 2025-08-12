@@ -10,6 +10,7 @@ const emit = defineEmits(["initPhysics"]);
 const TOTAL_SENSOR = 6;
 const isSensorDetected = ref(false);
 const sensorCount = ref(1);
+const selectedBody = ref<Matter.Body | null>(null);
 
 const container = ref<HTMLElement | null>(null);
 const targetY = ref(300);
@@ -40,6 +41,8 @@ const pointConfig = [{ x: -300, y: 70 }];
 const speedStore = useSpeedStore();
 
 let render: Matter.Render;
+let cards: Matter.Body[] = [];
+let isDragging = ref(false); // ✨ 드래그 상태를 추적하는 새로운 변수 추가
 const Engine = Matter.Engine;
 const Render = Matter.Render;
 const Runner = Matter.Runner;
@@ -49,22 +52,18 @@ const Body = Matter.Body;
 const Bounds = Matter.Bounds;
 const Composite = Matter.Composite;
 const Composites = Matter.Composites;
+const Mouse = Matter.Mouse;
+const MouseConstraint = Matter.MouseConstraint;
 
 const engine = Engine.create();
 const engineWorld = engine.world;
 
 const createCross = ({ x, y, width, height, thickness, options }: crossType) => {
-  // 가로 막대
   const horizontalBar = Bodies.rectangle(x, y, width, thickness, options);
-
-  // 세로 막대
   const verticalBar = Bodies.rectangle(x, y, thickness, height, options);
-
-  // 두 바디를 복합체로 묶음 (선택 사항이지만 관리하기 편리함)
   const cross = Composite.create({ label: "Cross" });
   Composite.add(cross, horizontalBar);
   Composite.add(cross, verticalBar);
-
   return cross;
 };
 
@@ -79,7 +78,7 @@ const loadImage = async (url: string): Promise<HTMLImageElement> => {
 
 const init = async () => {
   if (!container.value) return;
-  // create a renderer
+
   render = Render.create({
     element: container.value,
     engine: engine,
@@ -92,18 +91,23 @@ const init = async () => {
     },
   });
 
-  // 스토어 초기화
+  const mouse = Mouse.create(render.canvas);
+  const mouseConstraint = MouseConstraint.create(engine, {
+    mouse: mouse,
+    constraint: {
+      render: {
+        visible: false, // 마우스 제약 조건을 숨깁니다
+      },
+    },
+  });
 
-  // run the renderer
+  Composite.add(engineWorld, mouseConstraint);
+  render.mouse = mouse;
+
   Render.run(render);
-
-  // create runner
   const runner = Runner.create();
-
-  // run the engine
   Runner.run(runner, engine);
 
-  // 양쪽 벽 추가
   const wallThickness = 50;
   const leftWall = Bodies.rectangle(
     0,
@@ -127,7 +131,6 @@ const init = async () => {
     }
   );
 
-  //물체 생성
   const BALL_OFFSET = 20;
   const centerX = container.value!.clientWidth / 2;
   const centerY = container.value!.clientHeight / 2;
@@ -164,7 +167,6 @@ const init = async () => {
       angle: useTransferDgreeToRadia(bar.angle),
       render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
     });
-
     return body;
   });
 
@@ -175,19 +177,16 @@ const init = async () => {
       label: `sensor-${index + 1}`,
       render: { fillStyle: "transparent", lineWidth: 0, strokeStyle: "transparent" },
     });
-
     return body;
   });
 
-  const cards = await Promise.all(
+  cards = await Promise.all(
     cardConfig.map(async (card, index) => {
       const y = 1000 + card.y;
       const imageUrl = `/images/card/image-${index + 1}.jpg`;
       const img = await loadImage(imageUrl);
-
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;
-
       const xScale = card.w / originalWidth;
       const yScale = card.h / originalHeight;
 
@@ -197,8 +196,8 @@ const init = async () => {
         render: {
           sprite: { texture: imageUrl, xScale: xScale, yScale: yScale },
         },
+        label: "card-body", // ✨ 카드에 고유한 라벨을 추가합니다.
       });
-
       return body;
     })
   );
@@ -208,7 +207,6 @@ const init = async () => {
       const y = sensorBars.at(-1)!.position.y + 550;
       const imageUrl = `/images/physics/test_text.png`;
       const img = await loadImage(imageUrl);
-
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;
 
@@ -216,20 +214,19 @@ const init = async () => {
         render: {
           sprite: { texture: imageUrl, xScale: 1, yScale: 1 },
         },
-        density: 0.001, // 가벼운 물체로 설정
-        restitution: 0.5, // 탄성 추가
-        friction: 0.01, // 마찰력 최소화
+        density: 0.001,
+        restitution: 0.5,
+        friction: 0.01,
         label: "textCard",
       });
-
       return body;
     })
   );
 
   const numSegments = 100;
   const segmentWidth = window.innerWidth / numSegments;
-  const waveHeight = 1000; // 파도 바디의 전체 높이
-  const waveY = sensorBars.at(-1)!.position.y + 550; // 파도 바디의 기준 y 위치
+  const waveHeight = 1000;
+  const waveY = sensorBars.at(-1)!.position.y + 550;
   let wavePhase = 0;
 
   const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
@@ -264,23 +261,21 @@ const init = async () => {
     speedStore.updateSpeed(Math.min(speed, 5));
 
     if (isSensorDetected.value) {
-      const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
+      const tolerance = 0.1;
       const isMove = Math.abs(currentY - targetY.value) > tolerance;
 
       if (isMove) {
         const newYPosition = useLerp(currentY, targetY.value, lerpAmount);
         const moveAmount = newYPosition - currentY;
-
         Bounds.translate(render.bounds, { x: 0, y: moveAmount });
       }
     }
 
     Composite.rotate(cross, useTransferDgreeToRadia(10), { x: centerX - 300, y: centerY + 70 });
 
-    // 1. 파도의 움직임 업데이트 (파도 바디의 위치 변경)
-    const waveAmplitude = 30; // 파도 움직임의 진폭
-    const waveFrequency = 0.005; // 파도 움직임의 빈도
-    const waveSpeed = 0.05; // 파도 움직임의 속도
+    const waveAmplitude = 30;
+    const waveFrequency = 0.005;
+    const waveSpeed = 0.05;
 
     wavePhase += waveSpeed;
     waveBodies.forEach((body) => {
@@ -291,31 +286,55 @@ const init = async () => {
 
   Events.on(engine, "collisionStart", (event) => {
     const pairs = event.pairs;
-
     pairs.forEach((pair) => {
       const bodyA = pair.bodyA;
       const bodyB = pair.bodyB;
 
       if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) speedStore.updateEnabled(true);
 
-      // 센서가 true인 rectangle 감지
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
         const offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
-
         isSensorDetected.value = true;
       }
     });
   });
 
-  // render.canvas.style.visibility = "hidden";
+  // ✨ 마우스 클릭(드래그 시작) 이벤트 핸들러
+  Events.on(mouseConstraint, "mousedown", (event) => {
+    const body = event.source.body;
+    if (body?.label === "card-body") {
+      selectedBody.value = body; // 클릭한 카드를 selectedBody에 저장
+    }
+  });
+
+  // ✨ 마우스 이동 이벤트 핸들러
+  Events.on(mouseConstraint, "mousemove", (event) => {
+    if (selectedBody.value) {
+      const mousePosition = event.mouse.position;
+      Body.setPosition(selectedBody.value, mousePosition);
+    }
+  });
+
+  // ✨ 마우스 놓기(드래그 종료) 이벤트 핸들러
+  Events.on(mouseConstraint, "mouseup", () => {
+    selectedBody.value = null; // 드래그가 끝나면 selectedBody를 초기화
+  });
+
+  render.canvas.style.opacity = "0";
   emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 
 onMounted(() => {
   init();
+});
+
+onUnmounted(() => {
+  World.clear(engineWorld, false);
+  Engine.clear(engine);
+  Render.stop(render);
 });
 </script>
 
