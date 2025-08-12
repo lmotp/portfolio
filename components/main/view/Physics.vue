@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Matter, { Events } from "matter-js";
+import { useSpeedStore } from "@/stores/speed";
 import * as polyDecomp from "poly-decomp";
 
 // Initialize poly-decomp
@@ -36,6 +37,7 @@ const barConfig = [
 ];
 
 const pointConfig = [{ x: -300, y: 70 }];
+const speedStore = useSpeedStore();
 
 let render: Matter.Render;
 const Engine = Matter.Engine;
@@ -85,10 +87,12 @@ const init = async () => {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
       wireframes: false,
-      background: "#fff",
+      background: "transparent",
       hasBounds: true,
     },
   });
+
+  // 스토어 초기화
 
   // run the renderer
   Render.run(render);
@@ -215,6 +219,7 @@ const init = async () => {
         density: 0.001, // 가벼운 물체로 설정
         restitution: 0.5, // 탄성 추가
         friction: 0.01, // 마찰력 최소화
+        label: "textCard",
       });
 
       return body;
@@ -251,6 +256,12 @@ const init = async () => {
   Events.on(render, "beforeRender", () => {
     const currentY = render.bounds.min.y;
     const lerpAmount = 0.05;
+    const velocity = circle.velocity;
+    const vx = velocity.x;
+    const vy = velocity.y;
+    const speed = Math.sqrt(vx * vx + vy * vy);
+
+    speedStore.updateSpeed(Math.min(speed, 5));
 
     if (isSensorDetected.value) {
       const tolerance = 0.1; // 오차 허용 범위 (조절 가능)
@@ -285,6 +296,8 @@ const init = async () => {
       const bodyA = pair.bodyA;
       const bodyB = pair.bodyB;
 
+      if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) speedStore.updateEnabled(true);
+
       // 센서가 true인 rectangle 감지
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
@@ -298,7 +311,7 @@ const init = async () => {
   });
 
   render.canvas.style.visibility = "hidden";
-  emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine, circle });
+  emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 
 onMounted(() => {

@@ -4,6 +4,9 @@
 
 <script setup lang="ts">
 import * as THREE from "three";
+import { useSpeedStore } from "@/stores/speed";
+
+const speedStore = useSpeedStore();
 
 const container = ref<HTMLDivElement | null>(null);
 const LINE_COUNT = 100;
@@ -30,8 +33,12 @@ const init = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const vertices = new Float32Array([-0.3, 0, 0, 0.3, 0, 0, 0, 1, 0]);
-  const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true });
+  const vertices = new Float32Array([-0.55, 0, 0, 0.55, 0, 0, 0, 1, 0]);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.8,
+  });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
   geometry.translate(0, 0.5, 0);
@@ -43,19 +50,22 @@ const init = () => {
 
   for (let i = 0; i < LINE_COUNT; i++) {
     const angle = (i / LINE_COUNT) * Math.PI * 2;
+    const degree = (angle * 180) / Math.PI; // 라디안을 도로 변환
+    const isTopBottom = (degree >= 60 && degree <= 120) || (degree >= 240 && degree <= 300);
     const radius = 45;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
     const z = 1;
     const position = new THREE.Vector3(x, y, z);
     const velocity = position.clone().negate().normalize();
-    const scaleY = Math.random() * 10 + 12;
+    const offset = isTopBottom ? 2 : 0;
+    const scaleY = Math.random() * 10 + 12 + offset;
 
     lines.push({
       position,
       velocity,
       scaleY,
-      scaleSpeed: 1 + Math.random(),
+      scaleSpeed: 0.5 + Math.random() * 0.25,
       initialScaleY: scaleY,
     });
 
@@ -74,9 +84,15 @@ const animate = () => {
 
   for (let i = 0; i < LINE_COUNT; i++) {
     const line = lines[i];
+    const speedFactor = speedStore.currentSpeed; // 최대 속도 5를 기준으로 정규화
+    const isEnabled = speedStore.isEnabled;
 
-    line.scaleY -= line.scaleSpeed;
-    if (line.scaleY <= 0) line.scaleY = line.initialScaleY;
+    if (!isEnabled) {
+      line.scaleY -= line.scaleSpeed * speedFactor;
+      if (line.scaleY <= 0) line.scaleY = line.initialScaleY;
+    } else {
+      line.scaleY -= line.scaleSpeed;
+    }
 
     dummy.position.copy(line.position);
     dummy.rotation.z = Math.atan2(line.velocity.y, line.velocity.x) - Math.PI / 2;
@@ -100,4 +116,10 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+</style>

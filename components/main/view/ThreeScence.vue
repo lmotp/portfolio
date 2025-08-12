@@ -176,16 +176,9 @@ watch(
   (obj) => {
     if (obj) {
       // 물리 엔진 업데이트 후 캔버스 텍스처 업데이트
-      const { Events, canvas, engine, circle } = obj;
+      const { Events, canvas, engine } = obj;
 
       Events.on(engine, "afterUpdate", () => {
-        const velocity = circle.velocity;
-        const vx = velocity.x;
-        const vy = velocity.y;
-        const speed = Math.sqrt(vx * vx + vy * vy);
-
-        // if (speed > 3) console.log(`Current Speed: ${speed.toFixed(2)}`);
-
         const canvasTexture = new THREE.CanvasTexture(canvas);
         canvasTexture.needsUpdate = true;
         planeMaterial.uniforms.uTexture.value = canvasTexture;
