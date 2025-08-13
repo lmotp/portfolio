@@ -11,6 +11,7 @@ const TOTAL_SENSOR = 6;
 const isSensorDetected = ref(false);
 const sensorCount = ref(1);
 const selectedBody = ref<Matter.Body | null>(null);
+const offset = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
 const container = ref<HTMLElement | null>(null);
 const targetY = ref(300);
@@ -293,22 +294,29 @@ const init = async () => {
     });
   });
 
-  // ✨ 마우스 클릭(드래그 시작) 이벤트 핸들러
   Events.on(mouseConstraint, "mousedown", (event) => {
     const body = event.source.body;
-    if (body?.label === "card-body") selectedBody.value = body;
+    const mousePosition = event.mouse.position;
+
+    if (body?.label === "card-body") {
+      selectedBody.value = body;
+      offset.value = { x: body.position.x - mousePosition.x, y: body.position.y - mousePosition.y };
+    }
   });
 
   Events.on(mouseConstraint, "mousemove", (event) => {
     if (selectedBody.value) {
       const mousePosition = event.mouse.position;
-      console.log(mousePosition);
-      Body.setPosition(selectedBody.value, mousePosition);
+      Body.setPosition(selectedBody.value, {
+        x: mousePosition.x + offset.value.x,
+        y: mousePosition.y + offset.value.y,
+      });
     }
   });
 
   Events.on(mouseConstraint, "mouseup", () => {
-    selectedBody.value = null; // 드래그가 끝나면 selectedBody를 초기화
+    selectedBody.value = null;
+    offset.value = { x: 0, y: 0 };
   });
 
   render.canvas.style.opacity = "0";
