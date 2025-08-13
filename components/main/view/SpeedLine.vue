@@ -33,7 +33,7 @@ const init = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const vertices = new Float32Array([-0.55, 0, 0, 0.55, 0, 0, 0, 1, 0]);
+  const vertices = new Float32Array([-0.55, 0, 0, 0.55, 0, 0, 0, 0.9, 0]);
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
@@ -58,8 +58,7 @@ const init = () => {
     const z = 1;
     const position = new THREE.Vector3(x, y, z);
     const velocity = position.clone().negate().normalize();
-    const offset = isTopBottom ? 4 : 0;
-    const scaleY = Math.random() * 10 + 10 + offset;
+    let scaleY = Math.random() * 10 + (isTopBottom ? 16 : 10);
 
     lines.push({
       position,
@@ -67,6 +66,7 @@ const init = () => {
       scaleY,
       scaleSpeed: 0.5 + Math.random() * 0.25,
       initialScaleY: scaleY,
+      isTopBottom,
     });
 
     dummy.position.copy(lines[i].position);
@@ -87,10 +87,11 @@ const animate = () => {
     const speedFactor = speedStore.currentSpeed; // 최대 속도 5를 기준으로 정규화
     const isEnabled = speedStore.isEnabled;
 
-    if (!isEnabled) {
+    if (!isEnabled && speedFactor >= 0.3) {
       line.scaleY -= line.scaleSpeed * speedFactor;
       if (line.scaleY <= 0) line.scaleY = line.initialScaleY;
     } else {
+      line.initialScaleY = Math.random() * 10 + (line.isTopBottom ? 16 : 10);
       line.scaleY -= line.scaleSpeed;
     }
 

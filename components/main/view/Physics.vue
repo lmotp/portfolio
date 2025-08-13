@@ -108,29 +108,6 @@ const init = async () => {
   const runner = Runner.create();
   Runner.run(runner, engine);
 
-  const wallThickness = 50;
-  const leftWall = Bodies.rectangle(
-    0,
-    container.value!.clientHeight / 2,
-    wallThickness,
-    container.value!.clientHeight,
-    {
-      isStatic: true,
-      render: { fillStyle: "transparent" },
-    }
-  );
-
-  const rightWall = Bodies.rectangle(
-    container.value!.clientWidth,
-    container.value!.clientHeight / 2,
-    wallThickness,
-    container.value!.clientHeight,
-    {
-      isStatic: true,
-      render: { fillStyle: "transparent" },
-    }
-  );
-
   const BALL_OFFSET = 20;
   const centerX = container.value!.clientWidth / 2;
   const centerY = container.value!.clientHeight / 2;
@@ -196,7 +173,7 @@ const init = async () => {
         render: {
           sprite: { texture: imageUrl, xScale: xScale, yScale: yScale },
         },
-        label: "card-body", // ✨ 카드에 고유한 라벨을 추가합니다.
+        label: "card-body",
       });
       return body;
     })
@@ -238,6 +215,20 @@ const init = async () => {
   }).bodies;
 
   Composite.add(engineWorld, waveBodies);
+
+  const wallThickness = 50;
+  const wallHeight = waveBodies.at(-1)!.position.y + waveHeight;
+  const wallY = container.value!.clientHeight / 2;
+  const leftWall = Bodies.rectangle(0, wallY, wallThickness, wallHeight, {
+    isStatic: true,
+    render: { fillStyle: "transparent" },
+  });
+
+  const rightWall = Bodies.rectangle(container.value!.clientWidth, wallY, wallThickness, wallHeight, {
+    isStatic: true,
+    render: { fillStyle: "transparent" },
+  });
+
   World.add(engineWorld, [
     ...bars,
     ...points,
@@ -305,20 +296,17 @@ const init = async () => {
   // ✨ 마우스 클릭(드래그 시작) 이벤트 핸들러
   Events.on(mouseConstraint, "mousedown", (event) => {
     const body = event.source.body;
-    if (body?.label === "card-body") {
-      selectedBody.value = body; // 클릭한 카드를 selectedBody에 저장
-    }
+    if (body?.label === "card-body") selectedBody.value = body;
   });
 
-  // ✨ 마우스 이동 이벤트 핸들러
   Events.on(mouseConstraint, "mousemove", (event) => {
     if (selectedBody.value) {
       const mousePosition = event.mouse.position;
+      console.log(mousePosition);
       Body.setPosition(selectedBody.value, mousePosition);
     }
   });
 
-  // ✨ 마우스 놓기(드래그 종료) 이벤트 핸들러
   Events.on(mouseConstraint, "mouseup", () => {
     selectedBody.value = null; // 드래그가 끝나면 selectedBody를 초기화
   });
