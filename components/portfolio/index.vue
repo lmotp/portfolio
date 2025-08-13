@@ -58,8 +58,8 @@ const sources = [
   },
 ];
 
-const winW = window.innerWidth;
-const winH = window.innerHeight;
+const winW = window?.innerWidth;
+const winH = window?.innerHeight;
 const originalSize = { w: 1522, h: 1238 };
 const tileSize = ref({
   w: winW,
@@ -252,15 +252,15 @@ const initIntro = () => {
     const rect = item.getBoundingClientRect();
     return (
       rect.x > -rect.width &&
-      rect.x < window.innerWidth + rect.width &&
+      rect.x < window?.innerWidth + rect.width &&
       rect.y > -rect.height &&
-      rect.y < window.innerHeight + rect.height
+      rect.y < window?.innerHeight + rect.height
     );
   });
   introItems.forEach((item) => {
     const rect = item.getBoundingClientRect();
-    const x = -rect.x + window.innerWidth * 0.5 - rect.width * 0.5;
-    const y = -rect.y + window.innerHeight * 0.5 - rect.height * 0.5;
+    const x = -rect.x + window?.innerWidth * 0.5 - rect.width * 0.5;
+    const y = -rect.y + window?.innerHeight * 0.5 - rect.height * 0.5;
     gsap.set(item, { x, y });
   });
 

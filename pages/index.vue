@@ -7,10 +7,12 @@ const handleOnLoad = () => {
 </script>
 
 <template>
-  <ClientOnly>
-    <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
-    <Main v-else />
-  </ClientOnly>
+  <div>
+    <ClientOnly>
+      <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
+      <Main v-else />
+    </ClientOnly>
+  </div>
 </template>
 
 <style scoped></style>

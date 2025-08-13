@@ -2,7 +2,11 @@
 
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <Transition name="page" mode="out-in">
+      <div class="page-wrapper">
+        <NuxtPage />
+      </div>
+    </Transition>
   </NuxtLayout>
 </template>
 
