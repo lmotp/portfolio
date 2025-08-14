@@ -1,11 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <Transition name="slide">
-    <div>
-      <Portfolio />
-    </div>
-  </Transition>
+  <section>
+    <Portfolio />
+  </section>
 </template>
 
 <style scoped></style>

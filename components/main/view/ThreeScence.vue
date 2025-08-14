@@ -113,7 +113,7 @@ const init = () => {
   const dotPass = new DotScreenPass() as any;
   dotPass.uniforms["scale"].value = 2;
   dotPass.uniforms["angle"].value = THREE.MathUtils.degToRad(45);
-  // dotPass.enabled = false;
+  dotPass.enabled = false;
   effectComposer.addPass(dotPass);
 
   const customPass = new ShaderPass(CustomEffect);

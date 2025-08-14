@@ -302,9 +302,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section id="hero">
+  <div id="hero">
     <div ref="container" id="images"></div>
-  </section>
+  </div>
 </template>
 
 <style>
@@ -315,7 +315,7 @@ onUnmounted(() => {
 
 #hero {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 
   #images {

@@ -29,8 +29,8 @@ onUnmounted(() => {
 <template>
   <div ref="viewRef" class="view" @scroll="handleScroll">
     <Physics class="main-phy" :scrollPercentage="scrollPercentage" @initPhysics="initPhysics" />
-    <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" />
     <SpeedLine class="speed-line" />
+    <!-- <ThreeScence class="main-bg" :scrollPercentage="scrollPercentage" :initPhysicsObj="initPhysicsObj" /> -->
   </div>
 </template>
 

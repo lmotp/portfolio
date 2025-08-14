@@ -13,10 +13,16 @@ const sensorCount = ref(1);
 const selectedBody = ref<Matter.Body | null>(null);
 const offset = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
+const downBtnRef = ref<HTMLButtonElement | null>(null);
+const isDownBtnShow = ref(false);
+const isSuccess = ref(false);
+const isPress = ref(false);
+const PRESS_TIME = 1600;
+
 const container = ref<HTMLElement | null>(null);
 const targetY = ref(300);
 const cardConfig = [
-  { x: 210, y: 58, w: 320, h: 200, angle: -7.2 },
+  { x: 200, y: 58, w: 320, h: 200, angle: -7.2 },
   { x: 90, y: 265, w: 400, h: 200, angle: 8.2 },
   { x: -215, y: 430, w: 300, h: 150, angle: 13.2 },
   { x: 273, y: 650, w: 500, h: 200, angle: -13.2 },
@@ -43,7 +49,6 @@ const speedStore = useSpeedStore();
 
 let render: Matter.Render;
 let cards: Matter.Body[] = [];
-let isDragging = ref(false); // ✨ 드래그 상태를 추적하는 새로운 변수 추가
 const Engine = Matter.Engine;
 const Render = Matter.Render;
 const Runner = Matter.Runner;
@@ -86,7 +91,7 @@ const init = async () => {
     options: {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
-      wireframes: false,
+      wireframes: true,
       background: "transparent",
       hasBounds: true,
     },
@@ -116,7 +121,7 @@ const init = async () => {
   const startCircleY = BALL_OFFSET;
 
   const circle = Bodies.circle(startCircleX, startCircleY, 10, {
-    friction: 0.00001,
+    friction: 0.0000001,
     restitution: 0.5,
     density: 0.001,
     isStatic: false,
@@ -201,7 +206,7 @@ const init = async () => {
     })
   );
 
-  const numSegments = 100;
+  const numSegments = 300;
   const segmentWidth = window.innerWidth / numSegments;
   const waveHeight = 1000;
   const waveY = sensorBars.at(-1)!.position.y + 550;
@@ -210,7 +215,7 @@ const init = async () => {
   const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
     return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
       isStatic: true,
-      render: { fillStyle: "black" },
+      render: { fillStyle: "#00f" },
       label: "wave",
     });
   }).bodies;
@@ -263,6 +268,14 @@ const init = async () => {
       }
     }
 
+    if (isSuccess.value && isDownBtnShow.value) {
+      const targetYPosition = waveBodies[0].position.y - waveHeight / 2;
+      targetY.value = targetYPosition - 100;
+      Body.setPosition(circle, { x: circle.position.x, y: targetYPosition + 25 });
+
+      isDownBtnShow.value = false;
+    }
+
     Composite.rotate(cross, useTransferDgreeToRadia(10), { x: centerX - 300, y: centerY + 70 });
 
     const waveAmplitude = 30;
@@ -282,7 +295,10 @@ const init = async () => {
       const bodyA = pair.bodyA;
       const bodyB = pair.bodyB;
 
-      if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) speedStore.updateEnabled(true);
+      if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) {
+        speedStore.updateEnabled(true);
+        isDownBtnShow.value = true;
+      }
 
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
@@ -319,12 +335,39 @@ const init = async () => {
     offset.value = { x: 0, y: 0 };
   });
 
-  render.canvas.style.opacity = "0";
   emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
+};
+
+const buttonInit = () => {
+  const button = downBtnRef.value;
+  const downEvent = ["mousedown", "touchstart"];
+  const upEvent = ["mouseup", "touchend"];
+  let timeout: NodeJS.Timeout;
+  button!.style.setProperty("--duration", PRESS_TIME + "ms");
+
+  downEvent.forEach((e) => {
+    button!.addEventListener(e, () => {
+      if (!isPress.value) {
+        isPress.value = true;
+        timeout = setTimeout(() => {
+          isSuccess.value = true;
+          isDownBtnShow.value = false;
+        }, PRESS_TIME);
+      }
+    });
+  });
+
+  upEvent.forEach((e) => {
+    button!.addEventListener(e, () => {
+      isPress.value = false;
+      clearTimeout(timeout);
+    });
+  });
 };
 
 onMounted(() => {
   init();
+  nextTick(buttonInit);
 });
 
 onUnmounted(() => {
@@ -335,7 +378,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container" class="container"></div>
+  <div ref="container" class="container">
+    <Transition name="fade">
+      <button v-show="isDownBtnShow" ref="downBtnRef" :class="['down-btn', isSuccess && 'success', isPress && 'press']">
+        <svg class="progress" viewBox="0 0 32 32">
+          <circle r="8" cx="16" cy="16" />
+        </svg>
+        <span>👍</span>
+      </button>
+    </Transition>
+  </div>
 </template>
 
 <style scoped>
@@ -343,5 +395,50 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
+
+  .down-btn {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    text-align: center;
+    align-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    background-color: #999a9f;
+    cursor: pointer;
+    isolation: isolate;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background-color: #fff;
+      z-index: -1;
+    }
+
+    .progress {
+      position: absolute;
+      inset: 0;
+      fill: none;
+      z-index: -2;
+      transform: rotate(-90deg);
+
+      circle {
+        stroke-dashoffset: 1;
+        stroke-dasharray: var(--progress-array, 0) 52;
+        stroke-width: 16;
+        stroke: #0b0d0f;
+        transition: stroke-dasharray var(--duration) linear;
+      }
+    }
+
+    &.press,
+    &.success {
+      --progress-array: 52;
+    }
+  }
 }
 </style>

@@ -7,12 +7,18 @@ const handleOnLoad = () => {
 </script>
 
 <template>
-  <div>
+  <section>
     <ClientOnly>
       <MainLoading v-if="isLoading" @onLoad="handleOnLoad" />
       <Main v-else />
     </ClientOnly>
-  </div>
+  </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+section {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+}
+</style>

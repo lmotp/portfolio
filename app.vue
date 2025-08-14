@@ -2,7 +2,7 @@
 
 <template>
   <NuxtLayout>
-    <Transition name="page" mode="out-in">
+    <Transition name="slide">
       <div class="page-wrapper">
         <NuxtPage />
       </div>

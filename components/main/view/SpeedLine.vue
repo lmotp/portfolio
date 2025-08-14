@@ -33,11 +33,11 @@ const init = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const vertices = new Float32Array([-0.55, 0, 0, 0.55, 0, 0, 0, 0.9, 0]);
+  const vertices = new Float32Array([-0.5, 0, 0, 0.5, 0, 0, 0, 0.9, 0]);
   const material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.65,
   });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
@@ -64,7 +64,7 @@ const init = () => {
       position,
       velocity,
       scaleY,
-      scaleSpeed: 0.5 + Math.random() * 0.25,
+      scaleSpeed: 0.1 + Math.random() * 0.25,
       initialScaleY: scaleY,
       isTopBottom,
     });
