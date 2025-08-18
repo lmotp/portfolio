@@ -6,7 +6,6 @@ import Side from "./Side.vue";
   <main>
     <div class="frame">
       <section class="inner">
-        <Side />
         <slot />
       </section>
     </div>

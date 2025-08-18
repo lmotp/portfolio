@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Matter, { Events } from "matter-js";
-import { useSpeedStore } from "@/stores/speed";
 import * as polyDecomp from "poly-decomp";
+import { useSpeedStore } from "@/stores/speed";
+import { usePhysicsStore } from "@/stores/physics";
+import { storeToRefs } from "pinia";
 
 // Initialize poly-decomp
 Matter.Common.setDecomp(polyDecomp);
@@ -12,12 +14,6 @@ const isSensorDetected = ref(false);
 const sensorCount = ref(1);
 const selectedBody = ref<Matter.Body | null>(null);
 const offset = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-
-const downBtnRef = ref<HTMLButtonElement | null>(null);
-const isDownBtnShow = ref(false);
-const isSuccess = ref(false);
-const isPress = ref(false);
-const PRESS_TIME = 1600;
 
 const container = ref<HTMLElement | null>(null);
 const targetY = ref(300);
@@ -46,6 +42,8 @@ const barConfig = [
 
 const pointConfig = [{ x: -300, y: 70 }];
 const speedStore = useSpeedStore();
+const physicsStore = usePhysicsStore();
+const { isDownBtnShow, isSuccess, isShowThree } = storeToRefs(physicsStore);
 
 let render: Matter.Render;
 let cards: Matter.Body[] = [];
@@ -91,7 +89,7 @@ const init = async () => {
     options: {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
-      wireframes: true,
+      wireframes: false,
       background: "transparent",
       hasBounds: true,
     },
@@ -122,7 +120,7 @@ const init = async () => {
 
   const circle = Bodies.circle(startCircleX, startCircleY, 10, {
     friction: 0.0000001,
-    restitution: 0.5,
+    restitution: 0.6,
     density: 0.001,
     isStatic: false,
     render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
@@ -208,7 +206,7 @@ const init = async () => {
 
   const numSegments = 300;
   const segmentWidth = window.innerWidth / numSegments;
-  const waveHeight = 1000;
+  const waveHeight = 450;
   const waveY = sensorBars.at(-1)!.position.y + 550;
   let wavePhase = 0;
 
@@ -270,13 +268,13 @@ const init = async () => {
 
     if (isSuccess.value && isDownBtnShow.value) {
       const targetYPosition = waveBodies[0].position.y - waveHeight / 2;
-      targetY.value = targetYPosition - 100;
-      Body.setPosition(circle, { x: circle.position.x, y: targetYPosition + 25 });
+      targetY.value = targetYPosition + 25;
+      Body.setPosition(circle, { x: circle.position.x, y: targetYPosition + 50 });
 
       isDownBtnShow.value = false;
     }
 
-    Composite.rotate(cross, useTransferDgreeToRadia(10), { x: centerX - 300, y: centerY + 70 });
+    Composite.rotate(cross, useTransferDgreeToRadia(15), { x: centerX - 300, y: centerY + 70 });
 
     const waveAmplitude = 30;
     const waveFrequency = 0.005;
@@ -302,7 +300,13 @@ const init = async () => {
 
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
-        const offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
+        let offsetY = 300;
+
+        if (currentSensorCount === TOTAL_SENSOR) {
+          isShowThree.value = true;
+          offsetY = 350;
+        }
+
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
         isSensorDetected.value = true;
@@ -338,36 +342,8 @@ const init = async () => {
   emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 
-const buttonInit = () => {
-  const button = downBtnRef.value;
-  const downEvent = ["mousedown", "touchstart"];
-  const upEvent = ["mouseup", "touchend"];
-  let timeout: NodeJS.Timeout;
-  button!.style.setProperty("--duration", PRESS_TIME + "ms");
-
-  downEvent.forEach((e) => {
-    button!.addEventListener(e, () => {
-      if (!isPress.value) {
-        isPress.value = true;
-        timeout = setTimeout(() => {
-          isSuccess.value = true;
-          isDownBtnShow.value = false;
-        }, PRESS_TIME);
-      }
-    });
-  });
-
-  upEvent.forEach((e) => {
-    button!.addEventListener(e, () => {
-      isPress.value = false;
-      clearTimeout(timeout);
-    });
-  });
-};
-
 onMounted(() => {
   init();
-  nextTick(buttonInit);
 });
 
 onUnmounted(() => {
@@ -378,16 +354,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container" class="container">
-    <Transition name="fade">
-      <button v-show="isDownBtnShow" ref="downBtnRef" :class="['down-btn', isSuccess && 'success', isPress && 'press']">
-        <svg class="progress" viewBox="0 0 32 32">
-          <circle r="8" cx="16" cy="16" />
-        </svg>
-        <span>👍</span>
-      </button>
-    </Transition>
-  </div>
+  <div ref="container" class="container" />
 </template>
 
 <style scoped>
@@ -395,50 +362,5 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-
-  .down-btn {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    text-align: center;
-    align-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    transform: translateX(-50%);
-    background-color: #999a9f;
-    cursor: pointer;
-    isolation: isolate;
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 3px;
-      border-radius: 50%;
-      background-color: #fff;
-      z-index: -1;
-    }
-
-    .progress {
-      position: absolute;
-      inset: 0;
-      fill: none;
-      z-index: -2;
-      transform: rotate(-90deg);
-
-      circle {
-        stroke-dashoffset: 1;
-        stroke-dasharray: var(--progress-array, 0) 52;
-        stroke-width: 16;
-        stroke: #0b0d0f;
-        transition: stroke-dasharray var(--duration) linear;
-      }
-    }
-
-    &.press,
-    &.success {
-      --progress-array: 52;
-    }
-  }
 }
 </style>

@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import glsl from "vite-plugin-glsl";
+import { glslify } from "vite-plugin-glslify";
 
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
@@ -13,7 +14,7 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    plugins: [glsl()],
+    plugins: [glslify()],
   },
 
   app: {

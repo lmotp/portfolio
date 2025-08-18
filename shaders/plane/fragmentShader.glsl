@@ -1,27 +1,42 @@
-uniform float uTime;
-uniform float uProgress;
-uniform sampler2D uTexture;
+uniform sampler2D u_metalMatCap;
+uniform float u_time;
+uniform vec3 u_blue;
 
 varying vec2 vUv;
+varying vec3 vPosition;
+#pragma glslify: snoise3 = require(glsl-noise/simplex/3d);
+#pragma glslify: fbm2d = require('glsl-fractal-brownian-noise/2d');
+#pragma glslify: fbm3d = require('glsl-fractal-brownian-noise/3d');
 
-#include "./includes/coverUV.glsl"
-#include "./includes/perlin3dNoise.glsl"
+float multStep(float signal, float decomp) {
+  float outSign = 0.;
+  for(float i = 0.; i < decomp; i++) {
+    outSign += step((i + 1.) / decomp, signal) * (1. / (decomp - 1.));
+  }
+  return outSign;
+}
 
 void main() {
-  vec2 uv = vUv;
 
-  vec2 displacedUv = uv + cnoise(vec3(uv * 5.0, uTime * 0.1));
-  float strength = cnoise(vec3(displacedUv * 5.0, uTime * 0.2));
-  float radialGradient = distance(vUv, vec2(0.5)) * 12.5 - 7.0 * uProgress;
-  strength += radialGradient;
-  strength = clamp(strength, 0.0, 1.0);
-  strength = 1.0 - strength;
+    // Main Foam
+  float bNoise = fbm3d(vec3(vUv.y, vUv.x, u_time * 0.001), 10) * 0.4;
+  float sine = sin((vUv.x + bNoise) * 5. - u_time * 0.4 - 3.14);
+  sine = (sine + 1.) / 2.;
+  sine = multStep(sine, 4.);
 
-  float opacity = strength * smoothstep(0.0, 0.7, uProgress);
+  float tbNoise = fbm3d(vec3(vUv.y, vUv.x, u_time * 0.001), 10) * 0.4;
+  float triWave = abs(mod(((vUv.x + tbNoise - u_time * 0.02) * 2.), 1.) - .5) * 2.;
+  triWave = multStep(triWave, 4.);
 
-  vec4 color = texture2D(uTexture, uv);
-  vec3 bgColor = vec3(0.0, 0.50196, 0.50196);
-  vec3 finalColor = vec3(color.a == 0.0 ? bgColor : color.rgb);
+    // Floaters
+  vec2 stUv = vUv * vec2(5., 20.) + vec2(-u_time * 0.3, 0.);
+  float sNoise = snoise3(vec3(stUv, u_time * 0.05));
+  sNoise *= 3.;
+  sNoise -= 1.5;
+  sNoise = clamp(sNoise, .0, 1.);
+  sNoise = multStep(sNoise, 3.);
 
-  gl_FragColor = vec4(finalColor, 1.0);
+  vec3 outCol = mix(u_blue, vec3(1.), sine);
+  outCol += sNoise;
+  gl_FragColor = vec4(outCol, 1.);
 }
