@@ -78,6 +78,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   isolation: isolate;
+  background-color: #ffff8f;
 
   .main-phy {
     position: absolute;
@@ -88,7 +89,7 @@ onUnmounted(() => {
     position: absolute;
     inset: 0;
     z-index: 1;
-    transform: translateY(400px);
+    transform: translateY(360px);
   }
   .speed-line {
     position: absolute;

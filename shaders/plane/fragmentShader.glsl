@@ -22,7 +22,6 @@ void main() {
   float bNoise = fbm3d(vec3(vUv.y, vUv.x, u_time * 0.001), 10) * 0.4;
   float sine = sin((vUv.x + bNoise) * 5. - u_time * 0.4 - 3.14);
   sine = (sine + 1.) / 2.;
-  sine = multStep(sine, 4.);
 
   float tbNoise = fbm3d(vec3(vUv.y, vUv.x, u_time * 0.001), 10) * 0.4;
   float triWave = abs(mod(((vUv.x + tbNoise - u_time * 0.02) * 2.), 1.) - .5) * 2.;

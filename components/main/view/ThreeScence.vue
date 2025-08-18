@@ -13,7 +13,7 @@ const clock = new THREE.Clock();
 const container = ref<HTMLElement | null>(null);
 
 let scene: THREE.Scene;
-let camera: THREE.OrthographicCamera;
+let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let planeMaterial: THREE.ShaderMaterial;
 
@@ -25,11 +25,11 @@ const init = () => {
   scene.background = null;
 
   // Camera
-  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
-  camera.position.z = 500;
+  camera = new THREE.PerspectiveCamera(75, container.value!.clientWidth / container.value!.clientHeight, 0.1, 100);
+  camera.position.set(0.25, -0.25, 2);
 
   // Plane
-  const planeGeometry = new THREE.PlaneGeometry(1, 1);
+  const planeGeometry = new THREE.PlaneGeometry(1, 1, 32, 32);
   planeMaterial = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
     uniforms: {
@@ -59,7 +59,7 @@ const init = () => {
 
 const animate = () => {
   requestAnimationFrame(animate);
-  planeMaterial.uniforms.u_time.value += 0.01;
+  planeMaterial.uniforms.u_time.value += 0.05;
 
   renderer.render(scene, camera);
 };
