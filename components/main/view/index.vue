@@ -59,7 +59,9 @@ onUnmounted(() => {
   <div ref="viewRef" class="view" @scroll="handleScroll">
     <Physics class="main-phy" />
     <SpeedLine class="speed-line" />
-    <ThreeScence class="main-bg" />
+    <Transition>
+      <ThreeScence v-if="isShowThree" class="main-bg" />
+    </Transition>
 
     <Transition name="fade">
       <button v-show="isDownBtnShow" ref="downBtnRef" :class="['down-btn', isSuccess && 'success', isPress && 'press']">
@@ -89,7 +91,7 @@ onUnmounted(() => {
     position: absolute;
     inset: 0;
     z-index: 1;
-    transform: translateY(360px);
+    transform: translateY(290px);
   }
   .speed-line {
     position: absolute;

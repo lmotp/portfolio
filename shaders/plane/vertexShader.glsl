@@ -1,4 +1,6 @@
-uniform float u_time;
+uniform float uTime;
+uniform float uAmplitude;
+uniform float uFrequency;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -10,7 +12,8 @@ void main() {
   vPosition = position;
 
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  modelPosition.z += sin(modelPosition.x * 10.0 + u_time) * 0.1;
+  float wave = sin(modelPosition.x * uFrequency + uTime) * uAmplitude;
+  modelPosition.z += wave;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;

@@ -208,20 +208,31 @@ const init = async () => {
   const segmentWidth = window.innerWidth / numSegments;
   const waveHeight = 450;
   const waveY = sensorBars.at(-1)!.position.y + 550;
-  let wavePhase = 0;
 
-  const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
+  let wavePhase = 0;
+  let wavePhase2 = Math.PI / 2; // 90도 위상 차이
+
+  const waveBodies = Composites.stack(0, 40, numSegments, 1, 0, 0, (x: number, y: number) => {
     return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
       isStatic: true,
       render: { fillStyle: "#00f" },
       label: "wave",
     });
   }).bodies;
+  const waveBodies2 = Composites.stack(0, 40, numSegments, 1, 0, 0, (x: number, y: number) => {
+    return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
+      isStatic: true,
+      render: { fillStyle: "#0ff" },
+      label: "wave",
+    });
+  }).bodies;
 
   Composite.add(engineWorld, waveBodies);
+  Composite.add(engineWorld, waveBodies2);
 
+  const waveBottomY = waveBodies.at(-1)!.position.y;
   const wallThickness = 50;
-  const wallHeight = waveBodies.at(-1)!.position.y + waveHeight;
+  const wallHeight = waveBottomY + waveHeight;
   const wallY = container.value!.clientHeight / 2;
   const leftWall = Bodies.rectangle(0, wallY, wallThickness, wallHeight, {
     isStatic: true,
@@ -255,6 +266,10 @@ const init = async () => {
 
     speedStore.updateSpeed(Math.min(speed, 5));
 
+    const waveIsVisible = waveY < render.bounds.max.y;
+
+    if (waveIsVisible) isShowThree.value = true;
+
     if (isSensorDetected.value) {
       const tolerance = 0.1;
       const isMove = Math.abs(currentY - targetY.value) > tolerance;
@@ -276,13 +291,22 @@ const init = async () => {
 
     Composite.rotate(cross, useTransferDgreeToRadia(15), { x: centerX - 300, y: centerY + 70 });
 
-    const waveAmplitude = 30;
-    const waveFrequency = 0.005;
+    const waveAmplitude = 10;
+    const waveFrequency = 0.01;
     const waveSpeed = 0.05;
 
+    const waveAmplitude2 = 10;
+    const waveFrequency2 = 0.01;
+
     wavePhase += waveSpeed;
+    wavePhase2 += waveSpeed;
+
     waveBodies.forEach((body) => {
       const yOffset = waveAmplitude * Math.sin(body.position.x * waveFrequency + wavePhase);
+      Body.setPosition(body, { x: body.position.x, y: waveY + yOffset + waveHeight / 2 });
+    });
+    waveBodies2.forEach((body) => {
+      const yOffset = waveAmplitude2 * Math.sin(body.position.x * waveFrequency2 + wavePhase2);
       Body.setPosition(body, { x: body.position.x, y: waveY + yOffset + waveHeight / 2 });
     });
   });
@@ -300,12 +324,7 @@ const init = async () => {
 
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
-        let offsetY = 300;
-
-        if (currentSensorCount === TOTAL_SENSOR) {
-          isShowThree.value = true;
-          offsetY = 350;
-        }
+        let offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
 
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
