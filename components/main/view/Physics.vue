@@ -89,7 +89,7 @@ const init = async () => {
     options: {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
-      wireframes: true,
+      wireframes: false,
       background: "transparent",
       hasBounds: true,
     },
@@ -271,6 +271,7 @@ const init = async () => {
       isShowThree.value = true;
       threeWaveY.value = Math.min(render.bounds.max.y - waveY + 35, 456);
     }
+
     if (isSensorDetected.value) {
       const tolerance = 0.1;
       const isMove = Math.abs(currentY - targetY.value) > tolerance;

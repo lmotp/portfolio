@@ -7,7 +7,6 @@ export const usePhysicsStore = defineStore("physics", {
     isPress: false,
     isShowThree: false,
     threeWaveY: 50,
-    PRESS_TIME: 1600,
   }),
   actions: {},
 });

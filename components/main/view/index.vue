@@ -8,6 +8,7 @@ import { storeToRefs } from "pinia";
 const scrollPercentage = ref(0);
 const viewRef = ref<HTMLElement | null>(null);
 const downBtnRef = ref<HTMLButtonElement | null>(null);
+const PRESS_TIME = 1600;
 
 const physicsStore = usePhysicsStore();
 const { isDownBtnShow, isSuccess, isPress, isShowThree, threeWaveY } = storeToRefs(physicsStore);
@@ -25,16 +26,16 @@ const buttonInit = () => {
   const downEvent = ["mousedown", "touchstart"];
   const upEvent = ["mouseup", "touchend"];
   let timeout: NodeJS.Timeout;
-  button!.style.setProperty("--duration", physicsStore.PRESS_TIME + "ms");
+  button!.style.setProperty("--duration", PRESS_TIME + "ms");
 
   downEvent.forEach((e) => {
     button!.addEventListener(e, () => {
       if (!isPress.value) {
         isPress.value = true;
+
         timeout = setTimeout(() => {
           isSuccess.value = true;
-          isDownBtnShow.value = false;
-        }, physicsStore.PRESS_TIME);
+        }, PRESS_TIME);
       }
     });
   });
@@ -62,7 +63,7 @@ onUnmounted(() => {
     <Physics class="main-phy" />
     <SpeedLine class="speed-line" />
 
-    <ThreeScence v-if="isShowThree" class="main-bg" :style="{ transform: `translateY(${threeWaveYValue}px)` }" />
+    <ThreeScence v-if="isShowThree" :class="['main-bg', isSuccess && !isDownBtnShow && 'success']" />
 
     <Transition name="fade">
       <button v-show="isDownBtnShow" ref="downBtnRef" :class="['down-btn', isSuccess && 'success', isPress && 'press']">
@@ -94,6 +95,11 @@ onUnmounted(() => {
     z-index: 1;
     transform: translateY(calc(100% - v-bind("threeWaveYValue")));
     transition: transform 0.05s ease-out;
+
+    &.success {
+      transform: translateY(0);
+      transition: transform 1.25s ease-out;
+    }
   }
   .speed-line {
     position: absolute;
