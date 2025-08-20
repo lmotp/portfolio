@@ -269,7 +269,7 @@ const init = async () => {
 
     if (waveIsVisible) {
       isShowThree.value = true;
-      threeWaveY.value = Math.min(render.bounds.max.y - waveY + 35, 456);
+      threeWaveY.value = render.bounds.max.y - waveY + 40;
     }
 
     if (isSensorDetected.value) {
