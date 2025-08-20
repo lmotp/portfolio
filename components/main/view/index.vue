@@ -10,7 +10,9 @@ const viewRef = ref<HTMLElement | null>(null);
 const downBtnRef = ref<HTMLButtonElement | null>(null);
 
 const physicsStore = usePhysicsStore();
-const { isDownBtnShow, isSuccess, isPress, isShowThree } = storeToRefs(physicsStore);
+const { isDownBtnShow, isSuccess, isPress, isShowThree, threeWaveY } = storeToRefs(physicsStore);
+
+const threeWaveYValue = computed(() => `${threeWaveY.value}px`);
 
 const handleScroll = () => {
   const { scrollTop, scrollHeight, clientHeight } = viewRef.value!;
@@ -59,9 +61,8 @@ onUnmounted(() => {
   <div ref="viewRef" class="view" @scroll="handleScroll">
     <Physics class="main-phy" />
     <SpeedLine class="speed-line" />
-    <Transition>
-      <ThreeScence v-if="isShowThree" class="main-bg" />
-    </Transition>
+
+    <ThreeScence v-if="isShowThree" class="main-bg" :style="{ transform: `translateY(${threeWaveYValue}px)` }" />
 
     <Transition name="fade">
       <button v-show="isDownBtnShow" ref="downBtnRef" :class="['down-btn', isSuccess && 'success', isPress && 'press']">
@@ -91,7 +92,8 @@ onUnmounted(() => {
     position: absolute;
     inset: 0;
     z-index: 1;
-    transform: translateY(290px);
+    transform: translateY(calc(100% - v-bind("threeWaveYValue")));
+    transition: transform 0.05s ease-out;
   }
   .speed-line {
     position: absolute;

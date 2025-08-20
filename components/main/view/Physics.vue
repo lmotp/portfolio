@@ -27,9 +27,9 @@ const cardConfig = [
 
 const textConfig = [
   { x: 210, y: 58 },
-  { x: -110, y: 58 },
-  { x: 10, y: 58 },
-  { x: -10, y: 58 },
+  { x: -310, y: 58 },
+  { x: -100, y: 58 },
+  { x: 500, y: 58 },
 ];
 
 const barConfig = [
@@ -43,7 +43,7 @@ const barConfig = [
 const pointConfig = [{ x: -300, y: 70 }];
 const speedStore = useSpeedStore();
 const physicsStore = usePhysicsStore();
-const { isDownBtnShow, isSuccess, isShowThree } = storeToRefs(physicsStore);
+const { isDownBtnShow, isSuccess, isShowThree, threeWaveY } = storeToRefs(physicsStore);
 
 let render: Matter.Render;
 let cards: Matter.Body[] = [];
@@ -89,7 +89,7 @@ const init = async () => {
     options: {
       width: container.value.clientWidth,
       height: container.value.clientHeight,
-      wireframes: false,
+      wireframes: true,
       background: "transparent",
       hasBounds: true,
     },
@@ -230,9 +230,8 @@ const init = async () => {
   Composite.add(engineWorld, waveBodies);
   Composite.add(engineWorld, waveBodies2);
 
-  const waveBottomY = waveBodies.at(-1)!.position.y;
   const wallThickness = 50;
-  const wallHeight = waveBottomY + waveHeight;
+  const wallHeight = 4500;
   const wallY = container.value!.clientHeight / 2;
   const leftWall = Bodies.rectangle(0, wallY, wallThickness, wallHeight, {
     isStatic: true,
@@ -268,8 +267,10 @@ const init = async () => {
 
     const waveIsVisible = waveY < render.bounds.max.y;
 
-    if (waveIsVisible) isShowThree.value = true;
-
+    if (waveIsVisible) {
+      isShowThree.value = true;
+      threeWaveY.value = Math.min(render.bounds.max.y - waveY + 35, 456);
+    }
     if (isSensorDetected.value) {
       const tolerance = 0.1;
       const isMove = Math.abs(currentY - targetY.value) > tolerance;
