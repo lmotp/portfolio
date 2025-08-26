@@ -69,6 +69,7 @@ onMounted(() => {
       <div class="side__content">
         <NuxtLink to="/" class="side__content-link">Main</NuxtLink>
         <NuxtLink to="/portfolio" class="side__content-link">Portfolio</NuxtLink>
+        <NuxtLink to="/about" class="side__content-link">About</NuxtLink>
       </div>
 
       <div class="side__toggle">

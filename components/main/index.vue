@@ -1,11 +1,7 @@
-<script setup>
-import Inventory from "./inventory/index.vue";
-import MainView from "./view/index.vue";
-</script>
-
 <template>
-  <!-- <Inventory /> -->
-  <MainView />
+  <div>메인입니다</div>
 </template>
+
+<script setup lang="ts"></script>
 
 <style scoped></style>

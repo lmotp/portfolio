@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import ThreeScence from "./ThreeScence.vue";
 import Physics from "./Physics.vue";
 import SpeedLine from "./SpeedLine.vue";
+import ThreeScence from "./ThreeScence.vue";
+
 import { usePhysicsStore } from "@/stores/physics";
 import { storeToRefs } from "pinia";
 
@@ -62,7 +63,6 @@ onUnmounted(() => {
   <div ref="viewRef" class="view" @scroll="handleScroll">
     <Physics class="main-phy" />
     <SpeedLine class="speed-line" />
-
     <ThreeScence v-if="isShowThree" :class="['main-bg', isSuccess && !isDownBtnShow && 'success']" />
 
     <Transition name="fade">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import * as THREE from "three";
 import * as dat from "lil-gui";
+import { usePhysicsStore } from "@/stores/physics";
 
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
@@ -11,9 +12,10 @@ import effectFragmentShader from "./shaders/plane/effect/fragmentShader.glsl";
 const gui = new dat.GUI();
 const guiInfo = { value: 0.85, uFrequency: 4.0, uAmplitude: 0.2, y: 0 };
 
-const clock = new THREE.Clock();
-
 const container = ref<HTMLElement | null>(null);
+const physicsStore = usePhysicsStore();
+const { isSuccess } = storeToRefs(physicsStore);
+const clock = new THREE.Clock();
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
@@ -96,6 +98,16 @@ const handleWindowResize = () => {
   camera.updateProjectionMatrix();
   renderer.setSize(container.value.clientWidth, container.value.clientHeight);
 };
+
+watch(isSuccess, (newVal) => {
+  if (newVal) {
+    gsap.to(planeMaterial.uniforms.uAmplitude, {
+      duration: 1,
+      value: 0,
+      ease: "power3.out",
+    });
+  }
+});
 
 onMounted(() => {
   init();

@@ -1,11 +1,3 @@
 @import "@/assets/css/reset.css";
 @import "@/assets/css/variable.css";
 @import "@/assets/css/animation.css";
-
-.page-wrapper {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}

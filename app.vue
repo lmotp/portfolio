@@ -1,12 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+
+const pageTransitionStore = usePageTransitionStore();
+const { isPageTransition } = storeToRefs(pageTransitionStore);
+</script>
 
 <template>
+  <PageTransition v-show="isPageTransition" />
   <NuxtLayout>
-    <Transition name="slide">
-      <div class="page-wrapper">
-        <NuxtPage />
-      </div>
-    </Transition>
+    <NuxtPage />
   </NuxtLayout>
 </template>
 

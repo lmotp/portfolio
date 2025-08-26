@@ -1,5 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import glsl from "vite-plugin-glsl";
 import { glslify } from "vite-plugin-glslify";
 
 export default defineNuxtConfig({
@@ -18,7 +17,6 @@ export default defineNuxtConfig({
   },
 
   app: {
-    pageTransition: { name: "slide" },
     head: {
       htmlAttrs: {
         lang: "ko",
