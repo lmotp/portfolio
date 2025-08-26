@@ -66,6 +66,8 @@ const { x } = useDraggable(menuRef, {
 });
 
 const handleMenuClick = (menuPath: string) => {
+  if (menuPath === path.value) return;
+
   path.value = menuPath;
   x.value = initialX.value; // 드래그 초기값 동기화
 };
