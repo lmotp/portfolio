@@ -7,8 +7,8 @@ const { isPageTransition } = storeToRefs(pageTransitionStore);
 </script>
 
 <template>
-  <PageTransition v-show="isPageTransition" />
   <NuxtLayout>
+    <PageTransition v-show="isPageTransition" />
     <NuxtPage />
   </NuxtLayout>
 </template>
