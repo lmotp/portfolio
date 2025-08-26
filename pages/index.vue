@@ -8,17 +8,14 @@ const handleOnLoad = () => {
 
 <template>
   <section>
-    <ClientOnly>
-      <Loading v-if="isLoading" @onLoad="handleOnLoad" />
-      <Main v-else />
-    </ClientOnly>
+    <Loading v-if="isLoading" @onLoad="handleOnLoad" />
+    <Main v-else />
   </section>
 </template>
 
 <style scoped>
 section {
-  position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 100%;
 }
 </style>

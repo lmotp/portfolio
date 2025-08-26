@@ -1,4 +1,6 @@
 :root {
+  --frame: 15px;
+
   --matter-zIndex: 9999;
 
   /* Color */

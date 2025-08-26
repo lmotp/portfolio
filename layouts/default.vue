@@ -5,10 +5,10 @@ import Side from "./Side.vue";
 <template>
   <main>
     <div class="frame">
-      <section class="inner">
+      <div class="inner">
         <Side />
         <slot />
-      </section>
+      </div>
     </div>
   </main>
 </template>
@@ -27,7 +27,7 @@ main {
   .frame {
     position: fixed;
     inset: 0;
-    border: 15px solid #fff;
+    border: var(--frame) solid #fff;
     z-index: 101;
 
     .inner {
@@ -35,7 +35,7 @@ main {
       width: 100%;
       height: 100%;
 
-      clip-path: inset(0 0 round 15px 15px 15px 15px);
+      clip-path: inset(0 0 round var(--frame) var(--frame) var(--frame) var(--frame));
       background-color: #fff;
       box-shadow: inset 0px 4px 10px rgba(11, 13, 15, 0.2);
       overflow: hidden;

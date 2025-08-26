@@ -1,7 +1,11 @@
 <template>
-  <div>메인입니다</div>
+  <div class="main">메인입니다</div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped>
+.main {
+  padding: var(--frame);
+}
+</style>

@@ -1,5 +1,25 @@
 <script setup lang="ts">
 import { useDraggable } from "@vueuse/core";
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+
+const menuList = [
+  {
+    name: "Main",
+    path: "/",
+  },
+  {
+    name: "Portfolio",
+    path: "/portfolio",
+  },
+  {
+    name: "About",
+    path: "/about",
+  },
+];
+
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
 
 const menuRef = ref<HTMLElement | null>(null);
 const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
@@ -45,6 +65,11 @@ const { x } = useDraggable(menuRef, {
   onEnd: drabbleOnEnd,
 });
 
+const handleMenuClick = (menuPath: string) => {
+  path.value = menuPath;
+  x.value = initialX.value; // 드래그 초기값 동기화
+};
+
 watch(isMenuOpen, () => {
   audio.value?.play();
 });
@@ -65,11 +90,16 @@ onMounted(() => {
 
 <template>
   <aside id="side" class="side" :style="{ translate: `${x}px` }">
-    <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing', isMenuOpen && 'is-open']">
+    <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing']">
       <div class="side__content">
-        <NuxtLink to="/" class="side__content-link">Main</NuxtLink>
-        <NuxtLink to="/portfolio" class="side__content-link">Portfolio</NuxtLink>
-        <NuxtLink to="/about" class="side__content-link">About</NuxtLink>
+        <button
+          v-for="menu in menuList"
+          :key="menu.path"
+          :class="['side__content-link', path === menu.path && 'active']"
+          @click="handleMenuClick(menu.path)"
+        >
+          {{ menu.name }}
+        </button>
       </div>
 
       <div class="side__toggle">
@@ -147,7 +177,7 @@ onMounted(() => {
         }
 
         &:hover::before,
-        &.router-link-active::before {
+        &.active::before {
           width: 100%;
         }
       }
