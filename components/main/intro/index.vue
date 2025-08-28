@@ -208,6 +208,38 @@ const setScrollTriggerUpdate = (self: any) => {
     });
   }
 };
+const setScrollTriggerEnter = () => {
+  const textWrapTitle = textWrapRef.value?.querySelector(".title") as HTMLElement;
+  const textWrapDesc = textWrapRef.value?.querySelector(".desc") as HTMLElement;
+
+  gsap.set(textWrapTitle, { opacity: 0.2, translateY: 20 });
+  gsap.to(textWrapTitle, {
+    opacity: 1,
+    translateY: 0,
+    duration: 1.25,
+    ease: "power3.inOut",
+  });
+  gsap.set(textWrapDesc, { opacity: 0, translateY: 30 });
+  gsap.to(textWrapDesc, {
+    opacity: 1,
+    translateY: 0,
+    duration: 1,
+    delay: 0.2,
+    ease: "power3.inOut",
+  });
+
+  const iconTransitionY = ["90%", "70%", "75%", "50%", "100%"];
+  const iconDelay = [0.1, 0.05, 0, 0.08, 0.2];
+  iconElementsRefs.value.forEach((icon, index) => {
+    gsap.set(icon, { y: iconTransitionY[index] });
+    gsap.to(icon, {
+      y: 0,
+      duration: 1.25,
+      delay: iconDelay[index],
+      ease: "power3.inOut",
+    });
+  });
+};
 
 const init = () => {
   if (!introRef.value) return;
@@ -235,9 +267,7 @@ const init = () => {
     start: "top top",
     end: `+=${window.innerHeight * 8}px`,
     pin: true,
-    onEnter: () => {
-      iconElementsRefs.value.forEach((icon) => {});
-    },
+    onEnter: setScrollTriggerEnter,
     onUpdate: (self) => setScrollTriggerUpdate(self),
   });
 };
@@ -317,7 +347,6 @@ onMounted(() => {
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 32px;
     will-change: transform, opacity;
 
     .title {
