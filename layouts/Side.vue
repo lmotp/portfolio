@@ -129,10 +129,11 @@ onMounted(() => {
   --back-color: rgba(255, 255, 255, 0.9);
   --blur: 4px;
 
-  position: absolute;
-  height: 100%;
+  position: fixed;
+  inset: 0;
   background-color: transparent;
   z-index: 100;
+  pointer-events: none;
 
   .side__menu {
     position: relative;
@@ -143,6 +144,7 @@ onMounted(() => {
     backdrop-filter: blur(var(--blur));
     box-shadow: inset -3px 0px 10px 3px rgba(0, 0, 0, 0.2);
     isolation: isolate;
+    pointer-events: auto;
 
     &.is-grabbing {
       .side__toggle .side__toggle-btn {

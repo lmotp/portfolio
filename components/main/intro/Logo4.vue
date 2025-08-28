@@ -29,4 +29,8 @@
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped>
+svg {
+  height: 100%;
+}
+</style>

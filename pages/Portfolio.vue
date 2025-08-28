@@ -6,4 +6,9 @@
   </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+section {
+  width: 100%;
+  height: 100dvh;
+}
+</style>

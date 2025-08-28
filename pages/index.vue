@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const isLoading = ref(false);
+const viewRef = ref<HTMLElement | null>(null);
 
 const handleOnLoad = () => {
   isLoading.value = false;
@@ -7,15 +8,14 @@ const handleOnLoad = () => {
 </script>
 
 <template>
-  <section>
+  <section ref="viewRef">
     <Loading v-if="isLoading" @onLoad="handleOnLoad" />
-    <Main v-else />
+    <Main :view-ref="viewRef" v-else />
   </section>
 </template>
 
 <style scoped>
 section {
   width: 100%;
-  height: 100%;
 }
 </style>

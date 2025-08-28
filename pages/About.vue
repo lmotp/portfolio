@@ -2,9 +2,7 @@
 
 <template>
   <section>
-    <ClientOnly>
-      <About />
-    </ClientOnly>
+    <About />
   </section>
 </template>
 

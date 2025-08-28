@@ -33,8 +33,10 @@ const coverPage = (url: string) => {
 
   const tl = gsap.timeline({
     onComplete: () => {
-      isCovering.value = true;
       router.push(url);
+      setTimeout(() => {
+        isCovering.value = true;
+      }, 200);
     },
   });
 
