@@ -264,7 +264,7 @@ const init = () => {
 
   scrollTrigger.value?.create({
     trigger: ".intro",
-    start: "top top",
+    start: "top 15px",
     end: `+=${window.innerHeight * 8}px`,
     pin: true,
     onEnter: setScrollTriggerEnter,
@@ -306,8 +306,9 @@ onMounted(() => {
         </p>
 
         <p>
+          <span class="text-segment">For every</span>
           <span class="placeholder-icon" />
-          <span class="text-segment">For every tutorial</span>
+          <span class="text-segment"> tutorial</span>
         </p>
 
         <p>
@@ -331,11 +332,9 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: var(--padding);
   width: 100%;
-  height: 100svh;
+  height: 100%;
   background-color: #141414;
-  overflow: hidden;
   transition: background-color 0.3s ease;
 
   .text-wrap {

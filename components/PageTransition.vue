@@ -36,7 +36,7 @@ const coverPage = (url: string) => {
       router.push(url);
       setTimeout(() => {
         isCovering.value = true;
-      }, 200);
+      }, 400);
     },
   });
 
@@ -84,9 +84,9 @@ watch(isCovering, (status) => {
 <style>
 .page-transition {
   position: fixed;
-  inset: 0;
+  inset: 15px;
   pointer-events: none;
-  z-index: 201;
+  z-index: 100;
 
   .page-overlay {
     display: flex;

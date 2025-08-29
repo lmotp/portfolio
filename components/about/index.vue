@@ -60,7 +60,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="viewRef" class="view" @scroll="handleScroll">
+  <section ref="viewRef" class="view" @scroll="handleScroll">
     <Physics class="main-phy" />
     <SpeedLine class="speed-line" />
     <ThreeScence v-if="isShowThree" :class="['main-bg', isSuccess && !isDownBtnShow && 'success']" />
@@ -73,7 +73,7 @@ onUnmounted(() => {
         <span>👍</span>
       </button>
     </Transition>
-  </div>
+  </section>
 </template>
 
 <style scoped>
