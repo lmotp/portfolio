@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import Matter, { Events } from "matter-js";
-import * as polyDecomp from "poly-decomp";
 import { useSpeedStore } from "@/stores/speed";
-import { usePhysicsStore } from "@/stores/physics";
-import { storeToRefs } from "pinia";
+import * as polyDecomp from "poly-decomp";
 
 // Initialize poly-decomp
 Matter.Common.setDecomp(polyDecomp);
@@ -18,7 +16,7 @@ const offset = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 const container = ref<HTMLElement | null>(null);
 const targetY = ref(300);
 const cardConfig = [
-  { x: 200, y: 58, w: 320, h: 200, angle: -7.2 },
+  { x: 210, y: 58, w: 320, h: 200, angle: -7.2 },
   { x: 90, y: 265, w: 400, h: 200, angle: 8.2 },
   { x: -215, y: 430, w: 300, h: 150, angle: 13.2 },
   { x: 273, y: 650, w: 500, h: 200, angle: -13.2 },
@@ -27,9 +25,9 @@ const cardConfig = [
 
 const textConfig = [
   { x: 210, y: 58 },
-  { x: -310, y: 58 },
-  { x: -100, y: 58 },
-  { x: 500, y: 58 },
+  { x: -110, y: 58 },
+  { x: 10, y: 58 },
+  { x: -10, y: 58 },
 ];
 
 const barConfig = [
@@ -42,11 +40,10 @@ const barConfig = [
 
 const pointConfig = [{ x: -300, y: 70 }];
 const speedStore = useSpeedStore();
-const physicsStore = usePhysicsStore();
-const { isDownBtnShow, isSuccess, isShowThree, threeWaveY } = storeToRefs(physicsStore);
 
 let render: Matter.Render;
 let cards: Matter.Body[] = [];
+let isDragging = ref(false); // ✨ 드래그 상태를 추적하는 새로운 변수 추가
 const Engine = Matter.Engine;
 const Render = Matter.Render;
 const Runner = Matter.Runner;
@@ -119,8 +116,8 @@ const init = async () => {
   const startCircleY = BALL_OFFSET;
 
   const circle = Bodies.circle(startCircleX, startCircleY, 10, {
-    friction: 0.0000001,
-    restitution: 0.6,
+    friction: 0.00001,
+    restitution: 0.5,
     density: 0.001,
     isStatic: false,
     render: { fillStyle: "black", lineWidth: 0, strokeStyle: "transparent" },
@@ -204,34 +201,24 @@ const init = async () => {
     })
   );
 
-  const numSegments = 300;
+  const numSegments = 100;
   const segmentWidth = window.innerWidth / numSegments;
-  const waveHeight = 450;
+  const waveHeight = 1000;
   const waveY = sensorBars.at(-1)!.position.y + 550;
-
   let wavePhase = 0;
-  let wavePhase2 = Math.PI / 2; // 90도 위상 차이
 
-  const waveBodies = Composites.stack(0, 40, numSegments, 1, 0, 0, (x: number, y: number) => {
+  const waveBodies = Composites.stack(0, waveY, numSegments, 1, 0, 0, (x: number, y: number) => {
     return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
       isStatic: true,
-      render: { fillStyle: "#00f" },
-      label: "wave",
-    });
-  }).bodies;
-  const waveBodies2 = Composites.stack(0, 40, numSegments, 1, 0, 0, (x: number, y: number) => {
-    return Bodies.rectangle(x, y + waveHeight / 2, segmentWidth, waveHeight, {
-      isStatic: true,
-      render: { fillStyle: "#0ff" },
+      render: { fillStyle: "black" },
       label: "wave",
     });
   }).bodies;
 
   Composite.add(engineWorld, waveBodies);
-  Composite.add(engineWorld, waveBodies2);
 
   const wallThickness = 50;
-  const wallHeight = 4500;
+  const wallHeight = waveBodies.at(-1)!.position.y + waveHeight;
   const wallY = container.value!.clientHeight / 2;
   const leftWall = Bodies.rectangle(0, wallY, wallThickness, wallHeight, {
     isStatic: true,
@@ -265,13 +252,6 @@ const init = async () => {
 
     speedStore.updateSpeed(Math.min(speed, 5));
 
-    const waveIsVisible = waveY < render.bounds.max.y;
-
-    if (waveIsVisible) {
-      isShowThree.value = true;
-      threeWaveY.value = render.bounds.max.y - waveY + 45;
-    }
-
     if (isSensorDetected.value) {
       const tolerance = 0.1;
       const isMove = Math.abs(currentY - targetY.value) > tolerance;
@@ -283,32 +263,15 @@ const init = async () => {
       }
     }
 
-    if (isSuccess.value && isDownBtnShow.value) {
-      const targetYPosition = waveBodies[0].position.y - waveHeight / 2;
-      targetY.value = targetYPosition + 25;
-      Body.setPosition(circle, { x: circle.position.x, y: targetYPosition + 50 });
+    Composite.rotate(cross, useTransferDgreeToRadia(10), { x: centerX - 300, y: centerY + 70 });
 
-      isDownBtnShow.value = false;
-    }
-
-    Composite.rotate(cross, useTransferDgreeToRadia(15), { x: centerX - 300, y: centerY + 70 });
-
-    const waveAmplitude = 10;
-    const waveFrequency = 0.01;
+    const waveAmplitude = 30;
+    const waveFrequency = 0.005;
     const waveSpeed = 0.05;
 
-    const waveAmplitude2 = 10;
-    const waveFrequency2 = 0.01;
-
     wavePhase += waveSpeed;
-    wavePhase2 += waveSpeed;
-
     waveBodies.forEach((body) => {
       const yOffset = waveAmplitude * Math.sin(body.position.x * waveFrequency + wavePhase);
-      Body.setPosition(body, { x: body.position.x, y: waveY + yOffset + waveHeight / 2 });
-    });
-    waveBodies2.forEach((body) => {
-      const yOffset = waveAmplitude2 * Math.sin(body.position.x * waveFrequency2 + wavePhase2);
       Body.setPosition(body, { x: body.position.x, y: waveY + yOffset + waveHeight / 2 });
     });
   });
@@ -319,15 +282,11 @@ const init = async () => {
       const bodyA = pair.bodyA;
       const bodyB = pair.bodyB;
 
-      if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) {
-        speedStore.updateEnabled(true);
-        isDownBtnShow.value = true;
-      }
+      if (bodyA === circle && (bodyB.label === "wave" || bodyB.label === "textCard")) speedStore.updateEnabled(true);
 
       if (bodyB.isSensor && bodyA === circle && bodyB.label.includes("sensor")) {
         const currentSensorCount = Number(bodyB.label.split("-")[1]);
-        let offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
-
+        const offsetY = currentSensorCount === TOTAL_SENSOR ? 350 : 300;
         targetY.value = currentSensorCount * offsetY;
         sensorCount.value = currentSensorCount;
         isSensorDetected.value = true;
@@ -360,6 +319,7 @@ const init = async () => {
     offset.value = { x: 0, y: 0 };
   });
 
+  render.canvas.style.opacity = "0";
   emit("initPhysics", { Events: Matter.Events, canvas: render.canvas, engine });
 };
 
@@ -375,7 +335,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="container" class="container" />
+  <div ref="container" class="container"></div>
 </template>
 
 <style scoped>

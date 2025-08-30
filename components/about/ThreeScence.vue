@@ -1,27 +1,30 @@
 <script setup lang="ts">
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { DotScreenPass } from "three/examples/jsm/Addons.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
+
 import * as dat from "lil-gui";
-import { usePhysicsStore } from "@/stores/physics";
 
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
 
-import effectVertexShader from "./shaders/plane/effect/vertexShader.glsl";
-import effectFragmentShader from "./shaders/plane/effect/fragmentShader.glsl";
+// const gui = new dat.GUI();
+// const guiInfo = { value: 0.85 };
 
-const gui = new dat.GUI();
-const guiInfo = { value: 0.85, uFrequency: 4.0, uAmplitude: 0.2, y: 0 };
-
-const container = ref<HTMLElement | null>(null);
-const physicsStore = usePhysicsStore();
-const { isSuccess } = storeToRefs(physicsStore);
 const clock = new THREE.Clock();
 
+const props = defineProps<{ scrollPercentage: number; initPhysicsObj: InitPhysicsObj | null }>();
+const container = ref<HTMLElement | null>(null);
+
 let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
+let camera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
+let effectComposer: EffectComposer;
 let planeMaterial: THREE.ShaderMaterial;
-let plane2: THREE.Mesh;
+
 const init = () => {
   if (!container.value) return;
 
@@ -30,40 +33,26 @@ const init = () => {
   scene.background = null;
 
   // Camera
-  const FOV = 25;
-  const aspectRatio = container.value!.clientWidth / container.value!.clientHeight;
-  camera = new THREE.PerspectiveCamera(FOV, aspectRatio, 0.1, 1000);
-  camera.position.set(0, 0, 5);
+  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
+  camera.position.z = 500;
 
   // Plane
-  let ang_rad = (FOV * Math.PI) / 180;
-  let fov_y = camera.position.z * Math.tan(ang_rad / 2) * 2;
-  const planeGeometry = new THREE.PlaneGeometry((fov_y * window.innerWidth) / window.innerHeight, 0.4, 50, 50);
+  const planeGeometry = new THREE.PlaneGeometry(2, 2);
   planeMaterial = new THREE.ShaderMaterial({
-    side: THREE.DoubleSide,
     uniforms: {
-      uTime: { value: 0 },
-      uFrequency: { value: 4.0 },
-      uAmplitude: { value: 0.2 },
-      uBlue: { value: new THREE.Color("rgb( 0, 89,	179)").convertLinearToSRGB() },
+      uTime: { value: 0.0 },
+      uProgress: { value: 0.85 },
+      uPercentage: { value: 0.0 },
+      uTexture: { value: null },
     },
+    transparent: true,
+    side: THREE.DoubleSide,
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
   });
 
   const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.position.set(0, 0.65, 0.5);
   scene.add(plane);
-
-  const planeGeometry2 = new THREE.PlaneGeometry((fov_y * window.innerWidth) / window.innerHeight, fov_y, 50, 50);
-  const planeMaterial2 = new THREE.ShaderMaterial({
-    vertexShader: effectVertexShader,
-    fragmentShader: effectFragmentShader,
-  });
-
-  plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
-  plane2.position.set(0, -0.55, 0);
-  scene.add(plane2);
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -72,8 +61,30 @@ const init = () => {
   renderer.setPixelRatio(window.devicePixelRatio);
   container.value.appendChild(renderer.domElement);
 
-  gui.add(guiInfo, "uFrequency").min(1).max(100).step(0.1);
-  gui.add(guiInfo, "uAmplitude").min(0).max(1).step(0.01);
+  const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+    samples: renderer.getPixelRatio() === 1 ? 2 : 0,
+  });
+
+  effectComposer = new EffectComposer(renderer, renderTarget);
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  effectComposer.setSize(container.value!.clientWidth, container.value!.clientHeight);
+
+  const renderPass = new RenderPass(scene, camera);
+  effectComposer.addPass(renderPass);
+
+  const dotPass = new DotScreenPass() as any;
+  dotPass.uniforms["scale"].value = 2;
+  dotPass.uniforms["angle"].value = THREE.MathUtils.degToRad(45);
+  // dotPass.enabled = false;
+  effectComposer.addPass(dotPass);
+
+  // Add SMAA anti-aliasing pass
+  if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
+    const smaaPass = new SMAAPass(window.innerWidth, window.innerHeight);
+    effectComposer.addPass(smaaPass);
+  }
+
+  // gui.add(guiInfo, "value").min(0.5).max(1).step(0.01);
 
   // Animation
   animate();
@@ -84,12 +95,13 @@ const init = () => {
 
 const animate = () => {
   requestAnimationFrame(animate);
-  planeMaterial.uniforms.uTime.value += 0.04;
 
-  planeMaterial.uniforms.uFrequency.value = guiInfo.uFrequency;
-  planeMaterial.uniforms.uAmplitude.value = guiInfo.uAmplitude;
+  // Update uniforms
+  planeMaterial.uniforms.uTime.value = clock.getElapsedTime();
+  planeMaterial.uniforms.uPercentage.value = props.scrollPercentage;
 
-  renderer.render(scene, camera);
+  // Render effect composer
+  effectComposer.render();
 };
 
 const handleWindowResize = () => {
@@ -97,17 +109,32 @@ const handleWindowResize = () => {
 
   camera.updateProjectionMatrix();
   renderer.setSize(container.value.clientWidth, container.value.clientHeight);
+  effectComposer.setSize(container.value.clientWidth, container.value.clientHeight);
+  effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Update SMAA pass if exists
+  const smaaPass = effectComposer.passes.find((pass) => pass instanceof SMAAPass);
+  if (smaaPass) {
+    (smaaPass as SMAAPass).setSize(container.value.clientWidth, container.value.clientHeight);
+  }
 };
 
-watch(isSuccess, (newVal) => {
-  if (newVal) {
-    gsap.to(planeMaterial.uniforms.uAmplitude, {
-      duration: 1,
-      value: 0,
-      ease: "power3.out",
-    });
-  }
-});
+watch(
+  () => props.initPhysicsObj,
+  (obj) => {
+    if (obj) {
+      // 물리 엔진 업데이트 후 캔버스 텍스처 업데이트
+      const { Events, canvas, engine } = obj;
+
+      Events.on(engine, "afterUpdate", () => {
+        const canvasTexture = new THREE.CanvasTexture(canvas);
+        canvasTexture.needsUpdate = true;
+        planeMaterial.uniforms.uTexture.value = canvasTexture;
+      });
+    }
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   init();
@@ -122,4 +149,8 @@ onUnmounted(() => {
   <div ref="container" class="three-container"></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.three-container {
+  pointer-events: none;
+}
+</style>
