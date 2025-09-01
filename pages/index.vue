@@ -16,6 +16,7 @@ const handleOnLoad = () => {
 
 <style scoped>
 section {
+  position: relative;
   width: 100%;
   height: 100%;
 }

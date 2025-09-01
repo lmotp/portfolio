@@ -1,57 +1,52 @@
 <script setup lang="ts">
-import gsap from "gsap";
-import Logo from "./Logo.vue";
+import OutroTopView from "./OutroTopView.vue";
+import OutroLayerCard from "./OutroLayerCard.vue";
 
-const init = () => {
-  gsap.to(".layer", {
-    scrollTrigger: {
-      trigger: ".outro",
-      start: "top 15px",
-      end: "bottom bottom",
-      scrub: true,
-    },
-    xPercent: -10,
-    rotate: -15,
-    transformOrigin: "0% 100%",
-  });
-
-  gsap.to(".logo-scroller", {
-    scrollTrigger: {
-      trigger: ".outro",
-      start: "top 15px",
-      end: "bottom bottom",
-      scrub: true,
-    },
-    xPercent: -10,
-    rotate: -15,
-    transformOrigin: "0% 100%",
-  });
-};
-
-onMounted(() => {
-  nextTick(init);
-});
+const layerCards = ref([
+  {
+    id: 1,
+    url: "/portfolio",
+    title: "TEST-1",
+    type: "video",
+    src: "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18",
+  },
+  {
+    id: 2,
+    url: "/portfolio",
+    title: "TEST-2",
+    type: "image",
+    src: "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424",
+  },
+  {
+    id: 3,
+    url: "/portfolio",
+    title: "TEST-3",
+    type: "video",
+    src: "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c",
+  },
+]);
 </script>
 
 <template>
   <div class="outro">
-    <div class="video-wrapper">
-      <video
-        playsinline
-        muted
-        autoplay
-        loop
-        controlslist="nodownload noplaybackrate"
-        disablepictureinpicture
-        src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&amp;log_user=0&amp;signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
-      ></video>
+    <div class="top-view-container">
+      <OutroTopView />
     </div>
 
-    <div class="layer"></div>
+    <div class="layer-card-container">
+      <div class="layer-card-scroller">
+        <div class="layer-card-sticky">
+          <OutroLayerCard
+            v-for="(card, index) in layerCards"
+            v-bind="card"
+            :isLast="index === layerCards.length - 1"
+            :key="index"
+          />
+        </div>
+      </div>
 
-    <div class="logo-scroller">
-      <div class="logo-wrapper">
-        <Logo />
+      <div :aria-hidden="true">
+        <div v-for="(_, index) in layerCards" :key="index" :class="['layer-card-trigger', `index-${index}`]"></div>
       </div>
     </div>
   </div>
@@ -59,45 +54,34 @@ onMounted(() => {
 
 <style scoped>
 .outro {
-  position: relative;
-  width: 100%;
-  height: 200svh;
+  .top-view-container {
+    position: relative;
+    width: 100%;
+    height: 200svh;
+  }
 
-  .video-wrapper {
-    position: sticky;
-    top: 0;
+  .layer-card-container {
+    position: relative;
+    overflow: visible;
+
+    .layer-card-scroller {
+      position: absolute;
+      inset: 0;
+
+      .layer-card-sticky {
+        position: sticky;
+        top: 0;
+        height: 100lvh;
+      }
+    }
+  }
+
+  .layer-card-trigger {
+    position: relative;
     height: 100lvh;
-    overflow: hidden;
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .layer {
-    position: absolute;
-    inset: 0;
-    height: 100dvh;
-    background-color: red;
-    mix-blend-mode: multiply;
-    will-change: transform;
-  }
-
-  .logo-scroller {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    height: 100svh;
-    padding: 0 18px 18px;
-    color: #e8e9ee;
-
-    .logo-wrapper {
-      position: relative;
-      width: 100%;
-    }
+    width: 3rem;
+    opacity: 0;
+    z-index: 2;
   }
 }
 </style>
