@@ -4,7 +4,7 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { test } = storeToRefs(scrollTriggerStore);
+const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -45,9 +45,9 @@ onMounted(() => {
     ></video>
   </div>
 
-  <div :class="['layer', test ? 'test' : '']"></div>
+  <div :class="['layer', isIntroEnd && 'is-intro-end']"></div>
 
-  <div :class="['logo-scroller', test ? 'test' : '']">
+  <div :class="['logo-scroller', isIntroEnd && 'is-intro-end']">
     <div class="logo-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 1684 317" class="preloader__logo">
         <g
@@ -246,10 +246,8 @@ onMounted(() => {
   }
 }
 
-.test {
+.is-intro-end {
   position: absolute !important;
   top: 100dvh;
 }
-
-/* 다시 올라갈 때 test가 없어야ㅎ */
 </style>

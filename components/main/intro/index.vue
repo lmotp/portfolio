@@ -12,7 +12,7 @@ import Logo5 from "../logo/Logo5.vue";
 const { viewRef } = defineProps<{ viewRef: HTMLElement | null }>();
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { scrollTrigger, test } = storeToRefs(scrollTriggerStore);
+const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const introRef = ref<HTMLElement | null>(null);
 const textWrapRef = ref<HTMLElement | null>(null);
@@ -219,8 +219,8 @@ const setScrollTriggerUpdate = (self: any) => {
     maskIndex.value = 0;
   }
 
-  if (maskIndex.value === 10) test.value = true;
-  else test.value = false;
+  if (maskIndex.value === 10) isIntroEnd.value = true;
+  else isIntroEnd.value = false;
 };
 
 const setScrollTriggerEnter = () => {

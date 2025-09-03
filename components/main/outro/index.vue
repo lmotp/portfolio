@@ -57,7 +57,6 @@ const layerCards = ref([
   position: relative;
   padding-top: calc(100dvh * 7 - 30px);
   z-index: -1;
-  /* opacity: 0.5; */
 
   .top-view-container {
     position: relative;
