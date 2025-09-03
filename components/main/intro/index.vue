@@ -3,16 +3,16 @@ import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
-import Logo1 from "./Logo1.vue";
-import Logo2 from "./Logo2.vue";
-import Logo3 from "./Logo3.vue";
-import Logo4 from "./Logo4.vue";
-import Logo5 from "./Logo5.vue";
+import Logo1 from "../logo/Logo1.vue";
+import Logo2 from "../logo/Logo2.vue";
+import Logo3 from "../logo/Logo3.vue";
+import Logo4 from "../logo/Logo4.vue";
+import Logo5 from "../logo/Logo5.vue";
 
 const { viewRef } = defineProps<{ viewRef: HTMLElement | null }>();
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { scrollTrigger } = storeToRefs(scrollTriggerStore);
+const { scrollTrigger, test } = storeToRefs(scrollTriggerStore);
 
 const introRef = ref<HTMLElement | null>(null);
 const textWrapRef = ref<HTMLElement | null>(null);
@@ -24,6 +24,8 @@ const placeholderIconRefs = ref<HTMLElement[]>([]);
 const duplicateIcons = ref<HTMLElement[]>([]);
 const currentIconSize = ref<number>(0);
 const exactScale = ref<number>(0);
+
+const maskIndex = ref(0);
 
 const textAnimationOrder = ref<{ segment: HTMLElement; originalIndex: number }[]>([]);
 const isMobile = window.innerWidth <= 1000;
@@ -176,27 +178,12 @@ const setScrollTriggerUpdate = (self: any) => {
           const finalPageX = startPageX + currentX;
           const finalPageY = startPageY + currentY;
 
-          duplicate.style.left = finalPageX - headerIconSize / 2 + "px";
-          duplicate.style.top = finalPageY - headerIconSize / 2 + "px";
+          duplicate.style.left = finalPageX - headerIconSize / 2 - 15 + "px";
+          duplicate.style.top = finalPageY - headerIconSize / 2 - 15 + "px";
         }
       });
     }
   } else {
-    if (duplicateIcons.value.length) {
-      duplicateIcons.value.forEach((duplicate, index) => {
-        if (index < placeholderIconRefs.value.length) {
-          const targetRect = placeholderIconRefs.value[index].getBoundingClientRect();
-          const targetCenterX = targetRect.left + targetRect.width / 2;
-          const targetCenterY = targetRect.top + targetRect.height / 2;
-          const targetPageX = targetCenterX + window.pageXOffset;
-          const targetPageY = targetCenterY + window.pageYOffset;
-
-          duplicate.style.left = targetPageX - headerIconSize / 2 + "px";
-          duplicate.style.top = targetPageY - headerIconSize / 2 + "px";
-        }
-      });
-    }
-
     textAnimationOrder.value.forEach((item, randomIndex) => {
       const segmentStart = 0.75 + randomIndex * 0.03;
       const segmentEnd = segmentStart + 0.015;
@@ -207,7 +194,35 @@ const setScrollTriggerUpdate = (self: any) => {
       });
     });
   }
+
+  if (progress >= 0.75) {
+    if (duplicateIcons.value.length) {
+      duplicateIcons.value.forEach((duplicate, index) => {
+        if (index < placeholderIconRefs.value.length) {
+          const targetRect = placeholderIconRefs.value[index].getBoundingClientRect();
+          const targetCenterX = targetRect.left + targetRect.width / 2;
+          const targetCenterY = targetRect.top + targetRect.height / 2;
+          const targetPageX = targetCenterX + window.pageXOffset;
+          const targetPageY = targetCenterY + window.pageYOffset;
+
+          duplicate.style.left = targetPageX - headerIconSize / 2 - 15 + "px";
+          duplicate.style.top = targetPageY - headerIconSize / 2 - 15 + "px";
+        }
+      });
+    }
+  }
+
+  if (progress > 0.9) {
+    const maskProgress = Math.floor(progress * 100 - 90);
+    maskIndex.value = maskProgress;
+  } else {
+    maskIndex.value = 0;
+  }
+
+  if (maskIndex.value === 10) test.value = true;
+  else test.value = false;
 };
+
 const setScrollTriggerEnter = () => {
   const textWrapTitle = textWrapRef.value?.querySelector(".title") as HTMLElement;
   const textWrapDesc = textWrapRef.value?.querySelector(".desc") as HTMLElement;
@@ -278,7 +293,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="introRef" class="intro">
+  <div ref="introRef" class="intro" :style="{ '--mask-index': maskIndex }">
     <div ref="textWrapRef" class="text-wrap">
       <h2 class="title">PORTFOLIO</h2>
       <p class="desc">
@@ -327,7 +342,12 @@ onMounted(() => {
 
 <style scoped>
 .intro {
-  position: relative;
+  --mask-count: 8;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -336,6 +356,12 @@ onMounted(() => {
   height: 100%;
   background-color: #141414;
   transition: background-color 0.3s ease;
+
+  mask-image: url("/images/mask.webp");
+  mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+  mask-size: calc(100vw * var(--mask-count, 8)) auto;
+  mask-repeat: no-repeat;
+  pointer-events: none;
 
   .text-wrap {
     position: absolute;

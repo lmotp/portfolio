@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { test } = storeToRefs(scrollTriggerStore);
 
 const init = () => {
-  gsap.to(".layer", {
+  const mainTl = gsap.timeline({
     scrollTrigger: {
-      trigger: ".outro",
-      start: "top 15px",
-      end: "bottom bottom",
+      trigger: ".top-view-container",
+      start: `top+=${window.innerHeight}px 15px`,
+      end: `bottom bottom`,
       scrub: true,
+      markers: true,
     },
-    xPercent: -10,
-    rotate: -15,
-    transformOrigin: "0% 100%",
   });
 
-  gsap.to(".logo-scroller", {
-    scrollTrigger: {
-      trigger: ".outro",
-      start: "top 15px",
-      end: "bottom bottom",
-      scrub: true,
-    },
+  // 애니메이션 대상을 .layer와 .logo-scroller로 지정
+  mainTl.to(".layer, .logo-scroller", {
     xPercent: -10,
+    yPercent: -10,
     rotate: -15,
     transformOrigin: "0% 100%",
+    ease: "none",
   });
 };
 
@@ -45,9 +45,9 @@ onMounted(() => {
     ></video>
   </div>
 
-  <div class="layer"></div>
+  <div :class="['layer', test ? 'test' : '']"></div>
 
-  <div class="logo-scroller">
+  <div :class="['logo-scroller', test ? 'test' : '']">
     <div class="logo-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 1684 317" class="preloader__logo">
         <g
@@ -211,8 +211,9 @@ onMounted(() => {
 }
 
 .layer {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
   height: 100dvh;
   background-color: red;
   mix-blend-mode: multiply;
@@ -220,10 +221,11 @@ onMounted(() => {
 }
 
 .logo-scroller {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
   display: flex;
   align-items: flex-end;
+  width: 100%;
   height: 100svh;
   padding: 0 18px 18px;
   color: #e8e9ee;
@@ -243,4 +245,11 @@ onMounted(() => {
     }
   }
 }
+
+.test {
+  position: absolute !important;
+  top: 100dvh;
+}
+
+/* 다시 올라갈 때 test가 없어야ㅎ */
 </style>
