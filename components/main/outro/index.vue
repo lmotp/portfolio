@@ -55,7 +55,7 @@ const layerCards = ref([
 <style scoped>
 .outro {
   position: relative;
-  padding-top: calc(100dvh * 7 - 30px);
+  padding-top: calc(100dvh * 4 - 30px);
   z-index: -1;
 
   .top-view-container {

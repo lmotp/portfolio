@@ -1,13 +1,12 @@
 <script setup lang="ts">
+import Sample from "./intro/Sample.vue";
 import Intro from "./intro/index.vue";
 import Outro from "./outro/index.vue";
 import Footer from "./footer/index.vue";
-
-const { viewRef } = defineProps<{ viewRef: HTMLElement | null }>();
 </script>
 
 <template>
-  <Intro :view-ref="viewRef" />
+  <Sample />
 
   <Outro />
 
