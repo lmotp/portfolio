@@ -212,15 +212,7 @@ const setScrollTriggerUpdate = (self: any) => {
     }
   }
 
-  if (progress > 0.9) {
-    const maskProgress = Math.floor(progress * 100 - 90);
-    maskIndex.value = maskProgress;
-  } else {
-    maskIndex.value = 0;
-  }
 
-  if (maskIndex.value === 10) isIntroEnd.value = true;
-  else isIntroEnd.value = false;
 };
 
 const setScrollTriggerEnter = () => {
@@ -356,12 +348,6 @@ onMounted(() => {
   height: 100%;
   background-color: #141414;
   transition: background-color 0.3s ease;
-
-  mask-image: url("/images/mask.webp");
-  mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
-  mask-size: calc(100vw * var(--mask-count, 8)) auto;
-  mask-repeat: no-repeat;
-  pointer-events: none;
 
   .text-wrap {
     position: absolute;

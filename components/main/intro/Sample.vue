@@ -6,10 +6,20 @@ import Logo4 from "../logo/Logo4.vue";
 import Logo5 from "../logo/Logo5.vue";
 
 import gsap from "gsap";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const heroIconsRef = ref<HTMLElement | null>(null);
 const introContainerRef = ref<HTMLElement | null>(null);
+const introMainRef = ref<HTMLElement | null>(null);
+const introDumyRef = ref<HTMLElement | null>(null);
+
+const isIntroInit = ref(false);
+const maskIndex = ref(0);
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const heroInit = () => {
   if (!heroIconsRef.value) return;
@@ -25,6 +35,10 @@ const heroInit = () => {
       start: "top top",
       end: "bottom top",
       scrub: !0,
+
+      onEnter: () => {
+        isIntroInit.value = true;
+      },
     },
     defaults: {
       overwrite: "auto",
@@ -68,36 +82,46 @@ const heroInit = () => {
   }
 };
 const introInit = () => {
-  if (!introContainerRef.value) return;
+  if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value) return;
 
   const lineTexts = [...introContainerRef.value.querySelectorAll(".line span")];
-  const icons = [...introContainerRef.value.querySelectorAll(".intro-main-icon .intro-icon")];
-  const dumyIcons = [...introContainerRef.value.querySelectorAll(".intro-dumy-icon .intro-icon")];
+  const icons = [...introMainRef.value.querySelectorAll(".intro-icon")];
+  const dumyIcons = [...introDumyRef.value.querySelectorAll(".intro-icon")];
 
   gsap.set(".intro-container", { opacity: 0 });
   gsap.set(lineTexts, { opacity: 0 });
   gsap.set(icons, { x: 0, y: 0 });
 
   for (let i = 0; i < icons.length; i++) {
-    const icon = icons[i];
-    const dumy = dumyIcons[i];
-    const iconRect = icon.getBoundingClientRect();
-    const dumyRect = dumy.getBoundingClientRect();
-    const x = dumyRect.left - iconRect.left;
-    const y = dumyRect.top - iconRect.top;
+    let icon = icons[i];
+    let dumy = dumyIcons[i];
+    let iconRect = icon.getBoundingClientRect();
+    let dumyRect = dumy.getBoundingClientRect();
+    let x = dumyRect.left - iconRect.left;
+    let y = dumyRect.top - iconRect.top - 13;
 
     gsap.set(icon, { x, y });
-
-    console.log(dumyRect.left, iconRect.left, 1);
   }
 
   const tl = gsap.timeline({
     scrollTrigger: {
       id: "section-intro",
       trigger: ".intro-trigger",
-      start: "top 15px",
+      start: "top top",
       end: "bottom bottom",
       scrub: !0,
+      onUpdate: (self: any) => {
+        const progress = self.progress;
+        if (progress > 0.9) {
+          const maskProgress = Math.floor(progress * 100 - 90);
+          maskIndex.value = maskProgress;
+        } else {
+          maskIndex.value = 0;
+        }
+
+        if (maskIndex.value === 10) isIntroEnd.value = true;
+        else isIntroEnd.value = false;
+      },
     },
     defaults: {
       overwrite: "auto",
@@ -122,7 +146,8 @@ const introInit = () => {
     tl.set(".line-1 span:first-child", { opacity: 1 }, "song2+=0.4");
 
     tl.add("watch", "song2+=0.5");
-    tl.to(".intro-icon.icon-2", { x: 0, duration: 0.5, ease: "power1.inOut" }, "song2");
+    tl.to(".intro-icon.icon-2", { y: 0 }, "song2");
+    tl.to(".intro-icon.icon-2", { x: 0, duration: 0.3, ease: "power1.inOut" }, "song2");
     tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.2");
     tl.set(".line-2 span:first-child", { opacity: 1 }, "song2+=0.3");
     tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "song2+=0.4");
@@ -133,7 +158,11 @@ const introInit = () => {
     const g = introContainerRef.value.querySelector(".intro-icon.icon-2");
     const m = gsap.getProperty(g, "y");
 
-    tl.to(".intro-icon.icon-3", { y: 0, duration: 0.3, ease: "power2.out" }, "song2");
+    tl.to(
+      ".intro-icon.icon-3",
+      { y: 0, duration: 0.3, width: 86, height: 86, maxWidth: 86, maxHeight: 86, ease: "power2.out" },
+      "song2"
+    );
     tl.to(".intro-icon.icon-3", { x: 0, duration: 0.5, ease: "power1.inOut" }, "game");
     tl.fromTo(".line-3 span:first-child", { x: -50 }, { x: 0 }, "game+=0.2");
     tl.set(".line-3 span:first-child", { opacity: 1 }, "game+=0.3");
@@ -154,11 +183,12 @@ const introInit = () => {
   }
 };
 
+watch(isIntroInit, (status) => {
+  if (status) introInit();
+});
+
 onMounted(() => {
-  nextTick(() => {
-    introInit();
-    heroInit();
-  });
+  heroInit();
 });
 </script>
 
@@ -186,11 +216,11 @@ onMounted(() => {
     </div>
   </div>
 
-  <div ref="introContainerRef" class="intro-container">
+  <div ref="introContainerRef" class="intro-container" :style="{ '--mask-index': maskIndex }">
     <div class="intro-bg"></div>
     <div class="intro-trigger"></div>
     <div class="intro-sticky">
-      <h3 class="intro-main-icon title">
+      <h3 ref="introMainRef" class="intro-main-icon title">
         <p class="line line-1">
           <span>Your favorite</span>
           <Logo5 class="intro-icon icon-1" />
@@ -216,7 +246,7 @@ onMounted(() => {
         </p>
       </h3>
 
-      <div class="intro-dumy-icon" :aria-hidden="true">
+      <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
         <Logo5 class="intro-icon icon-1" />
         <Logo1 class="intro-icon icon-2" />
         <Logo4 class="intro-icon icon-3" />
@@ -229,7 +259,9 @@ onMounted(() => {
 
 <style scoped>
 .hero-container {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 300svh;
   background-color: #e3e3db;
@@ -327,10 +359,18 @@ onMounted(() => {
 }
 
 .intro-container {
-  position: relative;
-  margin-top: -200svh;
+  --mask-count: 8;
+
+  position: absolute;
+  top: 100svh;
+  left: 0;
   width: 100%;
   height: 300svh;
+
+  mask-image: url("/images/mask.webp");
+  mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+  mask-size: calc(100vw * var(--mask-count, 8)) auto;
+  mask-repeat: no-repeat;
 
   .intro-trigger {
     position: absolute;
@@ -352,7 +392,7 @@ onMounted(() => {
 
   .intro-sticky {
     position: sticky;
-    top: 0;
+    top: -50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -364,14 +404,7 @@ onMounted(() => {
 
     .intro-main-icon {
       position: relative;
-      line-height: 1.2;
-      font-size: 82px;
-      font-weight: 700;
       pointer-events: none;
-
-      @media (max-width: 1000px) {
-        font-size: 40px;
-      }
 
       .line {
         position: relative;
@@ -398,6 +431,16 @@ onMounted(() => {
           top: 200%;
         }
 
+        span {
+          line-height: 1.2;
+          font-size: 82px;
+          font-weight: 700;
+
+          @media (max-width: 1000px) {
+            font-size: 40px;
+          }
+        }
+
         .intro-icon {
           margin-inline: 18px;
 
@@ -419,8 +462,8 @@ onMounted(() => {
       top: 0;
       left: 0;
       width: 100%;
-      height: calc(100% - 34px);
-      /* pointer-events: none; */
+      height: 100%;
+      pointer-events: none;
       opacity: 0;
 
       .intro-icon {
@@ -443,15 +486,11 @@ onMounted(() => {
     }
 
     .intro-icon {
-      width: 74px;
-      height: 74px;
-      min-width: 74px;
-      min-height: 74px;
-
-      &.icon-3 {
-        width: 86px;
-        min-width: 86px;
-      }
+      flex-shrink: 0;
+      width: 78px;
+      height: 78px;
+      min-width: 78px;
+      min-height: 78px;
     }
   }
 }

@@ -13,7 +13,6 @@ const init = () => {
       start: `top+=${window.innerHeight}px 15px`,
       end: `bottom bottom`,
       scrub: true,
-      markers: true,
     },
   });
 

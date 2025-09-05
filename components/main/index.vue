@@ -7,9 +7,7 @@ import Footer from "./footer/index.vue";
 
 <template>
   <Sample />
-
   <Outro />
-
   <Footer />
 </template>
 
