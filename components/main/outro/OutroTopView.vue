@@ -212,7 +212,8 @@ onMounted(() => {
 .layer {
   position: fixed;
   top: 0;
-  width: 100%;
+  left: 15px;
+  width: calc(100% - 30px);
   height: 100dvh;
   background-color: red;
   mix-blend-mode: multiply;
@@ -222,9 +223,10 @@ onMounted(() => {
 .logo-scroller {
   position: fixed;
   top: 0;
+  left: 15px;
   display: flex;
   align-items: flex-end;
-  width: 100%;
+  width: calc(100% - 30px);
   height: 100svh;
   padding: 0 18px 18px;
   color: #e8e9ee;
@@ -248,5 +250,7 @@ onMounted(() => {
 .is-intro-end {
   position: absolute !important;
   top: 100dvh;
+  left: 0;
+  width: 100%;
 }
 </style>

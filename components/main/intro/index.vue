@@ -1,331 +1,303 @@
 <script setup lang="ts">
-import gsap from "gsap";
-import { useScrollTriggerStore } from "@/stores/scrollTrigger";
-import { storeToRefs } from "pinia";
-
 import Logo1 from "../logo/Logo1.vue";
 import Logo2 from "../logo/Logo2.vue";
 import Logo3 from "../logo/Logo3.vue";
 import Logo4 from "../logo/Logo4.vue";
 import Logo5 from "../logo/Logo5.vue";
 
-const { viewRef } = defineProps<{ viewRef: HTMLElement | null }>();
+import gsap from "gsap";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
 
-const scrollTriggerStore = useScrollTriggerStore();
-const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const heroIconsRef = ref<HTMLElement | null>(null);
+const introContainerRef = ref<HTMLElement | null>(null);
+const introMainRef = ref<HTMLElement | null>(null);
+const introDumyRef = ref<HTMLElement | null>(null);
 
-const introRef = ref<HTMLElement | null>(null);
-const textWrapRef = ref<HTMLElement | null>(null);
-const animatedIconsRef = ref<HTMLElement | null>(null);
-const animatedTextRef = ref<HTMLElement | null>(null);
-const iconElementsRefs = ref<HTMLElement[]>([]);
-const textSegmentsRefs = ref<HTMLElement[]>([]);
-const placeholderIconRefs = ref<HTMLElement[]>([]);
-const duplicateIcons = ref<HTMLElement[]>([]);
-const currentIconSize = ref<number>(0);
-const exactScale = ref<number>(0);
-
+const isIntroInit = ref(false);
+const isShowMask = ref(false);
 const maskIndex = ref(0);
 
-const textAnimationOrder = ref<{ segment: HTMLElement; originalIndex: number }[]>([]);
-const isMobile = window.innerWidth <= 1000;
-const headerIconSize = isMobile ? 30 : 70;
+const scrollTriggerStore = useScrollTriggerStore();
+const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 
-const setScrollTriggerUpdate = (self: any) => {
-  if (!introRef.value || !animatedIconsRef.value || !viewRef || !animatedTextRef.value) return;
+const heroInit = () => {
+  if (!heroIconsRef.value) return;
 
-  const progress = self.progress;
+  const heroIconsSize = heroIconsRef.value?.getBoundingClientRect();
+  const heroCenter = -heroIconsSize?.top + window.innerHeight / 2 - heroIconsSize?.height / 2;
+  const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
 
-  textSegmentsRefs.value.forEach((segment) => {
-    gsap.set(segment, { opacity: 0 });
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      id: "section-heading",
+      trigger: ".hero-trigger",
+      start: "top top",
+      end: "bottom top",
+      scrub: !0,
+
+      onEnter: () => {
+        isIntroInit.value = true;
+      },
+    },
+    defaults: {
+      overwrite: "auto",
+    },
   });
 
-  if (progress <= 0.3) {
-    const movePrgress = progress / 0.3;
-    const containerMoveY = -window.innerHeight * 0.3 * movePrgress;
+  tl.add("start");
+  tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
 
-    if (progress <= 0.15) {
-      const heaederProgress = progress / 0.15;
-      const headerMoveY = -50 * heaederProgress;
-      const headerOpacity = 1 - heaederProgress;
-
-      gsap.set(textWrapRef.value, {
-        transform: `translate(-50%, calc(-50% + ${headerMoveY}px))`,
-        opacity: headerOpacity,
-      });
-    } else {
-      gsap.set(textWrapRef.value, {
-        transform: `translate(-50%, calc(-50% + -50px))`,
-        opacity: 0,
-        pointerEvents: "none",
-      });
-    }
-
-    if (duplicateIcons.value.length) {
-      duplicateIcons.value.forEach((duplicate) => {
-        if (duplicate.parentNode) duplicate.parentNode.removeChild(duplicate);
-      });
-
-      duplicateIcons.value = [];
-    }
-
-    gsap.set(animatedIconsRef.value, {
-      x: 0,
-      y: containerMoveY,
-      scale: 1,
-      opacity: 1,
-    });
-
-    iconElementsRefs.value.forEach((icon, index) => {
-      const staggerDelay = index * 0.1;
-      const iconStart = staggerDelay;
-      const iconEnd = staggerDelay + 0.5;
-
-      const iconProgress = gsap.utils.mapRange(iconStart, iconEnd, 0, 1, movePrgress);
-      const clampedProgress = Math.max(0, Math.min(1, iconProgress));
-      const startOffset = -containerMoveY;
-      const individualY = startOffset * (1 - clampedProgress);
-
-      gsap.set(icon, {
-        x: 0,
-        y: individualY,
-      });
-    });
-  } else if (progress <= 0.6) {
-    const scalePrgoress = (progress - 0.3) / 0.3;
-
-    if (scalePrgoress >= 0.5) introRef.value.style.backgroundColor = "#e3e3db";
-    else introRef.value.style.backgroundColor = "#141414";
-
-    if (duplicateIcons.value.length) {
-      duplicateIcons.value.forEach((duplicate) => {
-        if (duplicate.parentNode) duplicate.parentNode.removeChild(duplicate);
-      });
-
-      duplicateIcons.value = [];
-    }
-
-    const targetCenterY = window.innerHeight / 2;
-    const targetCenterX = window.innerWidth / 2;
-    const containerRect = animatedIconsRef.value.getBoundingClientRect();
-    const currentCenterX = containerRect.left + containerRect.width / 2;
-    const currentCenterY = containerRect.top + containerRect.height / 2;
-
-    const deltaX = (targetCenterX - currentCenterX) * scalePrgoress;
-    const deltaY = (targetCenterY - currentCenterY) * scalePrgoress;
-    const baseY = -window.innerHeight * 0.3;
-    const currentScale = 1 + (exactScale.value - 1) * scalePrgoress;
-
-    gsap.set(animatedIconsRef.value, {
-      x: deltaX,
-      y: baseY + deltaY,
-      scale: currentScale,
-      opacity: 1,
-    });
-  } else if (progress <= 0.75) {
-    const moveProgress = (progress - 0.6) / 0.15;
-
-    gsap.set(animatedIconsRef.value, {
-      scale: exactScale.value,
-      opacity: 0,
-    });
-
-    if (!duplicateIcons.value.length) {
-      duplicateIcons.value = [];
-
-      iconElementsRefs.value.forEach((icon) => {
-        const duplicate = icon.cloneNode(true) as HTMLElement;
-        duplicate.classList.add("duplicate-icon");
-        duplicate.style.position = "absolute";
-        duplicate.style.width = `${headerIconSize}px`;
-        duplicate.style.height = `${headerIconSize}px`;
-
-        viewRef.appendChild(duplicate);
-        duplicateIcons.value.push(duplicate);
-      });
-    }
-
-    if (duplicateIcons.value.length) {
-      duplicateIcons.value.forEach((duplicate, index) => {
-        if (index < placeholderIconRefs.value.length) {
-          const iconRect = iconElementsRefs.value[index].getBoundingClientRect();
-          const startCenterX = iconRect.left + iconRect.width / 2;
-          const startCenterY = iconRect.top + iconRect.height / 2;
-          const startPageX = startCenterX + window.pageXOffset;
-          const startPageY = startCenterY + window.pageYOffset;
-
-          const targetRect = placeholderIconRefs.value[index].getBoundingClientRect();
-          const targetCenterX = targetRect.left + targetRect.width / 2;
-          const targetCenterY = targetRect.top + targetRect.height / 2;
-          const targetPageX = targetCenterX + window.pageXOffset;
-          const targetPageY = targetCenterY + window.pageYOffset;
-
-          const moveX = targetPageX - startPageX;
-          const moveY = targetPageY - startPageY;
-
-          let currentX = 0;
-          let currentY = 0;
-
-          if (moveProgress <= 0.5) {
-            const verticalProgress = moveProgress / 0.5;
-            currentY = moveY * verticalProgress;
-          } else {
-            const horizontalProgress = (moveProgress - 0.5) / 0.5;
-            currentY = moveY;
-            currentX = moveX * horizontalProgress;
-          }
-
-          const finalPageX = startPageX + currentX;
-          const finalPageY = startPageY + currentY;
-
-          duplicate.style.left = finalPageX - headerIconSize / 2 - 15 + "px";
-          duplicate.style.top = finalPageY - headerIconSize / 2 - 15 + "px";
-        }
-      });
-    }
+  if (isMobile.value) {
   } else {
-    textAnimationOrder.value.forEach((item, randomIndex) => {
-      const segmentStart = 0.75 + randomIndex * 0.03;
-      const segmentEnd = segmentStart + 0.015;
-      const segemntProgress = gsap.utils.mapRange(segmentStart, segmentEnd, 0, 1, progress);
-      const clampedProgress = Math.max(0, Math.min(1, segemntProgress));
-      gsap.set(item.segment, {
-        opacity: clampedProgress,
-      });
-    });
+    tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
+    tl.fromTo(
+      heroIcons,
+      {
+        y: 0,
+      },
+      {
+        y: heroCenter,
+        stagger: 0.1,
+        immediateRender: false,
+      },
+      "start"
+    );
+    tl.add("out", "-=0.2");
+    tl.to(
+      ".hero-container .scale",
+      {
+        scale: 8.3 / 30,
+      },
+      "out"
+    );
+    tl.to(
+      ".hero-bg",
+      {
+        opacity: 0,
+        duration: 1e-4,
+      },
+      "out+=0.3"
+    );
+  }
+};
+const introInit = () => {
+  if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value) return;
+
+  const lineTexts = [...introContainerRef.value.querySelectorAll(".line span")];
+  const icons = [...introMainRef.value.querySelectorAll(".intro-icon")];
+  const dumyIcons = [...introDumyRef.value.querySelectorAll(".intro-icon")];
+
+  gsap.set(".intro-container", { opacity: 0 });
+  gsap.set(lineTexts, { opacity: 0 });
+  gsap.set(icons, { x: 0, y: 0 });
+
+  for (let i = 0; i < icons.length; i++) {
+    let icon = icons[i];
+    let dumy = dumyIcons[i];
+    let iconRect = icon.getBoundingClientRect();
+    let dumyRect = dumy.getBoundingClientRect();
+    let x = dumyRect.left - iconRect.left;
+    let y = dumyRect.top - iconRect.top;
+
+    gsap.set(icon, { x, y });
   }
 
-  if (progress >= 0.75) {
-    if (duplicateIcons.value.length) {
-      duplicateIcons.value.forEach((duplicate, index) => {
-        if (index < placeholderIconRefs.value.length) {
-          const targetRect = placeholderIconRefs.value[index].getBoundingClientRect();
-          const targetCenterX = targetRect.left + targetRect.width / 2;
-          const targetCenterY = targetRect.top + targetRect.height / 2;
-          const targetPageX = targetCenterX + window.pageXOffset;
-          const targetPageY = targetCenterY + window.pageYOffset;
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      id: "section-intro",
+      trigger: ".intro-trigger",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: !0,
+      onLeave: () => {
+        isShowMask.value = true;
+      },
+      onEnterBack: () => {
+        isShowMask.value = false;
+      },
+    },
+    defaults: {
+      overwrite: "auto",
+    },
+  });
 
-          duplicate.style.left = targetPageX - headerIconSize / 2 - 15 + "px";
-          duplicate.style.top = targetPageY - headerIconSize / 2 - 15 + "px";
-        }
-      });
-    }
+  if (isMobile.value) {
+    tl.add("start");
+  } else {
+    tl.add("start");
+    tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
+
+    tl.add("song", "start");
+    tl.to(".intro-icon.icon-1", { y: 0, duration: 0.3, ease: "power2.out" }, "song");
+
+    tl.add("song2");
+    tl.to(".intro-icon.icon-1", { x: 0 }, "song2");
+
+    tl.fromTo(".line-1 span:last-child", { x: -50 }, { x: 0 }, "song2+=0.1");
+    tl.set(".line-1 span:last-child", { opacity: 1 }, "song2+=0.2");
+    tl.fromTo(".line-1 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.3");
+    tl.set(".line-1 span:first-child", { opacity: 1 }, "song2+=0.4");
+
+    tl.add("watch", "song2+=0.5");
+    tl.to(".intro-icon.icon-2", { y: 0, duration: 1e-4 }, "song2");
+    tl.to(".intro-icon.icon-2", { x: 0, duration: 0.3, ease: "power1.inOut" }, "song2");
+    tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.2");
+    tl.set(".line-2 span:first-child", { opacity: 1 }, "song2+=0.3");
+    tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "song2+=0.4");
+    tl.set(".line-2 span:last-child", { opacity: 1 }, "song2+=0.5");
+
+    tl.add("game", "song2+=0.3");
+
+    const g = introContainerRef.value.querySelector(".intro-icon.icon-2");
+    const m = gsap.getProperty(g, "y");
+
+    tl.to(
+      ".intro-icon.icon-3",
+      { y: 0, duration: 0.3, width: 86, height: 86, maxWidth: 86, maxHeight: 86, ease: "power2.out" },
+      "song2"
+    );
+    tl.to(".intro-icon.icon-3", { x: 0, duration: 0.5, ease: "power1.inOut" }, "game");
+    tl.fromTo(".line-3 span:first-child", { x: -50 }, { x: 0 }, "game+=0.2");
+    tl.set(".line-3 span:first-child", { opacity: 1 }, "game+=0.3");
+    tl.fromTo(".line-3 span:last-child", { x: 50 }, { x: 0 }, "game+=0.4");
+    tl.set(".line-3 span:last-child", { opacity: 1 }, "game+=0.5");
+
+    tl.add("shop", "song2+=0.4");
+    tl.to(".intro-icon.icon-4", { y: `-=${m}`, duration: 0.3, ease: "power2.out" }, "song2+=0.3");
+    tl.to(".intro-icon.icon-4", { y: 0, duration: 0.3, ease: "power2.out" }, "song2+=0.3");
+
+    tl.to(".intro-icon.icon-5", { y: 0, duration: 0.3, ease: "power2.out" }, "song2+=0.3");
+    tl.to(".intro-icon.icon-4", { x: 0, duration: 0.5, ease: "power1.inOut" }, "shop");
+    tl.to(".intro-icon.icon-5", { x: 0, duration: 0.5, ease: "power1.inOut" }, "shop");
+    tl.fromTo(".line-4 span:last-child", { x: -50 }, { x: 0 }, "shop+=0.2");
+    tl.set(".line-4 span:last-child", { opacity: 1 }, "shop+=0.3");
+    tl.fromTo(".line-4 span:first-child", { x: -50 }, { x: 0 }, "shop+=0.4");
+    tl.set(".line-4 span:first-child", { opacity: 1 }, "shop+=0.5");
+
+    tl.set(".intro-mask", { opacity: 1 }, "shop+=0.5");
   }
-
-
 };
+const maskInit = () => {
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".intro-mask",
+      start: `top top`,
+      end: `bottom top`,
+      scrub: !0,
+      markers: true,
+      onUpdate: (self: any) => {
+        const progress = self.progress;
+        maskIndex.value = Math.floor(progress * 10);
 
-const setScrollTriggerEnter = () => {
-  const textWrapTitle = textWrapRef.value?.querySelector(".title") as HTMLElement;
-  const textWrapDesc = textWrapRef.value?.querySelector(".desc") as HTMLElement;
+        console.log(progress);
 
-  gsap.set(textWrapTitle, { opacity: 0.2, translateY: 20 });
-  gsap.to(textWrapTitle, {
-    opacity: 1,
-    translateY: 0,
-    duration: 1.25,
-    ease: "power3.inOut",
-  });
-  gsap.set(textWrapDesc, { opacity: 0, translateY: 30 });
-  gsap.to(textWrapDesc, {
-    opacity: 1,
-    translateY: 0,
-    duration: 1,
-    delay: 0.2,
-    ease: "power3.inOut",
-  });
-
-  const iconTransitionY = ["90%", "70%", "75%", "50%", "100%"];
-  const iconDelay = [0.1, 0.05, 0, 0.08, 0.2];
-  iconElementsRefs.value.forEach((icon, index) => {
-    gsap.set(icon, { y: iconTransitionY[index] });
-    gsap.to(icon, {
-      y: 0,
-      duration: 1.25,
-      delay: iconDelay[index],
-      ease: "power3.inOut",
-    });
+        if (maskIndex.value === 10) isIntroEnd.value = true;
+        else isIntroEnd.value = false;
+      },
+    },
   });
 };
 
-const init = () => {
-  if (!introRef.value) return;
-
-  iconElementsRefs.value = Array.from(introRef.value?.querySelectorAll(".animated-icon"));
-  textSegmentsRefs.value = Array.from(introRef.value?.querySelectorAll(".text-segment"));
-  placeholderIconRefs.value = Array.from(introRef.value?.querySelectorAll(".placeholder-icon"));
-  currentIconSize.value = iconElementsRefs.value[0].getBoundingClientRect().width;
-  exactScale.value = headerIconSize / currentIconSize.value;
-
-  textSegmentsRefs.value.forEach((segment, index) => {
-    textAnimationOrder.value.push({ segment, originalIndex: index });
-  });
-
-  for (let i = textAnimationOrder.value.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [textAnimationOrder.value[i], textAnimationOrder.value[j]] = [
-      textAnimationOrder.value[j],
-      textAnimationOrder.value[i],
-    ];
-  }
-
-  scrollTrigger.value?.create({
-    trigger: ".intro",
-    start: "top 15px",
-    end: `+=${window.innerHeight * 8}px`,
-    pin: true,
-    onEnter: setScrollTriggerEnter,
-    onUpdate: (self) => setScrollTriggerUpdate(self),
-  });
-};
+watch(isIntroInit, (status) => {
+  if (status) introInit();
+});
 
 onMounted(() => {
-  nextTick(init);
+  heroInit();
+  maskInit();
 });
 </script>
 
 <template>
-  <div ref="introRef" class="intro" :style="{ '--mask-index': maskIndex }">
-    <div ref="textWrapRef" class="text-wrap">
-      <h2 class="title">PORTFOLIO</h2>
-      <p class="desc">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, ea. Et exercitationem nostrum accusamus magni
-      </p>
+  <div v-show="!isShowMask" class="hero-container">
+    <div class="hero-trigger"></div>
+    <div class="hero-bg"></div>
+    <div class="hero-sticky">
+      <div class="scale">
+        <div class="hero-text">
+          <h2 class="title">
+            <span>Your data runs the</span>
+            <span>world</span>
+          </h2>
+          <p class="desc">Start earning from it today.</p>
+        </div>
+        <div ref="heroIconsRef" class="hero-icons">
+          <Logo1 class="hero-icon icon-1" />
+          <Logo2 class="hero-icon icon-2" />
+          <Logo3 class="hero-icon icon-3" />
+          <Logo4 class="hero-icon icon-4" />
+          <Logo5 class="hero-icon icon-5" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ref="introContainerRef" class="intro-container">
+    <div v-show="!isShowMask" class="intro-bg"></div>
+    <div class="intro-trigger"></div>
+
+    <div v-show="!isShowMask" class="intro-sticky">
+      <h3 ref="introMainRef" class="intro-main-icon title">
+        <p class="line line-1">
+          <span>Your favorite</span>
+          <Logo5 class="intro-icon icon-1" />
+          <span>songs</span>
+        </p>
+
+        <p class="line line-2">
+          <span>That</span>
+          <Logo1 class="intro-icon icon-2" />
+          <span>must-see movie.</span>
+        </p>
+
+        <p class="line line-3">
+          <span>Your top</span>
+          <Logo4 class="intro-icon icon-3" />
+          <span>interests and</span>
+        </p>
+        <p class="line line-4">
+          <span>all your shopping</span>
+          <Logo2 class="intro-icon icon-4" />
+          <Logo3 class="intro-icon icon-5" />
+          <span>habits.</span>
+        </p>
+      </h3>
+
+      <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
+        <Logo5 class="intro-icon icon-1" />
+        <Logo1 class="intro-icon icon-2" />
+        <Logo4 class="intro-icon icon-3" />
+        <Logo2 class="intro-icon icon-4" />
+        <Logo3 class="intro-icon icon-5" />
+      </div>
     </div>
 
-    <div ref="animatedIconsRef" class="animated-icons">
-      <Logo1 class="animated-icon icon-1" />
-      <Logo2 class="animated-icon icon-2" />
-      <Logo3 class="animated-icon icon-3" />
-      <Logo4 class="animated-icon icon-4" />
-      <Logo5 class="animated-icon icon-5" />
-    </div>
-
-    <div ref="animatedTextRef" class="animated-text">
-      <h3>
-        <p>
-          <span class="placeholder-icon" />
-          <span class="text-segment">Delve into cooding</span>
-          <span class="placeholder-icon" />
-        </p>
-        <p>
-          <span class="text-segment">Without clutter.Unlock source code</span>
+    <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
+      <h3 class="mask-wrap">
+        <p class="mask-line mask-line-1">
+          <span>Your favorite</span>
+          <Logo5 class="mask-icon icon-1" />
+          <span>songs</span>
         </p>
 
-        <p>
-          <span class="text-segment">For every</span>
-          <span class="placeholder-icon" />
-          <span class="text-segment"> tutorial</span>
+        <p class="mask-line mask-line-2">
+          <span>That</span>
+          <Logo1 class="mask-icon icon-2" />
+          <span>must-see movie.</span>
         </p>
 
-        <p>
-          <span class="placeholder-icon" />
-          <span class="text-segment">Publishde on the Codegrid</span>
+        <p class="mask-line mask-line-3">
+          <span>Your top</span>
+          <Logo4 class="mask-icon icon-3" />
+          <span>interests and</span>
         </p>
-
-        <p>
-          <span class="placeholder-icon" />
-          <span class="text-segment">Youtube channel.</span>
+        <p class="mask-line mask-line-4">
+          <span>all your shopping</span>
+          <Logo2 class="mask-icon icon-4" />
+          <Logo3 class="mask-icon icon-5" />
+          <span>habits.</span>
         </p>
       </h3>
     </div>
@@ -333,122 +305,320 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.intro {
-  --mask-count: 8;
-
+.hero-container {
   position: absolute;
   top: 0;
   left: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
   width: 100%;
-  height: 100%;
-  background-color: #141414;
-  transition: background-color 0.3s ease;
+  height: 300svh;
+  background-color: #e3e3db;
 
-  .text-wrap {
+  .hero-trigger {
     position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    will-change: transform, opacity;
-
-    .title {
-      font-size: 7vw;
-      font-weight: 700;
-      letter-spacing: -2.5px;
-      color: white;
-    }
-
-    .desc {
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: white;
-    }
+    top: 0;
+    left: 0;
+    width: 3rem;
+    height: 100svh;
+    opacity: 0;
   }
 
-  .animated-icons {
-    position: fixed;
-    inset: auto 16px 16px 16px;
-    display: flex;
-    align-items: center;
-    will-change: transform;
-    z-index: 2;
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #141414;
+    will-change: opacity;
+  }
 
-    .animated-icon {
-      flex: 1;
+  .hero-sticky {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: calc(100svh - 30px);
+    text-align: center;
+    overflow: hidden;
+
+    .scale {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       height: 100%;
-      aspect-ratio: 1;
+      color: white;
+
       will-change: transform;
-    }
-  }
 
-  .animated-text {
-    pointer-events: none;
+      .hero-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: 42px;
 
-    h3 {
-      position: relative;
-      font-size: 62px;
-      font-weight: 900;
+        .title {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          line-height: 0.95;
+          font-size: 100px;
+          font-weight: 700;
 
-      p {
-        margin-top: 10px;
+          @media (max-width: 1000px) {
+            font-size: 45px;
+          }
+        }
+
+        .desc {
+          font-size: 14px;
+          line-height: 1.2;
+
+          @media (max-width: 1000px) {
+            font-size: 12px;
+          }
+        }
+      }
+
+      .hero-icons {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
-        white-space: nowrap;
+        padding: 0 16px 14px;
+        width: 100%;
 
-        .text-segment {
-          color: var(--black);
-          opacity: 0;
-          line-height: 0.9;
-        }
-
-        .placeholder-icon {
-          width: 70px;
-          height: 70px;
-          display: inline-block;
+        .hero-icon {
+          flex: 1;
+          width: 100%;
+          height: 100%;
+          aspect-ratio: 1;
           will-change: transform;
-          visibility: hidden;
         }
       }
     }
   }
 }
 
-@media (max-width: 1000px) {
-  .intro {
-    .text-wrap {
-      top: 45%;
-      width: 100%;
+.intro-container {
+  --mask-count: 8;
 
-      .title {
-        font-size: 12vw;
-      }
+  position: absolute;
+  top: 100svh;
+  left: 0;
+  width: 100%;
+  height: 300svh;
 
-      .desc {
-        font-size: 1.1rem;
+  mask-image: url("/images/mask.webp");
+  mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+  mask-size: calc(100vw * var(--mask-count, 8)) 100%;
+  mask-repeat: no-repeat;
+
+  .intro-trigger {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3rem;
+    height: 200svh;
+    opacity: 0;
+  }
+
+  .intro-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #e3e3db;
+  }
+
+  .intro-sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100svh;
+    text-align: center;
+    overflow: hidden;
+
+    .intro-main-icon {
+      position: relative;
+      pointer-events: none;
+
+      .line {
+        position: relative;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        white-space: nowrap;
+        will-change: transform;
+
+        &.line-1 {
+          position: absolute;
+          bottom: 100%;
+        }
+        &.line-3 {
+          position: absolute;
+          top: 100%;
+        }
+        &.line-4 {
+          position: absolute;
+          top: 200%;
+        }
+
+        span {
+          line-height: 1.2;
+          font-size: 82px;
+          font-weight: 700;
+
+          @media (max-width: 1000px) {
+            font-size: 40px;
+          }
+        }
+
+        .intro-icon {
+          margin-inline: 18px;
+
+          &.icon-4 {
+            margin-right: 4px;
+          }
+          &.icon-5 {
+            margin-left: 0;
+          }
+        }
       }
     }
 
-    .animated-text h3 {
-      font-size: 4.5rem;
+    .intro-dumy-icon {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
 
-      p {
-        margin-top: 4px;
+      .intro-icon {
+        &.icon-1 {
+          order: 5;
+        }
+        &.icon-2 {
+          order: 1;
+        }
+        &.icon-3 {
+          order: 4;
+        }
+        &.icon-4 {
+          order: 2;
+        }
+        &.icon-5 {
+          order: 3;
+        }
+      }
+    }
 
-        .placeholder-icon {
-          width: 30px;
-          height: 30px;
+    .intro-icon {
+      flex-shrink: 0;
+      width: 78px;
+      height: 78px;
+      min-width: 78px;
+      min-height: 78px;
+    }
+  }
+}
+
+.intro-mask {
+  --mask-count: 8;
+
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100svh;
+  text-align: center;
+  overflow: hidden;
+  background-color: #e3e3db;
+  pointer-events: none;
+
+  mask-image: url("/images/mask.webp");
+  mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+  mask-size: calc(100vw * var(--mask-count, 8)) 100%;
+  mask-repeat: no-repeat;
+
+  .mask-wrap {
+    position: relative;
+
+    .mask-line {
+      position: relative;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      white-space: nowrap;
+
+      &.mask-line-1 {
+        position: absolute;
+        bottom: 100%;
+      }
+
+      &.mask-line-3 {
+        position: absolute;
+        top: 100%;
+      }
+      &.mask-line-4 {
+        position: absolute;
+        top: 200%;
+      }
+
+      span {
+        line-height: 1.2;
+        font-size: 82px;
+        font-weight: 700;
+
+        @media (max-width: 1000px) {
+          font-size: 40px;
+        }
+      }
+
+      .mask-icon {
+        flex-shrink: 0;
+        width: 78px;
+        height: 78px;
+        min-width: 78px;
+        min-height: 78px;
+        margin-inline: 18px;
+
+        &.icon-3 {
+          width: 86px;
+          height: 86px;
+          min-width: 86px;
+          min-height: 86px;
+        }
+        &.icon-4 {
+          margin-right: 4px;
+        }
+        &.icon-5 {
+          margin-left: 0;
         }
       }
     }

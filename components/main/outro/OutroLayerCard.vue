@@ -132,6 +132,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100dvh;
+  overflow-x: hidden;
 
   .info-wrapper {
     width: 100%;
