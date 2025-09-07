@@ -20,7 +20,7 @@ const isShowMask = ref(false);
 const maskIndex = ref(0);
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { isIntroEnd } = storeToRefs(scrollTriggerStore);
+const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const heroInit = () => {
   if (!heroIconsRef.value) return;
@@ -180,22 +180,17 @@ const introInit = () => {
   }
 };
 const maskInit = () => {
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".intro-mask",
-      start: `top top`,
-      end: `bottom top`,
-      scrub: !0,
-      markers: true,
-      onUpdate: (self: any) => {
-        const progress = self.progress;
-        maskIndex.value = Math.floor(progress * 10);
+  scrollTrigger.value?.create({
+    trigger: ".intro-mask",
+    start: `top top`,
+    end: `bottom top`,
+    scrub: !0,
+    onUpdate: (self: any) => {
+      const progress = self.progress;
+      maskIndex.value = Math.floor(progress * 10);
 
-        console.log(progress);
-
-        if (maskIndex.value === 10) isIntroEnd.value = true;
-        else isIntroEnd.value = false;
-      },
+      if (maskIndex.value === 10) isIntroEnd.value = true;
+      else isIntroEnd.value = false;
     },
   });
 };

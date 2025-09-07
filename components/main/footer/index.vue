@@ -6,11 +6,12 @@
 
 <style lang="scss" scoped>
 footer {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100dvh;
-  background-color: blue;
+  z-index: -2;
 }
 </style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OutroTopView from "./OutroTopView.vue";
+import OutroIntro from "./OutroIntro.vue";
 import OutroLayerCard from "./OutroLayerCard.vue";
 
 const layerCards = ref([
@@ -32,6 +33,8 @@ const layerCards = ref([
     <div class="top-view-container">
       <OutroTopView />
     </div>
+
+    <OutroIntro />
 
     <div class="layer-card-container">
       <div class="layer-card-scroller">
@@ -80,14 +83,14 @@ const layerCards = ref([
         height: 100lvh;
       }
     }
-  }
 
-  .layer-card-trigger {
-    position: relative;
-    height: 100lvh;
-    width: 3rem;
-    opacity: 0;
-    z-index: 2;
+    .layer-card-trigger {
+      position: relative;
+      height: 100lvh;
+      width: 3rem;
+      opacity: 0;
+      z-index: 2;
+    }
   }
 }
 </style>

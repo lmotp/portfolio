@@ -32,16 +32,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="video-wrapper">
-    <video
-      playsinline
-      muted
-      autoplay
-      loop
-      controlslist="nodownload noplaybackrate"
-      disablepictureinpicture
-      src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&amp;log_user=0&amp;signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
-    ></video>
+  <div class="video-scroller">
+    <div class="video-wrapper">
+      <video
+        playsinline
+        muted
+        autoplay
+        loop
+        controlslist="nodownload noplaybackrate"
+        disablepictureinpicture
+        src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&amp;log_user=0&amp;signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
+      ></video>
+    </div>
   </div>
 
   <div :class="['layer', isIntroEnd && 'is-intro-end']"></div>
@@ -196,16 +198,21 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.video-wrapper {
-  position: sticky;
-  top: 0;
-  height: 100lvh;
-  overflow: hidden;
+.video-scroller {
+  position: absolute;
+  inset: 0 0 -100svh 0;
 
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .video-wrapper {
+    position: sticky;
+    top: 0;
+    height: 100lvh;
+    overflow: hidden;
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 }
 
