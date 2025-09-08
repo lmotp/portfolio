@@ -11,11 +11,14 @@ type cardType = {
 };
 
 const props = defineProps<cardType>();
+const cardWrapRef = ref<HTMLElement | null>(null);
 const infoWrapperRef = ref<HTMLElement | null>(null);
 const imageWrapperRef = ref<HTMLElement | null>(null);
 
+const maskIndex = ref(0);
+
 const init = () => {
-  const f = document.body.querySelector(`.layer-card-trigger:nth-child(${props.id})`);
+  const f = document.body.querySelector(`.layer-card-trigger:nth-child(${props.id})`) as HTMLElement;
 
   const r = gsap.timeline({
     paused: !0,
@@ -69,15 +72,28 @@ const init = () => {
       start: "top top+=1",
       end: "bottom top",
       scrub: !0,
+
+      onUpdate: (self: any) => {
+        if (props.isLast) {
+          const progress = self.progress;
+          maskIndex.value = Math.floor(progress * 10);
+        }
+      },
+      onEnterBack: () => {
+        if (!props.isLast && cardWrapRef.value) cardWrapRef.value.style.opacity = "1";
+      },
+      onLeave: () => {
+        if (!props.isLast && cardWrapRef.value) cardWrapRef.value.style.opacity = "0";
+      },
     },
   });
 
   l.to(
     infoWrapperRef.value,
     {
-      yPercent: props.isLast ? 50 : -80,
-      xPercent: props.isLast ? -10 : -25,
-      rotate: props.isLast ? -3 : -7,
+      yPercent: props.isLast ? 0 : -80,
+      xPercent: props.isLast ? 0 : -25,
+      rotate: props.isLast ? 0 : -7,
       force3D: !0,
       ease: "none",
     },
@@ -87,9 +103,9 @@ const init = () => {
   l.to(
     imageWrapperRef.value,
     {
-      yPercent: props.isLast ? 40 : -50,
-      xPercent: props.isLast ? -2.5 : -5,
-      rotate: props.isLast ? -2 : -5,
+      yPercent: props.isLast ? 0 : -50,
+      xPercent: props.isLast ? 0 : -5,
+      rotate: props.isLast ? 0 : -5,
       force3D: !0,
       ease: "none",
     },
@@ -103,7 +119,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="layer-card-wrap">
+  <div ref="cardWrapRef" :class="['layer-card-wrap', isLast && 'is-last']" :style="{ '--mask-index': maskIndex }">
     <div ref="infoWrapperRef" class="info-wrapper"></div>
     <div ref="imageWrapperRef" class="image-wrapper">
       <NuxtLink class="link" :to="props.url">
@@ -133,6 +149,15 @@ onMounted(() => {
   width: 100%;
   height: 100dvh;
   overflow-x: hidden;
+
+  &.is-last {
+    --mask-count: 8;
+
+    mask-image: url("/images/mask.webp");
+    mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+    mask-size: calc(100vw * var(--mask-count, 8)) 100%;
+    mask-repeat: no-repeat;
+  }
 
   .info-wrapper {
     width: 100%;

@@ -49,9 +49,15 @@ const layerCards = ref([
       </div>
 
       <div :aria-hidden="true">
-        <div v-for="(_, index) in layerCards" :key="index" :class="['layer-card-trigger', `index-${index}`]"></div>
+        <div
+          v-for="(_, index) in layerCards.length + 1"
+          :key="index"
+          :class="['layer-card-trigger', `index-${index}`]"
+        ></div>
       </div>
     </div>
+
+    <div class="outro-mask"></div>
   </div>
 </template>
 
@@ -90,6 +96,7 @@ const layerCards = ref([
       width: 3rem;
       opacity: 0;
       z-index: 2;
+      pointer-events: none;
     }
   }
 }
