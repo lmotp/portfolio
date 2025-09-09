@@ -13,5 +13,6 @@ footer {
   width: 100%;
   height: 100dvh;
   z-index: -2;
+  background-color: cornflowerblue;
 }
 </style>

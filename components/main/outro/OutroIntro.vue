@@ -74,6 +74,7 @@ onMounted(() => {
 <style scoped>
 .outro-intro {
   position: relative;
+  pointer-events: none;
 
   &::after {
     content: "";

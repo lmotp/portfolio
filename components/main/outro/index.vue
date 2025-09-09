@@ -56,8 +56,6 @@ const layerCards = ref([
         ></div>
       </div>
     </div>
-
-    <div class="outro-mask"></div>
   </div>
 </template>
 
@@ -66,7 +64,7 @@ const layerCards = ref([
   position: relative;
   width: 100%;
   padding-top: calc(100dvh * 2);
-
+  pointer-events: none;
   z-index: -1;
 
   .top-view-container {
@@ -96,7 +94,6 @@ const layerCards = ref([
       width: 3rem;
       opacity: 0;
       z-index: 2;
-      pointer-events: none;
     }
   }
 }

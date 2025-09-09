@@ -80,10 +80,14 @@ const init = () => {
         }
       },
       onEnterBack: () => {
-        if (!props.isLast && cardWrapRef.value) cardWrapRef.value.style.opacity = "1";
+        if (!cardWrapRef.value) return;
+        if (!props.isLast) cardWrapRef.value.style.opacity = "1";
+        cardWrapRef.value.style.pointerEvents = "auto";
       },
       onLeave: () => {
-        if (!props.isLast && cardWrapRef.value) cardWrapRef.value.style.opacity = "0";
+        if (!cardWrapRef.value) return;
+        if (!props.isLast) cardWrapRef.value.style.opacity = "0";
+        cardWrapRef.value.style.pointerEvents = "none";
       },
     },
   });
