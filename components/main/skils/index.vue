@@ -77,10 +77,9 @@ onMounted(() => {
 <style lang="scss" scoped>
 .skills {
   position: relative;
+  margin-top: -200dvh;
   width: 100%;
   height: 600dvh;
-
-  margin-top: -200dvh;
   background-color: blue;
   z-index: -2;
 
