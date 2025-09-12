@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { isOutroEnd } = storeToRefs(scrollTriggerStore);
 
 type cardType = {
   id: number;
@@ -77,6 +82,9 @@ const init = () => {
         if (props.isLast) {
           const progress = self.progress;
           maskIndex.value = Math.floor(progress * 10);
+
+          if (maskIndex.value === 10) isOutroEnd.value = true;
+          else isOutroEnd.value = false;
         }
       },
       onEnterBack: () => {
