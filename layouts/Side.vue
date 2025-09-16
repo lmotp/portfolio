@@ -16,6 +16,10 @@ const menuList = [
     name: "About",
     path: "/about",
   },
+  {
+    name: "Experiments",
+    path: "/experiments",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();
@@ -97,7 +101,10 @@ onMounted(() => {
         <button
           v-for="menu in menuList"
           :key="menu.path"
-          :class="['side__content-link', path === menu.path && 'active']"
+          :class="[
+            'side__content-link',
+            (menu.path === path || (path.includes('/experiments') && menu.path === '/experiments')) && 'active',
+          ]"
           @click="handleMenuClick(menu.path)"
         >
           {{ menu.name }}
