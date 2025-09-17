@@ -14,6 +14,4 @@ void main() {
   vec3 color = vec3(1.0, 0.38, 0.0);
 
   gl_FragColor = vec4(color, opacity * vOpacity);
-
-  gl_FragColor.a = vec4(gl_PointCoord, 1.0, 1.0);
 }
