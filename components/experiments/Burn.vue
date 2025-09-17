@@ -41,7 +41,10 @@ const init = async () => {
   if (!burnRef.value) return;
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(50, 3 / 2, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera();
+  camera.aspect = 3 / 2;
+  camera.far = 1000;
+  camera.setFocalLength(50);
   camera.position.set(0, 0, 50);
   camera.lookAt(new THREE.Vector3());
 
@@ -153,9 +156,9 @@ const changeTex = () => {
 
 const resizeWindow = () => {
   resolution.value.set(document.body.clientWidth, window.innerHeight);
-  renderer.setSize(resolution.value.x, resolution.value.y);
   camera.aspect = resolution.value.x / resolution.value.y;
   camera.updateProjectionMatrix();
+  renderer.setSize(resolution.value.x, resolution.value.y);
 
   const radian = THREE.MathUtils.degToRad(camera.fov);
   const height = Math.abs((camera.position.z - imageGroup.position.z) * Math.tan(radian / 2) * 2);
@@ -176,9 +179,9 @@ const resizeWindow = () => {
 
   const imageRatio = new THREE.Vector2(Math.min(1, size.x / size.y), Math.min(1, size.y / size.x));
 
-  imagePlaneMaterial.uniforms.imgRatio.value.set(imageRatio);
-  imageFireMaterial.uniforms.imgRatio.value.set(imageRatio);
-  imagePointsMaterial.uniforms.imgRatio.value.set(imageRatio);
+  imagePlaneMaterial.uniforms.imgRatio.value.set(imageRatio.x, imageRatio.y);
+  imageFireMaterial.uniforms.imgRatio.value.set(imageRatio.x, imageRatio.y);
+  imagePointsMaterial.uniforms.imgRatio.value.set(imageRatio.x, imageRatio.y);
 
   imagePlane.scale.copy(size);
   imageFire.scale.copy(size);
