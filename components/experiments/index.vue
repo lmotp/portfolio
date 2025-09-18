@@ -7,6 +7,10 @@ const menuList = [
     name: "Burn",
     path: "/experiments/burn",
   },
+  {
+    name: "Glitch",
+    path: "/experiments/glitch",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();
@@ -35,5 +39,6 @@ const handleMenuClick = (menuPath: string) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 20px;
 }
 </style>

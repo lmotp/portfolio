@@ -221,7 +221,12 @@ onMounted(() => {
     await init();
     resizeWindow();
     animate();
+    window.addEventListener("resize", resizeWindow);
   });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", resizeWindow);
 });
 </script>
 
