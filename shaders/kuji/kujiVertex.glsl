@@ -9,7 +9,11 @@ void main() {
   vUv = uv;
 
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+
   float reverseUv = 1.0 - uv.x;
+  float y = pow(reverseUv, 5.0);
+
+  float pct = plot(uv, y);
 
   modelPosition.z += reverseUv * 10.0;
 

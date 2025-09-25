@@ -15,6 +15,10 @@ const menuList = [
     name: "Kuji",
     path: "/experiments/kuji",
   },
+  {
+    name: "Roll",
+    path: "/experiments/roll",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();

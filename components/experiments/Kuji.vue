@@ -71,7 +71,6 @@ const setPlaneMesh = () => {
   textureLoader.load("/images/experiments/kuji/kuji_front.jpg", (tex) => {
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
-
     geometry = new THREE.PlaneGeometry(120, 80);
     material = new THREE.MeshStandardMaterial({
       map: tex,
@@ -121,10 +120,35 @@ const setSVGMesh = () => {
     svgMaterial = new THREE.MeshStandardMaterial({
       color: 0xff0000,
       side: THREE.DoubleSide,
-
-      // opacity: 0.5,
-      // transparent: true,
     });
+
+    svgMaterial.onBeforeCompile = (shader) => {
+      shader.uniforms.curved = { value: 5.0 };
+      shader.vertexShader =
+        `
+        uniform float curved;
+        float plot(vec2 st, float pct) {
+          return smoothstep(pct - 0.02, pct, st.y) -
+            smoothstep(pct, pct + 0.02, st.y);
+        }
+    ` + shader.vertexShader;
+
+      // 2. <begin_vertex> 부분을 찾아 정점 변형 코드 삽입
+      shader.vertexShader = shader.vertexShader.replace(
+        `#include <begin_vertex>`,
+        `#include <begin_vertex>
+
+        float reverseUv = 1.0 - uv.x;
+        float pct = pow(reverseUv, 2.0);
+        float plot = smoothstep(pct - 0.02, pct, uv.y) - smoothstep(pct, pct + 0.02, uv.y);
+            
+        transformed.z += pct * 100.0;
+        `
+      );
+
+      svgMaterial.userData.shader = shader;
+    };
+
     svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
     svgMesh.castShadow = true;
     svgMesh.scale.y *= -1;
@@ -137,40 +161,36 @@ const setSVGMesh = () => {
     svgMesh.position.y -= center.y - 0.5;
     svgMesh.position.z = 0.1;
 
-    svgMesh.rotateY(THREE.MathUtils.degToRad(-30));
-
     scene.add(svgMesh);
   });
 };
 
 const setLights = () => {
-  dirLight = new THREE.DirectionalLight(0xffffff, 3.15);
+  dirLight = new THREE.DirectionalLight(0xffffff, 2.85);
 
   dirLight.castShadow = true;
   // ✨ 그림자 카메라의 범위와 해상도 조절 (매우 중요)
-  dirLight.shadow.mapSize.width = 2048; // 해상도 높이기
-  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.mapSize.width = window.innerWidth;
+  dirLight.shadow.mapSize.height = window.innerHeight;
+
   dirLight.shadow.camera.left = -60;
   dirLight.shadow.camera.right = 60;
   dirLight.shadow.camera.top = 40;
   dirLight.shadow.camera.bottom = -40;
+
   dirLight.shadow.camera.near = 100;
   dirLight.shadow.camera.far = 200;
 
+  dirLight.shadow.radius = 10;
+  dirLight.shadow.bias = 0.005; // 약간의 바이어스 값으로 그림자 들뜸 방지 및 연하게 만들기
+  dirLight.shadow.normalBias = 0.05; // 법선 바이어스 값으로 경사진 면의 그림자 부드럽게
+
   dirLight.position.set(0, 0, 150);
+
   scene.add(dirLight);
 
-  // const rectLight = new THREE.RectAreaLight(0xffffff, 1, 1, 1);
-  // rectLight.position.set(0, 0, 150);
-  // scene.add(rectLight);
-
-  // const pointLight = new THREE.PointLight(0x0000ff, 1);
-  // const pointLightHelper = new THREE.PointLightHelper(pointLight, 1);
-  // pointLight.position.set(0, 0, 10);
-  // scene.add(pointLight);
-  // scene.add(pointLightHelper);
-
-  // transformControls.attach(pointLight);
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.5);
+  scene.add(hemiLight);
 };
 
 const resizeWindow = () => {
