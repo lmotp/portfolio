@@ -61,7 +61,7 @@ const init = () => {
   scene.add(gizmo);
 
   setPlaneMesh();
-  setSVGMesh();
+  // setSVGMesh();
 
   setLights();
 };
@@ -80,6 +80,20 @@ const setPlaneMesh = () => {
     mesh.receiveShadow = true;
     scene.add(mesh);
   });
+
+  const kujiGeometry = new THREE.PlaneGeometry(120, 80, 20, 20);
+  const kujiMaterial = new THREE.MeshStandardMaterial({
+    map: textureLoader.load("/images/experiments/kuji/kuji_clip.png"),
+    transparent: true,
+    side: THREE.DoubleSide,
+    // wireframe: true,
+  });
+  const kujiMesh = new THREE.Mesh(kujiGeometry, kujiMaterial);
+  kujiMesh.position.z = 10;
+  planeCurve(kujiGeometry, 10);
+  scene.add(kujiMesh);
+
+  transformControls.attach(kujiMesh);
 };
 
 const setSVGMesh = () => {
@@ -116,38 +130,14 @@ const setSVGMesh = () => {
     }
 
     svgGeometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+    (svgGeometry as any).parameters.width = width;
+    (svgGeometry as any).parameters.height = height;
 
     svgMaterial = new THREE.MeshStandardMaterial({
-      color: 0xff0000,
+      color: 0x000000,
       side: THREE.DoubleSide,
+      opacity: 0.5,
     });
-
-    svgMaterial.onBeforeCompile = (shader) => {
-      shader.uniforms.curved = { value: 5.0 };
-      shader.vertexShader =
-        `
-        uniform float curved;
-        float plot(vec2 st, float pct) {
-          return smoothstep(pct - 0.02, pct, st.y) -
-            smoothstep(pct, pct + 0.02, st.y);
-        }
-    ` + shader.vertexShader;
-
-      // 2. <begin_vertex> 부분을 찾아 정점 변형 코드 삽입
-      shader.vertexShader = shader.vertexShader.replace(
-        `#include <begin_vertex>`,
-        `#include <begin_vertex>
-
-        float reverseUv = 1.0 - uv.x;
-        float pct = pow(reverseUv, 2.0);
-        float plot = smoothstep(pct - 0.02, pct, uv.y) - smoothstep(pct, pct + 0.02, uv.y);
-            
-        transformed.z += pct * 100.0;
-        `
-      );
-
-      svgMaterial.userData.shader = shader;
-    };
 
     svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
     svgMesh.castShadow = true;
@@ -199,6 +189,39 @@ const resizeWindow = () => {
   camera.aspect = resolution.value.x / resolution.value.y;
   camera.updateProjectionMatrix();
   renderer.setSize(resolution.value.x, resolution.value.y);
+};
+
+const planeCurve = (g: THREE.ShapeGeometry | THREE.PlaneGeometry, z: number) => {
+  let p = g.parameters;
+  let hw = (p as any).width * 0.5;
+
+  let a = new THREE.Vector2(-hw, 0);
+  let b = new THREE.Vector2(0, z);
+  let c = new THREE.Vector2(hw, 0);
+
+  let ab = new THREE.Vector2().subVectors(a, b);
+  let bc = new THREE.Vector2().subVectors(b, c);
+  let ac = new THREE.Vector2().subVectors(a, c);
+
+  let r = (ab.length() * bc.length() * ac.length()) / (2 * Math.abs(ab.cross(ac)));
+
+  let center = new THREE.Vector2(0, z - r);
+  let baseV = new THREE.Vector2().subVectors(a, center);
+  let baseAngle = baseV.angle() - Math.PI * 0.5;
+  let arc = baseAngle * 2;
+
+  let uv = g.attributes.uv;
+  let pos = g.attributes.position;
+
+  let mainV = new THREE.Vector2();
+  for (let i = 0; i < uv.count; i++) {
+    let uvRatio = 1 - uv.getX(i);
+    let y = pos.getY(i);
+    mainV.copy(c).rotateAround(center, arc * uvRatio);
+    pos.setXYZ(i, mainV.x, y, -mainV.y);
+  }
+
+  pos.needsUpdate = true;
 };
 
 const animate = () => {
