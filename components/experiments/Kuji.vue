@@ -26,10 +26,15 @@ let svgGeometry: THREE.ShapeGeometry;
 let svgMaterial: THREE.MeshStandardMaterial;
 let svgMesh: THREE.Mesh;
 
+let kujiGeometry: THREE.PlaneGeometry;
+let kujiMaterial: THREE.MeshStandardMaterial;
+let kujiMesh: THREE.Mesh;
+
 const gui = new dat.GUI();
 const settings = ref({
   scale: 0.0085,
   intensity: 1.5,
+  curve: 1,
 });
 
 const init = () => {
@@ -43,7 +48,7 @@ const init = () => {
   renderer.setClearColor(0xffffff, 1.0);
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(50, resolution.value.x / resolution.value.y, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(50, resolution.value.x / resolution.value.y, 0.1, 2000);
   camera.position.set(0, 0, 150);
 
   controls = new OrbitControls(camera, renderer.domElement);
@@ -52,6 +57,11 @@ const init = () => {
   transformControls = new TransformControls(camera, renderer.domElement);
   transformControls.addEventListener("change", () => {
     renderer.render(scene, camera);
+
+    if (kujiMesh) {
+      const rotation = kujiMesh.rotation;
+      console.log(rotation);
+    }
   });
   transformControls.addEventListener("dragging-changed", (event) => {
     controls.enabled = !event.value;
@@ -68,10 +78,11 @@ const init = () => {
 
 const setPlaneMesh = () => {
   const textureLoader = new THREE.TextureLoader();
+
   textureLoader.load("/images/experiments/kuji/kuji_front.jpg", (tex) => {
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
-    geometry = new THREE.PlaneGeometry(120, 80);
+    geometry = new THREE.PlaneGeometry(tex.image.width * 0.1, tex.image.height * 0.1);
     material = new THREE.MeshStandardMaterial({
       map: tex,
       side: THREE.DoubleSide,
@@ -81,19 +92,23 @@ const setPlaneMesh = () => {
     scene.add(mesh);
   });
 
-  const kujiGeometry = new THREE.PlaneGeometry(120, 80, 20, 20);
-  const kujiMaterial = new THREE.MeshStandardMaterial({
-    map: textureLoader.load("/images/experiments/kuji/kuji_clip.png"),
-    transparent: true,
-    side: THREE.DoubleSide,
-    // wireframe: true,
-  });
-  const kujiMesh = new THREE.Mesh(kujiGeometry, kujiMaterial);
-  kujiMesh.position.z = 10;
-  planeCurve(kujiGeometry, 10);
-  scene.add(kujiMesh);
+  textureLoader.load("/images/experiments/kuji/kuji_clip.png", (tex) => {
+    kujiGeometry = new THREE.PlaneGeometry(tex.image.width * 0.1, tex.image.height * 0.1, 20, 20);
+    kujiMaterial = new THREE.MeshStandardMaterial({
+      map: tex,
+      transparent: true,
+      side: THREE.DoubleSide,
+    });
+    kujiMesh = new THREE.Mesh(kujiGeometry, kujiMaterial);
+    kujiMesh.position.set(0.27715137759722996, 1.2027755882334343, 0.5);
+    planeCurve(kujiGeometry, settings.value.curve);
+    // kujiMesh.rotateY(THREE.MathUtils.degToRad(-90));
+    scene.add(kujiMesh);
 
-  transformControls.attach(kujiMesh);
+    gui.add(settings.value, "curve", 1, 50, 1).onChange((v: number) => {
+      planeCurve(kujiGeometry, v);
+    });
+  });
 };
 
 const setSVGMesh = () => {
@@ -156,10 +171,9 @@ const setSVGMesh = () => {
 };
 
 const setLights = () => {
-  dirLight = new THREE.DirectionalLight(0xffffff, 2.85);
+  dirLight = new THREE.DirectionalLight(0xffffff, 2);
 
   dirLight.castShadow = true;
-  // ✨ 그림자 카메라의 범위와 해상도 조절 (매우 중요)
   dirLight.shadow.mapSize.width = window.innerWidth;
   dirLight.shadow.mapSize.height = window.innerHeight;
 
@@ -192,33 +206,30 @@ const resizeWindow = () => {
 };
 
 const planeCurve = (g: THREE.ShapeGeometry | THREE.PlaneGeometry, z: number) => {
-  let p = g.parameters;
-  let hw = (p as any).width * 0.5;
+  const params = g.parameters as any;
+  const hw = params.width;
+  const r = (z * z + hw * hw) / (2 * Math.abs(z));
 
-  let a = new THREE.Vector2(-hw, 0);
-  let b = new THREE.Vector2(0, z);
-  let c = new THREE.Vector2(hw, 0);
+  const center = new THREE.Vector3(0, 0, r);
 
-  let ab = new THREE.Vector2().subVectors(a, b);
-  let bc = new THREE.Vector2().subVectors(b, c);
-  let ac = new THREE.Vector2().subVectors(a, c);
+  const fixPoint = new THREE.Vector3(-hw, 0, 0);
+  const baseV = new THREE.Vector3().subVectors(fixPoint, center);
+  const baseAngle = Math.atan2(baseV.z, baseV.x);
+  const arc = Math.atan2(hw, Math.abs(r));
 
-  let r = (ab.length() * bc.length() * ac.length()) / (2 * Math.abs(ab.cross(ac)));
+  const pos = g.attributes.position;
+  const uv = g.attributes.uv;
 
-  let center = new THREE.Vector2(0, z - r);
-  let baseV = new THREE.Vector2().subVectors(a, center);
-  let baseAngle = baseV.angle() - Math.PI * 0.5;
-  let arc = baseAngle * 2;
-
-  let uv = g.attributes.uv;
-  let pos = g.attributes.position;
-
-  let mainV = new THREE.Vector2();
   for (let i = 0; i < uv.count; i++) {
-    let uvRatio = 1 - uv.getX(i);
-    let y = pos.getY(i);
-    mainV.copy(c).rotateAround(center, arc * uvRatio);
-    pos.setXYZ(i, mainV.x, y, -mainV.y);
+    const u = uv.getX(i);
+    const y = pos.getY(i);
+
+    const currentAngle = baseAngle + arc * u;
+
+    const newX = center.x + r * Math.cos(currentAngle);
+    const newZ = center.z + r * Math.sin(currentAngle);
+
+    pos.setXYZ(i, newX + hw * 0.5, y, newZ);
   }
 
   pos.needsUpdate = true;
