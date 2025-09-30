@@ -100,12 +100,16 @@ const setPlaneMesh = () => {
       side: THREE.DoubleSide,
     });
     kujiMesh = new THREE.Mesh(kujiGeometry, kujiMaterial);
-    kujiMesh.position.set(0.27715137759722996, 1.2027755882334343, 0.5);
+    kujiMesh.position.set(0.27715137759722996 - tex.image.width * 0.1 * 0.5, 1.2027755882334343, 0.5);
     planeCurve(kujiGeometry, settings.value.curve);
-    // kujiMesh.rotateY(THREE.MathUtils.degToRad(-90));
-    scene.add(kujiMesh);
 
-    gui.add(settings.value, "curve", 1, 50, 1).onChange((v: number) => {
+    const pivotGroup = new THREE.Group();
+    pivotGroup.position.set(tex.image.width * 0.1 * 0.5, 1.2027755882334343, 0.5);
+    pivotGroup.add(kujiMesh);
+    scene.add(pivotGroup);
+
+    gui.add(settings.value, "curve", 1, 100, 1).onChange((v: number) => {
+      pivotGroup.rotation.y = THREE.MathUtils.degToRad(v);
       planeCurve(kujiGeometry, v);
     });
   });
