@@ -139,3 +139,64 @@ const wave = await loadSvg("/images/physics/wave.svg").then(function (root) {
 
   return Bodies.fromVertices(centerX, y, vertexSets, options, true);
 });
+
+
+// ///////
+const setSVGMesh = () => {
+  const svgLoader = new SVGLoader();
+  svgLoader.load("/images/experiments/kuji/kuji_point.svg", (data) => {
+    const path = data.paths[0];
+    const shapes = SVGLoader.createShapes(path);
+    const scaleSize = 0.086;
+
+    svgGeometry = new THREE.ShapeGeometry(shapes[0]);
+    const positions = svgGeometry.attributes.position.array;
+    const uvs = new Float32Array((positions.length * 2) / 3);
+
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+
+    for (let k = 0; k < positions.length; k += 3) {
+      minX = Math.min(minX, positions[k]);
+      maxX = Math.max(maxX, positions[k]);
+      minY = Math.min(minY, positions[k + 1]);
+      maxY = Math.max(maxY, positions[k + 1]);
+    }
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    for (let k = 0; k < positions.length; k += 3) {
+      const x = positions[k];
+      const y = positions[k + 1];
+      uvs[(k / 3) * 2] = (x - minX) / width;
+      uvs[(k / 3) * 2 + 1] = (y - minY) / height;
+    }
+
+    svgGeometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2));
+    (svgGeometry as any).parameters.width = width;
+    (svgGeometry as any).parameters.height = height;
+
+    svgMaterial = new THREE.MeshStandardMaterial({
+      color: 0x000000,
+      side: THREE.DoubleSide,
+      opacity: 0.5,
+    });
+
+    svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
+    svgMesh.castShadow = true;
+    svgMesh.scale.y *= -1;
+    svgMesh.scale.set(scaleSize, scaleSize, scaleSize);
+
+    const bbox = new THREE.Box3().setFromObject(svgMesh);
+    const center = bbox.getCenter(new THREE.Vector3());
+
+    svgMesh.position.x -= center.x - 0.5;
+    svgMesh.position.y -= center.y - 0.5;
+    svgMesh.position.z = 0.1;
+
+    scene.add(svgMesh);
+  });
+};

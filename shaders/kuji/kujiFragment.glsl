@@ -6,7 +6,11 @@ varying vec2 vUv;
 
 void main() {
   vec2 coord = vUv;
-  vec4 color = vec4(coord, .0, 1.0);
+  vec4 color = texture2D(uTexture, coord);
+
+  if(color.a < 0.5) {
+    discard;
+  }
 
   gl_FragColor = color;
 }
