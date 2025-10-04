@@ -12,13 +12,17 @@ const kujiWrapRef = ref<HTMLElement | null>(null);
 const kujiRef = ref<HTMLElement | null>(null);
 const resolution = ref(new THREE.Vector2(window.innerWidth, window.innerHeight));
 
+const buttonSetting = {
+  xPos: 0,
+  progress: 0,
+};
 const falterIntroRef = ref<HTMLElement | null>(null);
 const topCircleRef = ref<HTMLElement | null>(null);
 const connectingLineRef = ref<HTMLElement | null>(null);
 const targetCircleRef = ref<HTMLElement | null>(null);
+const yoyo = ref<gsap.core.Timeline | null>(null);
 const isPress = ref(false);
-const progress = ref(0);
-const isGrabbing = ref(false);
+const isEnd = ref(false);
 
 let renderer: THREE.WebGLRenderer;
 let scene: THREE.Scene;
@@ -62,7 +66,7 @@ const init = () => {
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(50, resolution.value.x / resolution.value.y, 0.1, 2000);
-  camera.position.set(-80, -25, 180);
+  camera.position.set(-80, -25, 200);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -139,9 +143,9 @@ const setPlaneMesh = () => {
 
     initAnimation();
 
-    gui.add(settings.value, "curve", 1, 100, 1).onChange((v: number) => {
-      if (!isGrabbing.value) isGrabbing.value = true;
-    });
+    // gui.add(settings.value, "curve", 1, 100, 1).onChange((v: number) => {
+    //   if (!isGrabbing.value) isGrabbing.value = true;
+    // });
   });
 };
 const setLights = () => {
@@ -208,16 +212,19 @@ const planeCurve = (g: THREE.ShapeGeometry | THREE.PlaneGeometry, z: number) => 
 };
 
 const initAnimation = () => {
-  gsap.to(settings.value, {
+  yoyo.value = gsap.to(buttonSetting, {
     duration: 1, // 애니메이션 진행 시간 (1 -> 20)
-    curve: 4, // 최종 목표 값
+    progress: 0.1, // 최종 목표 값
     ease: "power2.inOut",
     repeat: -1, // 🔁 -1은 무한 반복을 의미합니다.
     yoyo: true,
     onUpdate: () => {
-      pivotGroup.rotation.y = THREE.MathUtils.degToRad(settings.value.curve);
-      planeCurve(kujiGeometry, settings.value.curve);
-      planeCurve(shadowGeometry, settings.value.curve);
+      const progress = buttonSetting.progress;
+      const curve = progress * 100;
+
+      pivotGroup.rotation.y = THREE.MathUtils.degToRad(curve);
+      planeCurve(kujiGeometry, curve);
+      planeCurve(shadowGeometry, curve);
     },
   });
 };
@@ -233,49 +240,51 @@ const buttonInit = () => {
     width: 150,
     height: 150,
     borderRadius: 200,
-    ease: "Expo.easeOut",
+    ease: "expo.out",
     duration: 2,
     autoAlpha: 0,
     stagger: 0.2,
   });
 
-  kujiWrapRef.value?.addEventListener("mouseup", () => {
-    if (isPress.value) isPress.value = false;
+  kujiWrapRef.value?.addEventListener("mousemove", (e) => {
+    if (!isPress.value || isEnd.value) return;
 
-    if (progress.value < 0.8) {
-      tl.play();
-      gsap.to(topButton, {
-        duration: 0.5,
-        scale: 0.9,
-        ease: "expo.easeOut",
-      });
-    } else {
+    const o = e.clientX;
+    const a =
+      o - falterIntroRef.value!.getBoundingClientRect().left - topCircleRef.value!.getBoundingClientRect().width / 2;
+
+    gsap.to(buttonSetting, {
+      duration: 0.2,
+      xPos: a,
+      onUpdate: buttonUpdate,
+    });
+
+    e.preventDefault();
+  });
+
+  kujiWrapRef.value?.addEventListener("mouseup", () => {
+    if (isPress.value) {
+      isPress.value = false;
+
+      if (buttonSetting.progress > 0.8) buttonComplete();
+      else {
+        yoyo.value?.resume();
+        tl.play();
+        gsap.to(topButton, {
+          duration: 0.5,
+          scale: 0.9,
+          ease: "expo.out",
+        });
+        gsap.to(buttonSetting, {
+          duration: 0.5,
+          xPos: 0,
+          ease: "expo.out",
+          onUpdate: buttonUpdate,
+        });
+      }
     }
   });
-  kujiWrapRef.value?.addEventListener("mousemove", (e) => {
-    if (!isPress.value) return;
-    const o = e.clientY;
-    const a =
-      o - falterIntroRef.value!.getBoundingClientRect().top - topCircleRef.value!.getBoundingClientRect().height / 2;
 
-    gsap.to(
-      { progress: progress.value },
-      {
-        duration: 0.2,
-        onUpdate: () => {
-          if (progress.value >= 1) {
-          } else {
-            const dots = connectingLineRef.value?.querySelectorAll(".small-dot");
-            gsap.set(topButton, { y: a });
-            progress.value = a / connectingLineRef.value!.clientHeight;
-            gsap.set(dots, {
-              autoAlpha: (i) => (i / dots.length < progress.value ? 0 : i / dots.length),
-            });
-          }
-        },
-      }
-    );
-  });
   topButton?.addEventListener("mouseover", (e) => {
     if (isPress.value) return;
     gsap.to(topButton, { duration: 0.5, scale: 0.9 });
@@ -292,6 +301,7 @@ const buttonInit = () => {
   });
   topButton?.addEventListener("mousedown", (e) => {
     tl.pause();
+    yoyo.value?.pause();
     gsap.to(tl, {
       duration: 0.2,
       progress: 0,
@@ -300,7 +310,7 @@ const buttonInit = () => {
     gsap.to(topButton, {
       scale: 0.5,
       duration: 0.5,
-      ease: "expo.easeOut",
+      ease: "expo.out",
     });
     isPress.value = true;
     e.preventDefault();
@@ -310,10 +320,10 @@ const connectingLineInit = () => {
   if (!connectingLineRef.value) return;
 
   const connectingLine = connectingLineRef.value;
-  const lineHeight = connectingLine?.clientHeight;
+  const width = connectingLine.clientWidth;
   const offset = 5;
 
-  for (let i = 0; i < lineHeight; i++) {
+  for (let i = 0; i < width; i++) {
     if (i % offset === 0) {
       const dot = document.createElement("span");
       dot.classList.add("small-dot");
@@ -326,13 +336,14 @@ const connectingLineInit = () => {
       background-color: #000;
     `;
       connectingLine?.append(dot);
+      gsap.set(dot, {
+        x: i,
+        autoAlpha: 0,
+      });
     }
   }
-  const dots = connectingLine?.querySelectorAll(".small-dot");
-  gsap.set(dots, {
-    y: (i) => i * 5,
-    autoAlpha: (i) => (i / dots.length < 0 ? 0 : i / dots.length),
-  });
+
+  buttonMove(true);
 };
 const targetCircleInit = () => {
   if (!targetCircleRef?.value) return;
@@ -365,6 +376,65 @@ const targetCircleInit = () => {
   }
 };
 
+const buttonUpdate = () => {
+  if (buttonSetting.progress > 1) {
+    buttonSetting.progress = 1;
+    buttonComplete();
+  }
+  if (buttonSetting.progress < 0) buttonSetting.progress = 0;
+  if (buttonSetting.xPos < 0) buttonSetting.xPos = 0;
+
+  const progress = buttonSetting.progress;
+  const curve = progress * 100;
+
+  pivotGroup.rotation.y = THREE.MathUtils.degToRad(curve);
+  planeCurve(kujiGeometry, curve);
+  planeCurve(shadowGeometry, curve);
+  gsap.set(topCircleRef.value, { x: buttonSetting.xPos });
+  buttonSetting.progress = buttonSetting.xPos / connectingLineRef.value!.clientWidth;
+  buttonMove(false, buttonSetting.progress);
+};
+const buttonMove = (status: boolean, progress: number = 0) => {
+  if (!connectingLineRef.value) return;
+  const dots = connectingLineRef.value?.querySelectorAll(".small-dot");
+  dots.forEach((dot, i) => {
+    gsap.timeline().to(
+      dot,
+      {
+        autoAlpha: i / dots.length < progress ? 0 : i / dots.length,
+        ease: "expo.out",
+      },
+      status ? 0.01 * i : 0
+    );
+  });
+};
+const buttonComplete = () => {
+  if (!isPress.value) {
+    isPress.value = true;
+    isEnd.value = true;
+
+    gsap.to(falterIntroRef.value, {
+      duration: 0.5,
+      autoAlpha: 0,
+      delay: 0.4,
+      ease: "expo.out",
+    });
+    gsap.to(targetCircleRef.value, {
+      duration: 0.5,
+      scale: 1.3,
+      autoAlpha: 0,
+      delay: 0.1,
+      ease: "expo.out",
+    });
+    gsap.to(buttonSetting, {
+      duration: 0.5,
+      xPos: connectingLineRef.value!.clientWidth + targetCircleRef.value!.clientWidth + 0.5,
+      ease: "expo.out",
+      onUpdate: buttonUpdate,
+    });
+  }
+};
+
 const animate = () => {
   requestAnimationFrame(animate);
 
@@ -374,8 +444,8 @@ const animate = () => {
 };
 
 onMounted(() => {
-  // init();
-  // animate();
+  init();
+  animate();
   buttonInit();
   connectingLineInit();
   targetCircleInit();
@@ -404,7 +474,6 @@ onUnmounted(() => {
 <style scoped>
 .kuji-wrap {
   position: relative;
-  background-color: red;
   width: 100%;
   height: 100%;
 
@@ -415,7 +484,6 @@ onUnmounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
     text-align: center;
     transform: translate(-50%, -50%);
 
@@ -439,8 +507,8 @@ onUnmounted(() => {
 
     .connecting-line {
       position: relative;
-      width: 1px;
-      height: 160px;
+      width: 220px;
+      height: 1px;
     }
     .target-circle {
       position: relative;
