@@ -6,6 +6,7 @@ export const useScrollTriggerStore = defineStore("scrollTrigger", {
     scrollTrigger: null as typeof ScrollTrigger | null,
     isIntroEnd: false,
     isOutroEnd: false,
+    scrollY: 0,
   }),
   actions: {},
 });

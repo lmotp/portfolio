@@ -7,10 +7,16 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { isOutroEnd } = storeToRefs(scrollTriggerStore);
+const { isOutroEnd, scrollY } = storeToRefs(scrollTriggerStore);
 
 const skillsRef = ref<HTMLCanvasElement | null>(null);
 const contentRef = ref<HTMLDivElement | null>(null);
+const mediaRefs = ref<{ el: any; mesh: THREE.Mesh }[]>([]);
+
+const viewport = ref({
+  width: 0,
+  height: 0,
+});
 
 let renderer: THREE.WebGLRenderer;
 let scene: THREE.Scene;
@@ -48,12 +54,13 @@ const init = () => {
   images.forEach((el) => {
     const image = el.querySelector("img");
     const mesh = setImageMesh(el, image) as any;
+
+    mediaRefs.value.push({ el, mesh });
     group.add(mesh);
   });
 
   scene.add(group);
 };
-
 const setImageMesh = (el: any, image: HTMLImageElement | null) => {
   if (!image) return;
 
@@ -63,7 +70,7 @@ const setImageMesh = (el: any, image: HTMLImageElement | null) => {
   const fov = camera.fov * (Math.PI / 180);
   const height = 2 * Math.tan(fov / 2) * camera.position.z;
   const width = height * camera.aspect;
-  const viewport = { width, height };
+  viewport.value = { width, height };
 
   const geometry = new THREE.PlaneGeometry(1, 1, 50, 100);
   const material = new THREE.ShaderMaterial({
@@ -71,7 +78,7 @@ const setImageMesh = (el: any, image: HTMLImageElement | null) => {
       tMap: { value: texture },
       uPlaneSize: { value: new THREE.Vector2() },
       uImageSize: { value: new THREE.Vector2() },
-      uViewportSize: { value: new THREE.Vector2(viewport.width, viewport.height) },
+      uViewportSize: { value: new THREE.Vector2(viewport.value.width, viewport.value.height) },
       uTime: { value: 100 * Math.random() },
       uBlurStrength: { value: 1 },
     },
@@ -89,21 +96,40 @@ const setImageMesh = (el: any, image: HTMLImageElement | null) => {
   };
 
   const mesh = new THREE.Mesh(geometry, material);
-
-  const x = el.offsetWidth;
-  const y = el.offsetHeight;
-  mesh.scale.x = (viewport.width * x) / window.innerWidth;
-  mesh.scale.y = (viewport.height * y) / window.innerHeight;
-  material.uniforms.uPlaneSize.value = new THREE.Vector2(mesh.scale.x, mesh.scale.y);
-
+  setScale(mesh, el);
 
   return mesh;
 };
-
 const animate = () => {
   renderer.render(scene, camera);
 
   requestAnimationFrame(animate);
+};
+
+const scrollWindow = () => {
+  if (mediaRefs.value.length) {
+    mediaRefs.value.forEach(({ el, mesh }) => {
+      mesh.position.y =
+        viewport.value.height / 2 -
+        mesh.scale.y / 2 -
+        ((el.offsetTop - scrollY.value) / window.innerHeight) * viewport.value.height;
+    });
+
+    // const p = easeInOut(Math.min(scrollY.value / (window.innerHeight * 0.57), 1));
+    // let height = mediaRefs.value[0].el.offsetHeight;
+    // const scale = 1 + 0.05 * p;
+    // setScale(mediaRefs.value[0].mesh, mediaRefs.value[0].el, null, height * scale);
+    // mediaRefs.value[0].mesh.material.uniforms.uBlurStrength.value = 1 - 0.8 * (1 - p);
+  }
+};
+
+const setScale = (mesh: THREE.Mesh, el: HTMLElement, x?: number | null, y?: number | null) => {
+  x = x || el.offsetWidth;
+  y = y || el.offsetHeight;
+  mesh.scale.x = (viewport.value.width * x) / window.innerWidth;
+  mesh.scale.y = (viewport.value.height * y) / window.innerHeight;
+
+  mesh.material.uniforms.uPlaneSize.value = new THREE.Vector2(mesh.scale.x, mesh.scale.y);
 };
 
 const resizeWindow = () => {
@@ -115,18 +141,29 @@ const resizeWindow = () => {
   renderer.setSize(size.width, size.height);
   camera.aspect = size.width / size.height;
   camera.updateProjectionMatrix();
+
+  if (mediaRefs.value.length) {
+    mediaRefs.value.forEach(({ el, mesh }) => {
+      mesh.position.x =
+        -(viewport.value.width / 2) + mesh.scale.x / 2 + (el.offsetLeft / size.width) * viewport.value.width;
+    });
+  }
 };
 
 onMounted(() => {
   nextTick(() => {
     init();
     animate();
+    scrollWindow();
+    resizeWindow();
     window.addEventListener("resize", resizeWindow);
+    window.addEventListener("scroll", scrollWindow);
   });
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", resizeWindow);
+  window.removeEventListener("scroll", scrollWindow);
 });
 </script>
 
@@ -210,6 +247,7 @@ onUnmounted(() => {
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding-top: 350px;
       text-align: center;
 
       h2 {
