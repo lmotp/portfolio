@@ -13,10 +13,6 @@ const menuList = [
     path: "/portfolio",
   },
   {
-    name: "About",
-    path: "/about",
-  },
-  {
     name: "Experiments",
     path: "/experiments",
   },

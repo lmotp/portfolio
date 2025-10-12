@@ -20,7 +20,7 @@ const falterIntroRef = ref<HTMLElement | null>(null);
 const topCircleRef = ref<HTMLElement | null>(null);
 const connectingLineRef = ref<HTMLElement | null>(null);
 const targetCircleRef = ref<HTMLElement | null>(null);
-const yoyo = ref<gsap.core.Timeline | null>(null);
+const yoyo = ref<gsap.core.Tween | gsap.core.Timeline | null>(null);
 const isPress = ref(false);
 const isEnd = ref(false);
 

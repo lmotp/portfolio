@@ -6,10 +6,10 @@ import Footer from "./footer/index.vue";
 </script>
 
 <template>
-  <Intro />
-  <Outro />
+  <!-- <Intro /> -->
+  <!-- <Outro /> -->
   <Skills />
-  <Footer />
+  <!-- <Footer /> -->
 </template>
 
 <style scoped></style>
