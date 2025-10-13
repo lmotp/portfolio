@@ -10,8 +10,8 @@ const scrollTriggerStore = useScrollTriggerStore();
 const { isOutroEnd, scrollY } = storeToRefs(scrollTriggerStore);
 
 const skillsRef = ref<HTMLCanvasElement | null>(null);
-const contentRef = ref<HTMLDivElement | null>(null);
-const mediaRefs = ref<{ el: any; mesh: THREE.Mesh }[]>([]);
+const skillWrapRef = ref<HTMLDivElement | null>(null);
+const mediaRefs = ref<{ el: any; mesh: THREE.Mesh; initY: number }[]>([]);
 
 const viewport = ref({
   width: 0,
@@ -22,18 +22,14 @@ let renderer: THREE.WebGLRenderer;
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 
-const easeInOut = (t: number) => {
-  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-};
-
 const init = () => {
-  if (!skillsRef.value || !contentRef.value) return;
+  if (!skillsRef.value || !skillWrapRef.value) return;
 
   const group = new THREE.Group();
-  const images = contentRef.value.querySelectorAll(".media");
+  const images = skillWrapRef.value.querySelectorAll(".media");
   const size = {
     width: window.innerWidth,
-    height: window.innerHeight - 30,
+    height: window.innerHeight,
   };
 
   renderer = new THREE.WebGLRenderer({
@@ -53,9 +49,10 @@ const init = () => {
 
   images.forEach((el) => {
     const image = el.querySelector("img");
+    const initY = el.getBoundingClientRect().top;
     const mesh = setImageMesh(el, image) as any;
 
-    mediaRefs.value.push({ el, mesh });
+    mediaRefs.value.push({ el, mesh, initY });
     group.add(mesh);
   });
 
@@ -74,13 +71,14 @@ const setImageMesh = (el: any, image: HTMLImageElement | null) => {
 
   const geometry = new THREE.PlaneGeometry(1, 1, 50, 100);
   const material = new THREE.ShaderMaterial({
+    depthWrite: false,
+    depthTest: false,
     uniforms: {
       tMap: { value: texture },
       uPlaneSize: { value: new THREE.Vector2() },
       uImageSize: { value: new THREE.Vector2() },
       uViewportSize: { value: new THREE.Vector2(viewport.value.width, viewport.value.height) },
-      uTime: { value: 100 * Math.random() },
-      uBlurStrength: { value: 1 },
+      uTime: { value: 0 },
     },
     transparent: true,
     vertexShader: skillsVertex,
@@ -100,28 +98,6 @@ const setImageMesh = (el: any, image: HTMLImageElement | null) => {
 
   return mesh;
 };
-const animate = () => {
-  renderer.render(scene, camera);
-
-  requestAnimationFrame(animate);
-};
-
-const scrollWindow = () => {
-  if (mediaRefs.value.length) {
-    mediaRefs.value.forEach(({ el, mesh }) => {
-      mesh.position.y =
-        viewport.value.height / 2 -
-        mesh.scale.y / 2 -
-        ((el.offsetTop - scrollY.value) / window.innerHeight) * viewport.value.height;
-    });
-
-    // const p = easeInOut(Math.min(scrollY.value / (window.innerHeight * 0.57), 1));
-    // let height = mediaRefs.value[0].el.offsetHeight;
-    // const scale = 1 + 0.05 * p;
-    // setScale(mediaRefs.value[0].mesh, mediaRefs.value[0].el, null, height * scale);
-    // mediaRefs.value[0].mesh.material.uniforms.uBlurStrength.value = 1 - 0.8 * (1 - p);
-  }
-};
 
 const setScale = (mesh: THREE.Mesh, el: HTMLElement, x?: number | null, y?: number | null) => {
   x = x || el.offsetWidth;
@@ -132,22 +108,49 @@ const setScale = (mesh: THREE.Mesh, el: HTMLElement, x?: number | null, y?: numb
   mesh.material.uniforms.uPlaneSize.value = new THREE.Vector2(mesh.scale.x, mesh.scale.y);
 };
 
+const scrollWindow = () => {
+  if (mediaRefs.value.length) {
+    mediaRefs.value.forEach(({ mesh, initY }) => {
+      const positionY =
+        viewport.value.height / 2 -
+        mesh.scale.y / 2 -
+        ((initY - scrollY.value) / window.innerHeight) * viewport.value.height;
+
+      mesh.position.y = positionY;
+    });
+  }
+};
 const resizeWindow = () => {
   const size = {
     width: window.innerWidth,
-    height: window.innerHeight - 30,
+    height: window.innerHeight,
   };
 
   renderer.setSize(size.width, size.height);
   camera.aspect = size.width / size.height;
   camera.updateProjectionMatrix();
 
+  const fov = camera.fov * (Math.PI / 180);
+  const height = 2 * Math.tan(fov / 2) * camera.position.z;
+  const width = height * camera.aspect;
+  viewport.value = { width, height };
+
   if (mediaRefs.value.length) {
     mediaRefs.value.forEach(({ el, mesh }) => {
       mesh.position.x =
-        -(viewport.value.width / 2) + mesh.scale.x / 2 + (el.offsetLeft / size.width) * viewport.value.width;
+        -(viewport.value.width / 2) + mesh.scale.x / 2 + ((el.offsetLeft + 15) / size.width) * viewport.value.width;
     });
   }
+};
+
+const animate = () => {
+  renderer.render(scene, camera);
+
+  mediaRefs.value.forEach(({ mesh }) => {
+    mesh.material.uniforms.uTime.value += 0.04;
+  });
+
+  requestAnimationFrame(animate);
 };
 
 onMounted(() => {
@@ -157,7 +160,11 @@ onMounted(() => {
     scrollWindow();
     resizeWindow();
     window.addEventListener("resize", resizeWindow);
-    window.addEventListener("scroll", scrollWindow);
+    window.addEventListener("scroll", () => {
+      if (isOutroEnd.value) {
+        scrollWindow();
+      }
+    });
   });
 });
 
@@ -168,7 +175,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="['skills', isOutroEnd && 'is-outro-end']">
+  <div ref="skillWrapRef" :class="['skills', isOutroEnd && 'is-outro-end']">
     <canvas ref="skillsRef"></canvas>
     <div class="title-wrap">
       <strong>
@@ -179,19 +186,49 @@ onUnmounted(() => {
       <h2>Skills</h2>
     </div>
 
-    <div ref="contentRef" class="skills-content">
+    <div class="sticky-wrap">
       <article class="inner-1">
-        <h2>
-          <small>by Jorge Toloza</small>
-          <span>WebGL / OGL</span>
-          <strong>Progressive Blur</strong>
-        </h2>
-
         <div class="media-container">
           <figure class="media">
             <img src="@/public/images/skills/6.webp" alt="fashion" />
           </figure>
           <small>(01)</small>
+        </div>
+      </article>
+
+      <article class="inner-2">
+        <div class="media-container">
+          <figure class="media">
+            <img src="@/public/images/skills/1.webp" alt="silueta" />
+          </figure>
+          <small>(02)</small>
+        </div>
+        <div class="media-container">
+          <figure class="media">
+            <img src="@/public/images/skills/2.webp" alt="camera" />
+          </figure>
+          <small>(03)</small>
+        </div>
+        <div class="media-container">
+          <figure class="media">
+            <img src="@/public/images/skills/3.webp" alt="spheres" />
+          </figure>
+          <small>(04)</small>
+        </div>
+      </article>
+
+      <article class="inner-3">
+        <div class="media-container">
+          <figure class="media">
+            <img src="@/public/images/skills/4.webp" alt="diana" />
+          </figure>
+          <small>(05)</small>
+        </div>
+        <div class="media-container">
+          <figure class="media">
+            <img src="@/public/images/skills/5.webp" alt="abuelo" />
+          </figure>
+          <small>(06)</small>
         </div>
       </article>
     </div>
@@ -201,11 +238,10 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .skills {
   position: relative;
-  padding-block: 0;
-  width: 100%;
-  height: 300dvh;
+  margin-top: calc(-200dvh);
   background-color: #e8e8e8;
   isolation: isolate;
+  z-index: -2;
 
   canvas {
     position: fixed;
@@ -217,10 +253,6 @@ onUnmounted(() => {
   }
 
   .title-wrap {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    height: calc(100dvh - 15px);
     padding: 6px 6px 0;
     color: #ffffff;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -238,80 +270,93 @@ onUnmounted(() => {
     }
   }
 
-  .skills-content {
-    padding: 0 30px;
+  .inner-1 {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 
-    .inner-1 {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding-top: 350px;
-      text-align: center;
+    .media-container {
+      max-width: 1080px;
 
-      h2 {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-weight: normal;
-        margin-bottom: 40px;
-        font-size: clamp(1.5rem, 6.5vw, 8rem);
-        line-height: 1;
-
-        & > * {
-          &:not(:last-child) {
-            margin-bottom: 15px;
-          }
-        }
-
-        small,
-        strong {
-          display: block;
-        }
-        small {
-          font-size: 0.175em;
-        }
-        span {
-          font-size: 0.5em;
-          text-transform: uppercase;
-        }
-        strong {
-          font-weight: 600;
-          line-height: 0.9;
-          letter-spacing: -0.05em;
-          text-transform: uppercase;
-        }
+      .media {
+        aspect-ratio: 1080 / 950;
       }
+    }
+  }
 
-      .media-container {
-        max-width: 1080px;
-        .media {
-          aspect-ratio: 1080 / 950;
-        }
+  .inner-2 {
+    display: flex;
+    .media-container {
+      .media {
+        height: 40.7142857vw;
+      }
+      &:nth-child(1) {
+        width: 32.0713235%;
+      }
+      &:nth-child(2) {
+        width: 51.8926471%;
+      }
+      &:nth-child(3) {
+        width: 15.9558824%;
+      }
+      &:not(:last-child) {
+        margin-right: var(--margin);
+      }
+    }
+  }
+
+  .inner-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .media-container:first-child {
+      width: 20%;
+      .media {
+        aspect-ratio: 1 / 1;
+      }
+    }
+    .media-container:nth-child(2) {
+      width: 61.8033989%;
+      margin-top: var(--margin);
+      .media {
+        aspect-ratio: 376 / 400;
+      }
+    }
+  }
+
+  .media-container {
+    width: 100%;
+    display: inline-flex;
+    flex-direction: column;
+
+    .media {
+      display: inline-flex;
+
+      img {
+        visibility: hidden;
       }
     }
 
-    .media-container {
-      width: 100%;
-      display: inline-flex;
-      flex-direction: column;
+    small {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+      line-height: 0.8;
+      opacity: 0;
+    }
+  }
 
-      .media {
-        display: inline-flex;
+  article {
+    margin: 125px auto 0;
+    padding: 0 var(--margin);
 
-        img {
-          visibility: hidden;
-        }
-      }
-
-      small {
-        display: block;
-        margin-top: 10px;
-        text-align: center;
-        line-height: 0.8;
-        opacity: 0;
-      }
+    .media {
+      outline: 1px solid red;
     }
   }
 }
