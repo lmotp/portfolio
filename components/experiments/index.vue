@@ -23,6 +23,10 @@ const menuList = [
     name: "Pinball",
     path: "/experiments/pinball",
   },
+  {
+    name: "Blur",
+    path: "/experiments/blur",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();
