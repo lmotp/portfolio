@@ -7,7 +7,7 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { isOutroEnd, scrollY } = storeToRefs(scrollTriggerStore);
+const { scrollY } = storeToRefs(scrollTriggerStore);
 
 const skillsRef = ref<HTMLCanvasElement | null>(null);
 const skillWrapRef = ref<HTMLDivElement | null>(null);
@@ -160,11 +160,7 @@ onMounted(() => {
     scrollWindow();
     resizeWindow();
     window.addEventListener("resize", resizeWindow);
-    window.addEventListener("scroll", () => {
-      if (isOutroEnd.value) {
-        scrollWindow();
-      }
-    });
+    window.addEventListener("scroll", scrollWindow);
   });
 });
 
@@ -175,7 +171,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="skillWrapRef" :class="['skills', isOutroEnd && 'is-outro-end']">
+  <div ref="skillWrapRef" :class="['skills']">
     <canvas ref="skillsRef"></canvas>
     <div class="title-wrap">
       <strong>
@@ -238,7 +234,6 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .skills {
   position: relative;
-  margin-top: calc(-200dvh);
   background-color: #e8e8e8;
   isolation: isolate;
   z-index: -2;
@@ -354,10 +349,6 @@ onUnmounted(() => {
   article {
     margin: 125px auto 0;
     padding: 0 var(--margin);
-
-    .media {
-      outline: 1px solid red;
-    }
   }
 }
 </style>
