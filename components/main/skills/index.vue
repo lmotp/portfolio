@@ -7,11 +7,13 @@ const source = [
       title: "WebGL / OGL",
       content: "Progressive Blur",
       src: "/images/skills/1.webp",
+      pixelSrc: "/images/skills/1_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
       src: "/images/skills/2.webp",
+      pixelSrc: "/images/skills/2_pixel.png",
     },
   ],
   [
@@ -19,11 +21,13 @@ const source = [
       title: "WebGL / OGL",
       content: "Progressive Blur",
       src: "/images/skills/3.webp",
+      pixelSrc: "/images/skills/3_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "/images/skills/4.webp",
+      src: "/images/skills/0.webp",
+      pixelSrc: "/images/skills/0_pixel.png",
     },
   ],
   [
@@ -31,23 +35,13 @@ const source = [
       title: "WebGL / OGL",
       content: "Progressive Blur",
       src: "/images/skills/5.webp",
+      pixelSrc: "/images/skills/5_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
       src: "/images/skills/6.webp",
-    },
-  ],
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/7.webp",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/8.webp",
+      pixelSrc: "/images/skills/6_pixel.png",
     },
   ],
 ];
@@ -87,7 +81,7 @@ const rotateInit = () => {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: row,
-        start: "top 60%",
+        start: "top 80%",
       },
     });
 
@@ -134,7 +128,8 @@ onMounted(() => {
       <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
         <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
           <figure>
-            <img :src="value.src" alt="" />
+            <img class="main" :src="value.src" alt="" />
+            <img class="pixel" :src="value.pixelSrc" alt="" />
           </figure>
 
           <p class="text-wrap">
@@ -192,7 +187,7 @@ onMounted(() => {
 
   .skills {
     position: relative;
-    padding: 50px 8px 0;
+    padding: 50px 8px 150px;
     background: linear-gradient(#f8f8f8, #e8e8e8);
     z-index: 1;
 
@@ -202,10 +197,13 @@ onMounted(() => {
       .skill-wrap {
         width: 50%;
         padding: 0 8px 16px;
+        cursor: pointer;
 
         figure {
           position: relative;
           width: 100%;
+          isolation: isolate;
+          overflow: hidden;
 
           img {
             width: 100%;
@@ -213,8 +211,22 @@ onMounted(() => {
             position: absolute;
             left: 0;
             top: 0;
-            object-fit: cover;
             object-position: center;
+            object-fit: cover;
+            transform: scale(1.2);
+            image-rendering: pixelated;
+            pointer-events: none;
+
+            transition: all 0.3s ease;
+
+            &.main {
+              opacity: 0;
+              z-index: 5;
+            }
+
+            &.pixel {
+              z-index: 4;
+            }
           }
 
           &::after {
@@ -222,6 +234,19 @@ onMounted(() => {
             display: block;
             width: 100%;
             padding-bottom: 66.8103448276%;
+          }
+
+          &:hover {
+            img {
+              transform: scale(1);
+
+              &.main {
+                opacity: 1;
+              }
+              &.pixel {
+                opacity: 0;
+              }
+            }
           }
         }
 
