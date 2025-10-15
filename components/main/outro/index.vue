@@ -66,7 +66,6 @@ const layerCards = ref([
   padding-top: calc(100dvh * 2);
   pointer-events: none;
   z-index: -1;
-  background-color: #e8e8e8;
 
   .top-view-container {
     position: relative;

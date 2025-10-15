@@ -54,6 +54,30 @@ const source = [
 const skillsRef = ref<HTMLElement | null>(null);
 
 const init = () => {
+  const mainTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".skills-intro",
+      start: "top bottom",
+      end: "top center",
+      scrub: true,
+    },
+  });
+
+  mainTl.fromTo(
+    ".intro-wrapper",
+    {
+      xPercent: -10,
+      rotate: 8,
+      transformOrigin: "left",
+    },
+    {
+      xPercent: 0,
+      rotate: 0,
+    }
+  );
+};
+
+const rotateInit = () => {
   if (!skillsRef.value) return;
 
   const rows = skillsRef.value.querySelectorAll(".row");
@@ -84,121 +108,136 @@ const init = () => {
     );
   });
 };
-const rotateInit = () => {
-  const mainTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".skills-intro",
-      start: "top bottom",
-      end: "top center",
-      scrub: true,
-    },
-  });
-  const subTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".skills-intro",
-      start: "top 35%",
-      end: "bottom top-=50%",
-      scrub: true,
-    },
-  });
-
-  mainTl.fromTo(
-    ".intro-wrapper",
-    {
-      xPercent: -10,
-      rotate: 8,
-      transformOrigin: "left",
-    },
-    {
-      xPercent: 0,
-      rotate: 0,
-    },
-    0
-  );
-
-  subTl.to(
-    ".outro-intro",
-    {
-      xPercent: -10,
-      rotate: -4,
-      yPercent: 5,
-      transformOrigin: "right",
-      ease: "power1.out",
-    },
-    0
-  );
-};
 
 onMounted(() => {
   nextTick(() => {
     init();
+    rotateInit();
   });
 });
 </script>
 
 <template>
-  <div ref="skillsRef" class="skills">
-    <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
-      <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
-        <figure>
-          <img :src="value.src" alt="" />
-        </figure>
+  <div class="skills-intro">
+    <div class="intro-wrapper">
+      <div class="title-wrap">
+        <strong>
+          <span class="fw300">/&nbsp;</span>
+          About The Line
+        </strong>
 
-        <p class="text-wrap">
-          <strong>{{ value.content }}</strong>
-          <span>{{ value.title }}</span>
-        </p>
+        <h2>Skills</h2>
+      </div>
+    </div>
+
+    <div ref="skillsRef" class="skills">
+      <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
+        <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
+          <figure>
+            <img :src="value.src" alt="" />
+          </figure>
+
+          <p class="text-wrap">
+            <strong>{{ value.content }}</strong>
+            <span>{{ value.title }}</span>
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.skills {
-  padding: 50px 8px 15px;
-  background-color: #e8e8e8;
+.skills-intro {
+  margin-top: -75dvh;
+  isolation: isolate;
 
-  .row {
-    display: flex;
+  .intro-wrapper {
+    position: relative;
+    padding-inline: 6px;
+    background-color: #f8f8f8;
 
-    .skill-wrap {
-      width: 50%;
-      padding: 0 8px 16px;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      height: 100lvh;
+      background-color: #f8f8f8;
+    }
 
-      figure {
-        position: relative;
-        width: 100%;
+    .title-wrap {
+      padding: 6px 6px 0;
+      color: #0b0d0f;
 
-        img {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          left: 0;
-          top: 0;
-          object-fit: cover;
-          object-position: center;
-        }
-
-        &::after {
-          content: "";
-          display: block;
-          width: 100%;
-          padding-bottom: 66.8103448276%;
-        }
+      @media (max-width: 1000px) {
+        padding-top: 0;
       }
 
-      .text-wrap {
+      strong {
         display: flex;
-        flex-direction: column;
-        margin-top: 8px;
+        font-size: 10px;
+        margin-bottom: 20px;
+      }
 
-        span {
-          font-size: 12px;
-          color: #999;
+      h2 {
+        line-height: 1;
+        letter-spacing: -7px;
+        font-size: 175px;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .skills {
+    position: relative;
+    padding: 50px 8px 0;
+    background: linear-gradient(#f8f8f8, #e8e8e8);
+    z-index: 1;
+
+    .row {
+      display: flex;
+
+      .skill-wrap {
+        width: 50%;
+        padding: 0 8px 16px;
+
+        figure {
+          position: relative;
+          width: 100%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            object-fit: cover;
+            object-position: center;
+          }
+
+          &::after {
+            content: "";
+            display: block;
+            width: 100%;
+            padding-bottom: 66.8103448276%;
+          }
         }
 
-        strong {
-          color: #0b0d0f;
+        .text-wrap {
+          display: flex;
+          flex-direction: column;
+          margin-top: 8px;
+
+          span {
+            font-size: 12px;
+            color: #999;
+          }
+
+          strong {
+            color: #0b0d0f;
+          }
         }
       }
     }
