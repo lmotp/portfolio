@@ -87,9 +87,9 @@ const init = () => {
   l.to(
     infoWrapperRef.value,
     {
-      yPercent: -80,
-      xPercent: -25,
-      rotate: -7,
+      yPercent: props.isLast ? 0 : -80,
+      xPercent: props.isLast ? 0 : -25,
+      rotate: props.isLast ? 0 : -7,
       force3D: !0,
       ease: "none",
     },
