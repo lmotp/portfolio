@@ -84,7 +84,7 @@ watch(isCovering, (status) => {
 <style>
 .page-transition {
   position: fixed;
-  inset: 15px;
+  inset: 0;
   pointer-events: none;
   z-index: 100;
 

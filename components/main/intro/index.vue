@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Logo1 from "../logo/Logo1.vue";
-import Logo2 from "../logo/Logo2.vue";
-import Logo3 from "../logo/Logo3.vue";
-import Logo4 from "../logo/Logo4.vue";
-import Logo5 from "../logo/Logo5.vue";
+import Logo1 from "./Logo1.vue";
+import Logo2 from "./Logo2.vue";
+import Logo3 from "./Logo3.vue";
+import Logo4 from "./Logo4.vue";
+import Logo5 from "./Logo5.vue";
 
 import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
@@ -331,7 +331,7 @@ onMounted(() => {
     position: sticky;
     top: 0;
     width: 100%;
-    height: calc(100svh - 30px);
+    height: 100svh;
     text-align: center;
     overflow: hidden;
 

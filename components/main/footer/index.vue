@@ -8,7 +8,6 @@ const init = () => {
       start: "top top",
       end: "max",
       scrub: true,
-      markers: true,
     },
   });
 

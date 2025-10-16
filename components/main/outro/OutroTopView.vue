@@ -10,7 +10,7 @@ const init = () => {
   const mainTl = gsap.timeline({
     scrollTrigger: {
       trigger: ".top-view-container",
-      start: `top+=${window.innerHeight}px 15px`,
+      start: `top+=${window.innerHeight}px top`,
       end: `bottom bottom`,
       scrub: true,
     },
@@ -219,8 +219,8 @@ onMounted(() => {
 .layer {
   position: fixed;
   top: 0;
-  left: 15px;
-  width: calc(100% - 30px);
+  left: 0;
+  width: 100%;
   height: 100dvh;
   background-color: red;
   mix-blend-mode: multiply;
