@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Side from "./Side.vue";
+</script>
 <template>
   <main>
     <slot />
+    <Side />
   </main>
 </template>
 <style scoped>

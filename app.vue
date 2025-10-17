@@ -31,7 +31,7 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <!-- v-show="isPageTransition" -->
-    <RivePageTransition />
+    <RivePageTransition v-if="isPageTransition" />
     <NuxtPage />
   </NuxtLayout>
 </template>

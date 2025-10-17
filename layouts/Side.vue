@@ -133,7 +133,7 @@ onMounted(() => {
   --blur: 4px;
 
   position: fixed;
-  inset: 0 0 0 15px;
+  inset: 0;
   background-color: transparent;
   z-index: 100;
   pointer-events: none;

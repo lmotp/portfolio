@@ -17,7 +17,7 @@ const init = () => {
       r.play();
       setInterval(() => {
         inputs[0].value += 1;
-      }, 100);
+      }, 25);
     },
   });
 };
@@ -38,6 +38,7 @@ onMounted(() => {
   position: fixed;
   inset: 0;
   z-index: 100;
+  pointer-events: none;
 
   canvas {
     display: block;
