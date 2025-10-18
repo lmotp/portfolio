@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import * as rive from "@rive-app/canvas";
+import gsap from "gsap";
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+
+const router = useRouter();
+
+const pageTransitionStore = usePageTransitionStore();
+const { isPageTransition, path } = storeToRefs(pageTransitionStore);
+const pushRequested = ref(false);
+let transitionInput: rive.StateMachineInput;
+let r: rive.Rive;
 
 const init = () => {
-  const r = new rive.Rive({
+  r = new rive.Rive({
     src: "/rive/navigate_ui_transition_desktop_scroll.riv",
-    canvas: document.getElementById("canvas"),
+    canvas: document.getElementById("canvas") as HTMLCanvasElement,
     autoplay: true,
     stateMachines: "Transition Desktop",
     layout: new rive.Layout({
@@ -12,19 +23,41 @@ const init = () => {
       alignment: rive.Alignment.Center,
     }),
     onLoad: () => {
+      transitionInput = r.stateMachineInputs("Transition Desktop")[0];
+      transitionInput.value = 5;
       r.resizeDrawingSurfaceToCanvas();
-      const inputs = r.stateMachineInputs("Transition Desktop");
       r.play();
-      setInterval(() => {
-        inputs[0].value += 1;
-      }, 25);
     },
   });
 };
 
+watch(path, (url) => {
+  isPageTransition.value = true;
+  transitionInput.value = 10;
+
+  gsap.to(transitionInput, {
+    value: 65,
+    duration: 1.5,
+    ease: "linear",
+    onUpdate: function () {
+      if (this.progress() >= 0.3) pushRequested.value = true;
+    },
+    onComplete: () => {
+      isPageTransition.value = false;
+      pushRequested.value = false;
+    },
+  });
+});
+
+watch(pushRequested, (status) => {
+  if (status) router.push(path.value);
+});
+
 onMounted(() => {
   init();
 });
+
+onUnmounted(() => {});
 </script>
 
 <template>
