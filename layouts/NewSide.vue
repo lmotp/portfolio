@@ -61,6 +61,7 @@ const handleToggleButton = () => {
     inset: 0;
     opacity: 0;
     background-color: hsla(0, 0%, 8%, 0.45);
+    pointer-events: none;
     z-index: -2;
 
     transition: opacity 0.3s ease-out;
@@ -74,6 +75,7 @@ const handleToggleButton = () => {
     width: var(--header-size);
     height: 100dvh;
     background-color: white;
+    box-shadow: 0 0 0 1px black;
 
     .side-toggle {
       position: relative;
@@ -203,15 +205,17 @@ const handleToggleButton = () => {
     display: flex;
     flex-direction: column;
     gap: 3px;
+    padding-block: 5px;
     z-index: -1;
 
     .nav-content {
       width: 420px;
       border-radius: 5px;
+      box-shadow: 0 0 0 1px black;
 
       &:not(:last-child) {
         flex: 1;
-        background-color: black;
+        background-color: white;
       }
 
       &:last-child {
