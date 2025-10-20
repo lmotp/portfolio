@@ -1,8 +1,21 @@
 <script setup lang="ts">
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+
 const isClose = ref(false);
+
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
 
 const handleToggleButton = () => {
   isClose.value = !isClose.value;
+};
+
+const handleMenuClick = (menuPath: string) => {
+  if (menuPath === path.value) return;
+
+  path.value = menuPath;
+  isClose.value = false;
 };
 </script>
 
@@ -24,9 +37,39 @@ const handleToggleButton = () => {
 
     <Transition :duration="{ enter: 800, leave: 900 }">
       <nav :class="['nav-wrap']" v-show="isClose">
-        <div class="nav-content">첫번쨰</div>
-        <div class="nav-content">두번째</div>
-        <div class="nav-content">세번째</div>
+        <div class="nav-content">
+          <button @click="handleMenuClick('/')" :class="{ 'is-active': path === '/' }">
+            <strong>Main</strong>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+              <path d="M.63 1h19.373v20"></path>
+              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+            </svg>
+          </button>
+          <p>main</p>
+        </div>
+        <div class="nav-content">
+          <button @click="handleMenuClick('/experiments')" :class="{ 'is-active': path === '/experiments' }">
+            <strong>Experiments </strong>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+              <path d="M.63 1h19.373v20"></path>
+              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+            </svg>
+          </button>
+          <p>experiments</p>
+        </div>
+        <div class="nav-content">
+          <button @click="handleMenuClick('/contact')" :class="{ 'is-active': path === '/contact' }">
+            <strong>Contact</strong>
+
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+              <path d="M.63 1h19.373v20"></path>
+              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+            </svg>
+          </button>
+          <p>contact</p>
+        </div>
       </nav>
     </Transition>
   </header>
@@ -211,10 +254,57 @@ const handleToggleButton = () => {
         height: 158px;
         background-color: red;
       }
+
+      button {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+        width: 100%;
+
+        strong {
+          font-size: 24px;
+        }
+
+        svg {
+          width: 20px;
+          height: 15px;
+          stroke: black;
+          stroke-width: 2px;
+          transform: rotate(45deg);
+
+          path {
+            transition: stroke-dashoffset 0.4s cubic-bezier(1, 0, 0.25, 0.995);
+
+            &:first-child {
+              stroke-dasharray: 40;
+              stroke-dashoffset: 40;
+              transition-delay: 0.15s;
+            }
+            &:nth-child(2) {
+              stroke-dasharray: 28;
+              stroke-dashoffset: 28;
+            }
+          }
+        }
+
+        &:hover,
+        &.is-active {
+          svg {
+            path {
+              stroke-dashoffset: 0;
+            }
+          }
+        }
+      }
+
+      p {
+      }
     }
 
     &.v-enter-active .nav-content {
-      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), padding-top 0.3s ease-out;
 
       &:first-child {
         transition-delay: 0.06s;
@@ -227,7 +317,7 @@ const handleToggleButton = () => {
       }
     }
     &.v-leave-active .nav-content {
-      transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995);
+      transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995), padding-top 0.2s ease-out;
       transform-origin: bottom left;
 
       &:last-child {
@@ -243,13 +333,21 @@ const handleToggleButton = () => {
 
     &.v-enter-from .nav-content {
       transform: translateX(calc(-100% - 5px));
+
+      &:first-child {
+        padding-top: 70px;
+      }
     }
     &.v-enter-to .nav-content {
       transform: translateX(0);
-    }
 
+      &:first-child {
+        padding-top: 70px;
+      }
+    }
     &.v-leave-to .nav-content {
       &:first-child {
+        padding-top: 10px;
         transform: translateX(0) translateY(100vh) rotate(24deg);
       }
       &:nth-child(2) {
