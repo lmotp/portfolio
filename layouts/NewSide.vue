@@ -21,7 +21,7 @@ const handleMenuClick = (menuPath: string) => {
 
 <template>
   <header :class="['header-container']">
-    <div :class="['overlay', isClose && 'is-close']"></div>
+    <div :class="['overlay', isClose && 'is-close']" :aria-hidden="true"></div>
 
     <button :class="['side-toggle', isClose && 'is-close']" @click="handleToggleButton">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 45 25" aria-hidden="true" class="svg-menu close">
@@ -34,76 +34,71 @@ const handleMenuClick = (menuPath: string) => {
         <path d="m.354.646 23.577 23.578"></path>
       </svg>
     </button>
-
-    <Transition :duration="{ enter: 800, leave: 900 }">
-      <nav :class="['nav-wrap']" v-show="isClose">
-        <div class="nav-content">
-          <button @click="handleMenuClick('/')" :class="{ 'is-active': path === '/' }">
-            <strong>Main</strong>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
-              <path d="M.63 1h19.373v20"></path>
-              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
-            </svg>
-          </button>
-          <p>main</p>
-        </div>
-        <div class="nav-content">
-          <button @click="handleMenuClick('/experiments')" :class="{ 'is-active': path === '/experiments' }">
-            <strong>Experiments </strong>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
-              <path d="M.63 1h19.373v20"></path>
-              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
-            </svg>
-          </button>
-          <p>experiments</p>
-        </div>
-        <div class="nav-content">
-          <button @click="handleMenuClick('/contact')" :class="{ 'is-active': path === '/contact' }">
-            <strong>Contact</strong>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
-              <path d="M.63 1h19.373v20"></path>
-              <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
-            </svg>
-          </button>
-          <p>contact</p>
-        </div>
-      </nav>
-    </Transition>
   </header>
+
+  <Transition :duration="{ enter: 800, leave: 900 }">
+    <nav :class="['nav-wrap']" v-show="isClose">
+      <div class="nav-content">
+        <button @click="handleMenuClick('/')" :class="{ 'is-active': path === '/' }">
+          <strong>Main</strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>main</p>
+      </div>
+      <div class="nav-content">
+        <button @click="handleMenuClick('/experiments')" :class="{ 'is-active': path === '/experiments' }">
+          <strong>Experiments </strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>experiments</p>
+      </div>
+      <div class="nav-content">
+        <button @click="handleMenuClick('/contact')" :class="{ 'is-active': path === '/contact' }">
+          <strong>Contact</strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>contact</p>
+      </div>
+    </nav>
+  </Transition>
 </template>
 
 <style scoped>
 .header-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 100;
-  isolation: isolate;
-
   .overlay {
-    position: absolute;
+    position: fixed;
     inset: 0;
     opacity: 0;
-    background-color: hsla(0, 0%, 8%, 0.45);
+    backdrop-filter: blur(6px);
+    background-color: rgba(20, 20, 20, 0.45);
     pointer-events: none;
-    z-index: -2;
+    user-select: none;
+    z-index: 100;
 
     transition: opacity 0.3s ease-out;
 
     &.is-close {
       opacity: 1;
+      pointer-events: auto;
     }
   }
 
   .side-toggle {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 15px;
+    right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,6 +107,7 @@ const handleMenuClick = (menuPath: string) => {
     border-radius: 50%;
     background-color: black;
     overflow: hidden;
+    z-index: 101;
 
     &::before {
       content: "";
@@ -226,136 +222,125 @@ const handleMenuClick = (menuPath: string) => {
       }
     }
   }
+}
 
-  .nav-wrap {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 3px;
-    z-index: -1;
+.nav-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 100dvh;
+  z-index: 101;
 
-    .nav-content {
-      width: 420px;
-      padding: 10px 14px;
-      border-radius: 5px;
-      box-shadow: 0 0 0 1px black;
+  .nav-content {
+    width: 420px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px black;
 
-      &:not(:last-child) {
-        flex: 1;
-        background-color: white;
+    &:not(:last-child) {
+      flex: 1;
+      background-color: white;
+    }
+
+    &:last-child {
+      height: 158px;
+      background-color: red;
+    }
+
+    button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+      width: 100%;
+
+      strong {
+        font-size: 24px;
       }
 
-      &:first-child {
-        padding-top: 70px;
-      }
+      svg {
+        width: 20px;
+        height: 15px;
+        stroke: black;
+        stroke-width: 2px;
+        transform: rotate(45deg);
 
-      &:last-child {
-        height: 158px;
-        background-color: red;
-      }
+        path {
+          transition: stroke-dashoffset 0.4s cubic-bezier(1, 0, 0.25, 0.995);
 
-      button {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 5px;
-        width: 100%;
-
-        strong {
-          font-size: 24px;
+          &:first-child {
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+            transition-delay: 0.15s;
+          }
+          &:nth-child(2) {
+            stroke-dasharray: 28;
+            stroke-dashoffset: 28;
+          }
         }
+      }
 
+      &:hover,
+      &.is-active {
         svg {
-          width: 20px;
-          height: 15px;
-          stroke: black;
-          stroke-width: 2px;
-          transform: rotate(45deg);
-
           path {
-            transition: stroke-dashoffset 0.4s cubic-bezier(1, 0, 0.25, 0.995);
-
-            &:first-child {
-              stroke-dasharray: 40;
-              stroke-dashoffset: 40;
-              transition-delay: 0.15s;
-            }
-            &:nth-child(2) {
-              stroke-dasharray: 28;
-              stroke-dashoffset: 28;
-            }
-          }
-        }
-
-        &:hover,
-        &.is-active {
-          svg {
-            path {
-              stroke-dashoffset: 0;
-            }
+            stroke-dashoffset: 0;
           }
         }
       }
-
-      p {
-      }
     }
 
-    &.v-enter-active .nav-content {
-      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), padding-top 0.3s ease-out;
-
-      &:first-child {
-        transition-delay: 0.06s;
-      }
-      &:nth-child(2) {
-        transition-delay: 0.12s;
-      }
-      &:nth-child(3) {
-        transition-delay: 0.18s;
-      }
+    p {
     }
-    &.v-leave-active .nav-content {
-      transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995), padding-top 0.2s ease-out;
-      transform-origin: bottom left;
+  }
 
-      &:last-child {
-        transition-delay: 0.06s;
-      }
-      &:nth-last-child(2) {
-        transition-delay: 0.12s;
-      }
-      &:nth-last-child(3) {
-        transition-delay: 0.18s;
-      }
+  &.v-enter-active .nav-content {
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+
+    &:first-child {
+      transition-delay: 0.06s;
     }
-
-    &.v-enter-from .nav-content {
-      transform: translateX(calc(-100% - 5px));
-
-      &:first-child {
-        padding-top: 70px;
-      }
+    &:nth-child(2) {
+      transition-delay: 0.12s;
     }
-    &.v-enter-to .nav-content {
-      transform: translateX(0);
-
-      &:first-child {
-        padding-top: 70px;
-      }
+    &:nth-child(3) {
+      transition-delay: 0.18s;
     }
-    &.v-leave-to .nav-content {
-      &:first-child {
-        padding-top: 10px;
-        transform: translateX(0) translateY(100vh) rotate(24deg);
-      }
-      &:nth-child(2) {
-        transform: translateX(0) translateY(100vh) rotate(-24deg);
-      }
-      &:last-child {
-        transform: translateX(0) translateY(100vh) rotate(24deg);
-      }
+  }
+  &.v-leave-active .nav-content {
+    transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995);
+    transform-origin: bottom left;
+
+    &:last-child {
+      transition-delay: 0.06s;
+    }
+    &:nth-last-child(2) {
+      transition-delay: 0.12s;
+    }
+    &:nth-last-child(3) {
+      transition-delay: 0.18s;
+    }
+  }
+
+  &.v-enter-from .nav-content {
+    transform: translateX(calc(-100% - 5px));
+  }
+  &.v-enter-to .nav-content {
+    transform: translateX(0);
+  }
+  &.v-leave-to .nav-content {
+    &:first-child {
+      transform: translateX(0) translateY(100vh) rotate(24deg);
+    }
+    &:nth-child(2) {
+      transform: translateX(0) translateY(100vh) rotate(-24deg);
+    }
+    &:last-child {
+      transform: translateX(0) translateY(100vh) rotate(24deg);
     }
   }
 }

@@ -28,6 +28,7 @@ const heroInit = () => {
   const heroIconsSize = heroIconsRef.value?.getBoundingClientRect();
   const heroCenter = -heroIconsSize?.top + window.innerHeight / 2 - heroIconsSize?.height / 2;
   const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
+  const iconsInitY = [110, 40, 80, 20, 100.6];
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -48,6 +49,21 @@ const heroInit = () => {
 
   tl.add("start");
   tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
+
+  gsap.fromTo(".hero-icons", { y: -heroCenter }, { y: 0 }, "start");
+  gsap.fromTo(heroIcons, { yPercent: (index) => iconsInitY[index] }, { yPercent: 0 }, "start+=0.1");
+  gsap.fromTo(
+    ".hero-text .title",
+    { y: 50, opacity: 0 },
+    { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" },
+    "start"
+  );
+  gsap.fromTo(
+    ".hero-text .desc",
+    { y: 30, opacity: 0 },
+    { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" },
+    "start+=0.2"
+  );
 
   if (isMobile.value) {
   } else {
@@ -374,6 +390,7 @@ onMounted(() => {
         .desc {
           font-size: 14px;
           line-height: 1.2;
+          overflow: hidden;
 
           @media (max-width: 1000px) {
             font-size: 12px;
