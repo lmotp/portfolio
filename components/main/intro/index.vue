@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import Logo1 from "./Logo1.vue";
-import Logo2 from "./Logo2.vue";
-import Logo3 from "./Logo3.vue";
-import Logo4 from "./Logo4.vue";
-import Logo5 from "./Logo5.vue";
+import Logo1 from "@/components/logo/Logo1.vue";
+import Logo2 from "@/components/logo/Logo2.vue";
+import Logo3 from "@/components/logo/Logo3.vue";
+import Logo4 from "@/components/logo/Logo4.vue";
+import Logo5 from "@/components/logo/Logo5.vue";
 
 import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
@@ -15,9 +16,11 @@ const introContainerRef = ref<HTMLElement | null>(null);
 const introMainRef = ref<HTMLElement | null>(null);
 const introDumyRef = ref<HTMLElement | null>(null);
 
-const isIntroInit = ref(false);
 const isShowMask = ref(false);
 const maskIndex = ref(0);
+
+const pageTransitionStore = usePageTransitionStore();
+const { isLoading } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
@@ -37,10 +40,6 @@ const heroInit = () => {
       start: "top top",
       end: "bottom top",
       scrub: !0,
-
-      onEnter: () => {
-        isIntroInit.value = true;
-      },
     },
     defaults: {
       overwrite: "auto",
@@ -211,12 +210,14 @@ const maskInit = () => {
   });
 };
 
-watch(isIntroInit, (status) => {
-  if (status) introInit();
+watch(isLoading, (status) => {
+  if (!status) {
+    heroInit();
+    introInit();
+  }
 });
 
 onMounted(() => {
-  heroInit();
   maskInit();
 });
 </script>

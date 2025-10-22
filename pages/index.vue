@@ -1,15 +1,8 @@
-<script setup lang="ts">
-const isLoading = ref(false);
-
-const handleOnLoad = () => {
-  isLoading.value = false;
-};
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <section>
-    <Loading v-if="isLoading" @onLoad="handleOnLoad" />
-    <Main v-else />
+    <Main />
   </section>
 </template>
 

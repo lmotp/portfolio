@@ -36,7 +36,7 @@ watch(path, (url) => {
   transitionInput.value = 10;
 
   gsap.to(transitionInput, {
-    value: 65,
+    value: 70,
     duration: 1.5,
     ease: "linear",
     onUpdate: function () {
@@ -70,7 +70,7 @@ onUnmounted(() => {});
 .page-transition {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 3000;
   pointer-events: none;
 
   canvas {

@@ -1,237 +1,347 @@
 <script setup lang="ts">
-import { useDraggable } from "@vueuse/core";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
-const menuList = [
-  {
-    name: "Main",
-    path: "/",
-  },
-  {
-    name: "Portfolio",
-    path: "/portfolio",
-  },
-  {
-    name: "Experiments",
-    path: "/experiments",
-  },
-];
+const isClose = ref(false);
 
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
-const menuRef = ref<HTMLElement | null>(null);
-const isMenuOpen = ref(false); // 메뉴 열림 상태 관리
-const isGrabbing = ref(false);
-
-// 초기 위치 설정
-const OPEN_X = 0; // 메뉴가 열린 상태 (px)
-
-const initialX = ref(-384); // 메뉴가 숨겨진 상태 (px)
-const closeThreshold = ref(-350); // 닫힘/열림 결정 기준 (px)
-const menuWidth = ref(0);
-const audio = ref<HTMLAudioElement | null>(null);
-
-const drabbleOnMove = (position: any) => {
-  isGrabbing.value = true;
-
-  // 열린 상태에서 오른쪽으로 드래그하지 못하도록 제한
-  if (position.x > OPEN_X && menuWidth.value) {
-    x.value = OPEN_X; // x 값을 고정
-    isMenuOpen.value = true;
-  }
+const handleToggleButton = () => {
+  isClose.value = !isClose.value;
 };
-// 드래그 종료 시 위치에 따라 열림/닫힘 결정
-const drabbleOnEnd = (position: any) => {
-  const isOpen = position.x > closeThreshold.value;
-  isGrabbing.value = false;
-
-  if (isOpen) {
-    // 메뉴 열기
-    x.value = OPEN_X;
-    isMenuOpen.value = true;
-  } else {
-    // 메뉴 닫기
-    x.value = initialX.value;
-    isMenuOpen.value = false;
-  }
-};
-
-// useDraggable 설정
-const { x } = useDraggable(menuRef, {
-  initialValue: { x: initialX.value, y: 0 }, // 초기 위치
-  onMove: drabbleOnMove,
-  onEnd: drabbleOnEnd,
-});
 
 const handleMenuClick = (menuPath: string) => {
   if (menuPath === path.value) return;
 
   path.value = menuPath;
-  x.value = initialX.value; // 드래그 초기값 동기화
+  isClose.value = false;
 };
-
-watch(isMenuOpen, () => {
-  audio.value?.play();
-});
-
-onMounted(() => {
-  nextTick(() => {
-    if (menuRef.value) {
-      menuWidth.value = menuRef.value.clientWidth;
-      audio.value = new Audio("/sounds/drawer.mp3");
-
-      initialX.value = -menuWidth.value; // 메뉴 너비를 기준으로 초기 위치 설정
-      closeThreshold.value = -menuWidth.value / 2; // 닫힘/열림 기준도 업데이트
-      x.value = initialX.value; // 드래그 초기값 동기화
-    }
-  });
-});
 </script>
 
 <template>
-  <aside id="side" class="side" :style="{ translate: `${x}px` }">
-    <div ref="menuRef" :class="['side__menu', isGrabbing && 'is-grabbing']">
-      <div class="side__content">
-        <button
-          v-for="menu in menuList"
-          :key="menu.path"
-          :class="[
-            'side__content-link',
-            (menu.path === path || (path.includes('/experiments') && menu.path === '/experiments')) && 'active',
-          ]"
-          @click="handleMenuClick(menu.path)"
-        >
-          {{ menu.name }}
-        </button>
-      </div>
+  <header :class="['header-container']">
+    <div :class="['overlay', isClose && 'is-close']" :aria-hidden="true"></div>
 
-      <div class="side__toggle">
-        <button class="side__toggle-btn">
-          <div class="btn-inner">
-            <span class="line"></span>
-            <span class="line"></span>
-          </div>
-        </button>
+    <button :class="['side-toggle', isClose && 'is-close']" @click="handleToggleButton">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 45 25" aria-hidden="true" class="svg-menu close">
+        <path d="M0 .5h45"></path>
+        <path d="M0 12.5h45"></path>
+        <path d="M0 24.5h45"></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 25 26" aria-hidden="true" class="svg-menu open">
+        <path d="M24.293 1.354.716 24.931"></path>
+        <path d="m.354.646 23.577 23.578"></path>
+      </svg>
+    </button>
+  </header>
 
-        <svg width="168" height="34" viewBox="0 0 168 34" fill="none" class="MenuButtonClip_svg">
-          <clipPath id="menuButtonClip">
-            <path
-              d="M0.988281 -0.12793H167.016L145.491 25.1077C141.691 29.5627 136.13 32.1288 130.274 32.1288H38.4755C32.7372 32.1288 27.2753 29.664 23.4787 25.3612L0.988281 -0.12793Z"
-            ></path>
-          </clipPath>
-        </svg>
+  <Transition :duration="{ enter: 800, leave: 900 }">
+    <nav :class="['nav-wrap']" v-show="isClose">
+      <div class="nav-content">
+        <button @click="handleMenuClick('/')" :class="{ 'is-active': path === '/' }">
+          <strong>Main</strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>main</p>
       </div>
-    </div>
-  </aside>
+      <div class="nav-content">
+        <button @click="handleMenuClick('/experiments')" :class="{ 'is-active': path === '/experiments' }">
+          <strong>Experiments </strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>experiments</p>
+      </div>
+      <div class="nav-content">
+        <button @click="handleMenuClick('/contact')" :class="{ 'is-active': path === '/contact' }">
+          <strong>Contact</strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>contact</p>
+      </div>
+    </nav>
+  </Transition>
 </template>
 
 <style scoped>
-.side {
-  --back-color: rgba(255, 255, 255, 0.9);
-  --blur: 4px;
+.header-container {
+  .overlay {
+    position: fixed;
+    inset: 0;
+    opacity: 0;
+    backdrop-filter: blur(6px);
+    background-color: rgba(20, 20, 20, 0.45);
+    pointer-events: none;
+    user-select: none;
+    z-index: 100;
 
-  position: fixed;
-  inset: 0;
-  background-color: transparent;
-  z-index: 100;
-  pointer-events: none;
+    transition: opacity 0.3s ease-out;
 
-  .side__menu {
-    position: relative;
-    padding: 21px 16px;
-    width: calc(350px + 34px);
-    height: 100%;
-    background-color: var(--back-color);
-    backdrop-filter: blur(var(--blur));
-    box-shadow: inset -3px 0px 10px 3px rgba(0, 0, 0, 0.2);
-    isolation: isolate;
-    pointer-events: auto;
-
-    &.is-grabbing {
-      .side__toggle .side__toggle-btn {
-        cursor: grabbing;
-      }
+    &.is-close {
+      opacity: 1;
+      pointer-events: auto;
     }
+  }
 
-    .side__content {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      flex-direction: column;
-      gap: 10px;
+  .side-toggle {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: black;
+    box-shadow: 0 0 0 1px white;
+    overflow: hidden;
+    z-index: 101;
 
-      .side__content-link {
-        position: relative;
-        font-weight: 700;
-        font-size: 32px;
-        color: #0b0d0f;
-        box-shadow: inset 0 -20px 0 transparent;
-        isolation: isolate;
-
-        &::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          width: 0;
-          box-shadow: inset 0 -20px 0 rgba(191, 255, 161, 0.7);
-          z-index: -1;
-          user-select: none;
-          pointer-events: none;
-
-          transition: width 0.3s ease-in-out;
-        }
-
-        &:hover::before,
-        &.active::before {
-          width: 100%;
-        }
-      }
-    }
-
-    .side__toggle {
+    &::before {
+      content: "";
       position: absolute;
-      top: 50%;
-      left: 100%;
-      z-index: 101;
-      transform: translate(calc(-50% + 16px), -50%) rotate(-90deg);
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      transform: scaleX(0);
+      transform-origin: right;
+      background-color: red;
+      transition: transform 0.4s cubic-bezier(1, 0, 0.25, 0.995);
+    }
 
-      .side__toggle-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 168px;
-        height: 34px;
-        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.05));
-        cursor: grab;
+    .svg-menu {
+      width: 100%;
+      height: 100%;
+      stroke: white;
+      stroke-width: 2px;
+      transition: stroke 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 
-        .btn-inner {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          gap: 4px;
-          width: 100%;
-          height: 34px;
-          clip-path: url(#menuButtonClip);
-          background-color: var(--back-color);
+      path {
+        transition: stroke-dashoffset 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+      }
 
-          .line {
-            display: inline-block;
-            width: 24px;
-            height: 2px;
-            background-color: var(--black);
+      &.close {
+        position: relative;
+        width: 20px;
+        height: 20px;
+
+        path {
+          stroke-dasharray: 45;
+          stroke-dashoffset: 0;
+
+          &:first-child {
+            transition-delay: 0.5s;
+          }
+
+          &:nth-child(2) {
+            transition-delay: 0.6s;
+          }
+
+          &:nth-child(3) {
+            transition-delay: 0.7s;
           }
         }
       }
 
-      .MenuButtonClip_svg {
+      &.open {
         position: absolute;
-        top: -100vh;
-        left: -100vw;
-        pointer-events: none;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        transform: translate(-50%, -50%);
+
+        path {
+          stroke-dasharray: 34;
+          stroke-dashoffset: 34;
+
+          &:first-child {
+            transition-delay: 0.1s;
+          }
+
+          &:nth-child(2) {
+            transition-delay: 0.2s;
+          }
+        }
       }
+    }
+
+    &:hover {
+      &::before {
+        transform: scaleX(1);
+        transform-origin: left;
+        transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      .svg-menu {
+        stroke: black;
+      }
+    }
+
+    &.is-close {
+      .svg-menu {
+        &.close path {
+          stroke-dashoffset: 45;
+
+          &:first-child {
+            transition-delay: 0.1s;
+          }
+
+          &:nth-child(2) {
+            transition-delay: 0.2s;
+          }
+
+          &:nth-child(3) {
+            transition-delay: 0.3s;
+          }
+        }
+        &.open path {
+          stroke-dashoffset: 0;
+
+          &:first-child {
+            transition-delay: 0.5s;
+          }
+
+          &:nth-child(2) {
+            transition-delay: 0.6s;
+          }
+        }
+      }
+    }
+  }
+}
+
+.nav-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: 100dvh;
+  z-index: 101;
+
+  .nav-content {
+    width: 420px;
+    padding: 10px 14px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px black;
+
+    &:not(:last-child) {
+      flex: 1;
+      background-color: white;
+    }
+
+    &:last-child {
+      height: 158px;
+      background-color: red;
+    }
+
+    button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+      width: 100%;
+
+      strong {
+        font-size: 24px;
+      }
+
+      svg {
+        width: 20px;
+        height: 15px;
+        stroke: black;
+        stroke-width: 2px;
+        transform: rotate(45deg);
+
+        path {
+          transition: stroke-dashoffset 0.4s cubic-bezier(1, 0, 0.25, 0.995);
+
+          &:first-child {
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+            transition-delay: 0.15s;
+          }
+          &:nth-child(2) {
+            stroke-dasharray: 28;
+            stroke-dashoffset: 28;
+          }
+        }
+      }
+
+      &:hover,
+      &.is-active {
+        svg {
+          path {
+            stroke-dashoffset: 0;
+          }
+        }
+      }
+    }
+
+    p {
+    }
+  }
+
+  &.v-enter-active .nav-content {
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+
+    &:first-child {
+      transition-delay: 0.06s;
+    }
+    &:nth-child(2) {
+      transition-delay: 0.12s;
+    }
+    &:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+  }
+  &.v-leave-active .nav-content {
+    transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995);
+    transform-origin: bottom left;
+
+    &:last-child {
+      transition-delay: 0.06s;
+    }
+    &:nth-last-child(2) {
+      transition-delay: 0.12s;
+    }
+    &:nth-last-child(3) {
+      transition-delay: 0.18s;
+    }
+  }
+
+  &.v-enter-from .nav-content {
+    transform: translateX(calc(-100% - 5px));
+  }
+  &.v-enter-to .nav-content {
+    transform: translateX(0);
+  }
+  &.v-leave-to .nav-content {
+    &:first-child {
+      transform: translateX(0) translateY(100vh) rotate(24deg);
+    }
+    &:nth-child(2) {
+      transform: translateX(0) translateY(100vh) rotate(-24deg);
+    }
+    &:last-child {
+      transform: translateX(0) translateY(100vh) rotate(24deg);
     }
   }
 }

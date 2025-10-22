@@ -1,172 +1,87 @@
-<script setup>
-import step1 from "@/assets/images/step-1.webp";
-import step2 from "@/assets/images/step-2.webp";
-import step3 from "@/assets/images/step-3.webp";
-import step4 from "@/assets/images/step-4.webp";
+<script setup lang="ts">
+import Logo1 from "@/components/logo/Logo1.vue";
+import Logo2 from "@/components/logo/Logo2.vue";
+import Logo3 from "@/components/logo/Logo3.vue";
+import Logo4 from "@/components/logo/Logo4.vue";
+import Logo5 from "@/components/logo/Logo5.vue";
 
-const step = ref(0);
-const stepPictures = [step1, step2, step3, step4];
-const stepPictureRotaion = [0, 3, -4, 6];
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
 
-const meteor = computed(() => {
-  if (process.client) {
-    return [...Array.from({ length: 20 })].map(() => ({
-      top: "-5px",
-      left: Math.floor(Math.random() * window.innerWidth) + "px",
-      animationDelay: Math.random() * 1 + 0.5 + "s",
-      animationDuration: Math.floor(Math.random() * 10 + 2.5) + "s",
-    }));
-  } else return [];
-});
+const pageTransitionStore = usePageTransitionStore();
+const { isLoading } = storeToRefs(pageTransitionStore);
 
-const emits = defineEmits(["onLoad"]);
+const percent = ref(0);
+const interval = ref<any>(null);
 
-let interval;
-
-watch(step, (val) => {
-  if (val >= 4) {
-    clearInterval(interval);
-    emits("onLoad");
-  }
-});
+const init = () => {
+  interval.value = setInterval(() => {
+    percent.value += 1;
+    if (percent.value >= 100) {
+      clearInterval(interval.value);
+      isLoading.value = false;
+    }
+  }, 50);
+};
 
 onMounted(() => {
-  interval = setInterval(() => (step.value += 1), 2000);
+  init();
+});
+
+onUnmounted(() => {
+  clearInterval(interval.value);
 });
 </script>
 
 <template>
-  <div class="background-wrap">
-    <div class="meteors-wrap">
-      <span v-for="(s, i) of meteor" :key="i" :style="s" class="wrapper">
-        <div class="tail" />
-      </span>
-    </div>
-
-    <div class="picture-container">
-      <template v-for="(picture, index) of stepPictures" :key="index">
-        <Transition name="fade">
-          <div v-if="step >= index" class="picture-wrap" :style="{ '--rotaion': `${stepPictureRotaion[index]}deg` }">
-            <img class="picture" :src="picture" :alt="`step-${index + 1}`" />
-          </div>
-        </Transition>
-      </template>
+  <div :class="['loading-wrap', !isLoading && 'fade']">
+    <strong class="percent">{{ percent < 10 ? `0${percent}` : percent }}</strong>
+    <div class="logo-wrap">
+      <Logo1 class="logo" />
+      <Logo2 class="logo" />
+      <Logo3 class="logo" />
+      <Logo4 class="logo" />
+      <Logo5 class="logo" />
     </div>
   </div>
 </template>
 
-<style scoped>
-.background-wrap {
-  width: 100%;
-  height: 100%;
-  background-color: #0b0d0f;
+<style lang="scss" scoped>
+.loading-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background-color: #141414;
+  z-index: 2000;
 
-  .meteors-wrap {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform: translateX(-50%);
-
-    .wrapper {
-      --tw-shadow: 0 0 0 1px #ffffff10;
-      --tw-ring-shadow: 0 0 #0000;
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      border-radius: 99999px;
-      background-color: #a1a1aa;
-      box-shadow: var(--tw-ring-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-      pointer-events: none;
-      isolation: isolate;
-
-      animation: meteor 5s linear infinite forwards;
-
-      .tail {
-        position: absolute;
-        top: 50%;
-        width: 50px;
-        height: 1px;
-        background-image: linear-gradient(to right, rgb(161, 161, 170), rgba(0, 0, 0, 0));
-        z-index: -10;
-      }
-    }
+  &.fade {
+    animation: fade 0.5s ease-in-out forwards;
   }
 
-  .picture-container {
-    .picture-wrap {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 510px;
-      aspect-ratio: 1.777 / 1;
-      transform: translate(-50%, -50%) rotate(var(--rotaion));
-      transform-origin: center center;
+  .percent {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .logo-wrap {
+    display: flex;
+    gap: 10px;
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        border: 3px solid rgb(14, 14, 14);
-        background-color: rgb(255, 254, 250);
-        mix-blend-mode: multiply;
-
-        z-index: 10;
-        user-select: none;
-        pointer-events: none;
-      }
-
-      &.fade-enter-active,
-      &.fade-leave-active {
-        transition: all 1000ms cubic-bezier(0.08, 0.82, 0.17, 1), filter 1000ms ease-in-out;
-      }
-
-      &.fade-enter-from,
-      &.fade-leave-to {
-        top: 175%;
-        transform: translate(-50%, -50%) scale(2) rotate(5deg);
-        filter: blur(3px);
-      }
-
-      .picture {
-        position: absolute;
-        inset: 0;
-        border-radius: 4px;
-        object-fit: cover;
-      }
+    .logo {
+      width: 50px;
+      height: 50px;
     }
   }
 }
 
-@keyframes meteor {
-  0% {
-    transform: rotate(215deg) translateX(0);
-    opacity: 1;
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(215deg) translateX(-1000px);
-    opacity: 0;
-  }
-}
-
-@keyframes completed {
-  50% {
-    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(1);
-    filter: blur(0px);
-  }
-  90% {
-    opacity: 1;
-    filter: blur(1px);
-    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(2.15);
-  }
+@keyframes fade {
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) rotate(var(--rotaion)) scale(2.25);
+    display: none;
   }
 }
 </style>

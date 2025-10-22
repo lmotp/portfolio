@@ -33,6 +33,16 @@ const menuList = [
     path: "/experiments/blur",
     src: "/images/skills/5.webp",
   },
+  {
+    name: "Meteor",
+    path: "/experiments/meteor",
+    src: "/images/skills/6.webp",
+  },
+  {
+    name: "Step",
+    path: "/experiments/step",
+    src: "/images/skills/7.webp",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();

@@ -9,27 +9,33 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition } = storeToRefs(pageTransitionStore);
+const { isPageTransition, isLoading } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY } = storeToRefs(scrollTriggerStore);
 
-const lenis = new Lenis();
-lenis.on("scroll", () => {
-  scrollY.value = window.scrollY;
-  ScrollTrigger.update();
-});
+const init = () => {
+  const lenis = new Lenis();
 
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
+  lenis.on("scroll", () => {
+    scrollY.value = window.scrollY;
+    ScrollTrigger.update();
+  });
+
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  scrollTrigger.value = ScrollTrigger;
+};
 
 onMounted(() => {
-  scrollTrigger.value = ScrollTrigger;
+  init();
 });
 </script>
 
 <template>
   <NuxtLayout>
+    <Loading />
     <RivePageTransition v-show="isPageTransition" />
     <NuxtPage />
   </NuxtLayout>

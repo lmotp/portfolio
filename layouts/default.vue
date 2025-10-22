@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Side from "./Side.vue";
-import NewSide from "./NewSide.vue";
 </script>
 <template>
   <main>
-    <NewSide />
+    <Side />
     <slot />
   </main>
 </template>
@@ -12,5 +11,6 @@ import NewSide from "./NewSide.vue";
 main {
   width: 100%;
   height: 100dvh;
+  isolation: isolate;
 }
 </style>
