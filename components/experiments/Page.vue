@@ -1,12 +1,5 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
-import { usePageTransitionStore } from "@/stores/pageTransition";
-import { storeToRefs } from "pinia";
-
-const router = useRouter();
-
-const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path } = storeToRefs(pageTransitionStore);
 
 const overlayRef = ref<HTMLElement | null>(null);
 const blocksRef = ref<HTMLElement[]>([]);
@@ -27,16 +20,10 @@ const createBlocks = () => {
   }
 };
 
-const coverPage = (url: string) => {
-  if (isPageTransition.value) return;
-  isPageTransition.value = true;
-
+const coverPage = () => {
   const tl = gsap.timeline({
     onComplete: () => {
-      router.push(url);
-      setTimeout(() => {
-        isCovering.value = true;
-      }, 400);
+      isCovering.value = true;
     },
   });
 
@@ -58,19 +45,18 @@ const revealPage = () => {
     ease: "power2.out",
     transformOrigin: "right",
     onComplete: () => {
-      isPageTransition.value = false;
       isCovering.value = false;
     },
   });
 };
 
-watch(path, (url) => {
-  createBlocks();
-  coverPage(url);
-});
-
 watch(isCovering, (status) => {
   if (status) revealPage();
+});
+
+onMounted(() => {
+  createBlocks();
+  coverPage();
 });
 </script>
 

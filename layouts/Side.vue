@@ -36,18 +36,28 @@ const handleMenuClick = (menuPath: string) => {
     </button>
   </header>
 
-  <Transition :duration="{ enter: 800, leave: 900 }">
+  <Transition :duration="{ enter: 700, leave: 800 }">
     <nav :class="['nav-wrap']" v-show="isClose">
       <div class="nav-content">
         <button @click="handleMenuClick('/')" :class="{ 'is-active': path === '/' }">
-          <strong>Main</strong>
+          <strong>Home</strong>
 
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
             <path d="M.63 1h19.373v20"></path>
             <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
           </svg>
         </button>
-        <p>main</p>
+      </div>
+      <div class="nav-content">
+        <button @click="handleMenuClick('/portfolio')" :class="{ 'is-active': path === '/portfolio' }">
+          <strong>Portfolio</strong>
+
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+            <path d="M.63 1h19.373v20"></path>
+            <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+          </svg>
+        </button>
+        <p>portfolio</p>
       </div>
       <div class="nav-content">
         <button @click="handleMenuClick('/experiments')" :class="{ 'is-active': path === '/experiments' }">
@@ -239,11 +249,19 @@ const handleMenuClick = (menuPath: string) => {
     width: 420px;
     padding: 10px 14px;
     border-radius: 5px;
+    background-color: white;
     box-shadow: 0 0 0 1px black;
 
-    &:not(:last-child) {
+    &:not(:last-child, :first-child) {
       flex: 1;
-      background-color: white;
+    }
+
+    &:first-child {
+      height: 60px;
+
+      button {
+        margin-bottom: 0;
+      }
     }
 
     &:last-child {
@@ -300,30 +318,36 @@ const handleMenuClick = (menuPath: string) => {
   }
 
   &.v-enter-active .nav-content {
-    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
 
     &:first-child {
-      transition-delay: 0.06s;
+      transition-delay: 0.05s;
     }
     &:nth-child(2) {
-      transition-delay: 0.12s;
+      transition-delay: 0.1s;
     }
     &:nth-child(3) {
-      transition-delay: 0.18s;
+      transition-delay: 0.15s;
+    }
+    &:nth-child(4) {
+      transition-delay: 0.2s;
     }
   }
   &.v-leave-active .nav-content {
-    transition: transform 0.9s cubic-bezier(1, 0, 0.25, 0.995);
+    transition: transform 0.8s cubic-bezier(1, 0, 0.25, 0.995);
     transform-origin: bottom left;
 
     &:last-child {
-      transition-delay: 0.06s;
+      transition-delay: 0.05s;
     }
     &:nth-last-child(2) {
-      transition-delay: 0.12s;
+      transition-delay: 0.1s;
     }
     &:nth-last-child(3) {
-      transition-delay: 0.18s;
+      transition-delay: 0.15s;
+    }
+    &:nth-last-child(4) {
+      transition-delay: 0.2s;
     }
   }
 
@@ -340,8 +364,11 @@ const handleMenuClick = (menuPath: string) => {
     &:nth-child(2) {
       transform: translateX(0) translateY(100vh) rotate(-24deg);
     }
-    &:last-child {
+    &:nth-child(3) {
       transform: translateX(0) translateY(100vh) rotate(24deg);
+    }
+    &:last-child {
+      transform: translateX(0) translateY(100vh) rotate(-24deg);
     }
   }
 }
