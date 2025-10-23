@@ -20,7 +20,7 @@ const isShowMask = ref(false);
 const maskIndex = ref(0);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isLoading } = storeToRefs(pageTransitionStore);
+const { isLoading, isPageTransition } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
@@ -28,10 +28,15 @@ const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
 const heroInit = () => {
   if (!heroIconsRef.value) return;
 
-  const heroIconsSize = heroIconsRef.value?.getBoundingClientRect();
-  const heroCenter = -heroIconsSize?.top + window.innerHeight / 2 - heroIconsSize?.height / 2;
+  const heroIconsSize = heroIconsRef.value.getBoundingClientRect();
+  const heroCenter = -heroIconsSize.top + window.innerHeight / 2 - heroIconsSize.height / 2;
   const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
   const iconsInitY = [110, 40, 80, 20, 100.6];
+
+  gsap.set(".hero-icons", { y: -heroCenter });
+  gsap.set(heroIcons, { yPercent: (index) => iconsInitY[index] });
+  gsap.set(".hero-text .title", { y: 50, opacity: 0 });
+  gsap.set(".hero-text .desc", { y: 30, opacity: 0 });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -40,6 +45,9 @@ const heroInit = () => {
       start: "top top",
       end: "bottom top",
       scrub: !0,
+      onEnter: () => {
+        introInit();
+      },
     },
     defaults: {
       overwrite: "auto",
@@ -48,21 +56,6 @@ const heroInit = () => {
 
   tl.add("start");
   tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
-
-  gsap.fromTo(".hero-icons", { y: -heroCenter }, { y: 0 }, "start");
-  gsap.fromTo(heroIcons, { yPercent: (index) => iconsInitY[index] }, { yPercent: 0 }, "start+=0.1");
-  gsap.fromTo(
-    ".hero-text .title",
-    { y: 50, opacity: 0 },
-    { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" },
-    "start"
-  );
-  gsap.fromTo(
-    ".hero-text .desc",
-    { y: 30, opacity: 0 },
-    { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" },
-    "start+=0.2"
-  );
 
   if (isMobile.value) {
   } else {
@@ -210,14 +203,21 @@ const maskInit = () => {
   });
 };
 
-watch(isLoading, (status) => {
-  if (!status) {
-    heroInit();
-    introInit();
+watch([isLoading, isPageTransition], ([status, isPageTransition]) => {
+  if (!heroIconsRef.value) return;
+
+  if (!status && !isPageTransition) {
+    const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
+
+    gsap.to(".hero-icons", { y: 0 });
+    gsap.to(heroIcons, { yPercent: 0 });
+    gsap.to(".hero-text .title", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+    gsap.to(".hero-text .desc", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
   }
 });
 
 onMounted(() => {
+  heroInit();
   maskInit();
 });
 </script>
