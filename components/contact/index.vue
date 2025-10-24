@@ -6,8 +6,8 @@ import vertexShader from "@/shaders/contact/vertex.glsl";
 import fragmentShader from "@/shaders/contact/fragment.glsl";
 
 const cotactRef = ref<null | HTMLCanvasElement>(null);
-const minPan = new THREE.Vector3(-180, -135, -Infinity);
-const maxPan = new THREE.Vector3(180, 135, Infinity);
+const minPan = new THREE.Vector3(-10, -29, -Infinity);
+const maxPan = new THREE.Vector3(10, 29, Infinity);
 const target = new THREE.Vector3();
 const mouse = new THREE.Vector2();
 
@@ -32,12 +32,12 @@ const init = () => {
   });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x0b0d0f, 1);
+  renderer.setClearColor(0xff0000, 1);
 
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 0, 150);
+  camera.position.set(0, 0, 50);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false;
@@ -59,7 +59,7 @@ const init = () => {
 
   const textureLoader = new THREE.TextureLoader();
   textureLoader.load("/images/contact/cover.jpg", (texture) => {
-    geometry = new THREE.PlaneGeometry(600, 400);
+    geometry = new THREE.PlaneGeometry(100, 100, 32, 32);
     material = new THREE.ShaderMaterial({
       uniforms: {
         uTexture: { value: texture },
@@ -67,6 +67,7 @@ const init = () => {
         uMouse: { value: mouse },
         uCenter: { value: new THREE.Vector2(0.5, 0.5) },
         uRadius: { value: 0.35 },
+        uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       },
       vertexShader,
       fragmentShader,
