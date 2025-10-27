@@ -120,7 +120,7 @@ onMounted(() => {
           About The Line
         </strong>
 
-        <h2>Skills</h2>
+        <h2>Experiments</h2>
       </div>
     </div>
 

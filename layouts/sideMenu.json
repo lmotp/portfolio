@@ -1,0 +1,72 @@
+{
+  "Home": {
+    "path": "/",
+    "desc": "",
+    "childs": []
+  },
+  "Portfolio": {
+    "path": "/portfolio",
+    "desc": "Portfolio",
+    "childs": [
+      {
+        "path": "/portfolio/1",
+        "name": "Portfolio 1"
+      },
+      {
+        "path": "/portfolio/2",
+        "name": "Portfolio 2"
+      }
+    ]
+  },
+  "Experiments": {
+    "path": "/experiments",
+    "desc": "Experiments",
+    "childs": [
+      {
+        "name": "Burn",
+        "path": "/experiments/burn"
+      },
+      {
+        "name": "Glitch",
+        "path": "/experiments/glitch"
+      },
+      {
+        "name": "Kuji",
+        "path": "/experiments/kuji"
+      },
+      {
+        "name": "Roll",
+        "path": "/experiments/roll"
+      },
+      {
+        "name": "Pinball",
+        "path": "/experiments/pinball"
+      },
+      {
+        "name": "Blur",
+        "path": "/experiments/blur"
+      },
+      {
+        "name": "Meteor",
+        "path": "/experiments/meteor"
+      },
+      {
+        "name": "Step",
+        "path": "/experiments/step"
+      },
+      {
+        "name": "Page",
+        "path": "/experiments/page"
+      },
+      {
+        "name": "Card",
+        "path": "/experiments/card"
+      }
+    ]
+  },
+  "Contact": {
+    "path": "/contact",
+    "desc": "Contact",
+    "childs": []
+  }
+}
