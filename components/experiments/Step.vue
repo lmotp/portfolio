@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import step1 from "@/assets/images/step-1.webp";
-import step2 from "@/assets/images/step-2.webp";
-import step3 from "@/assets/images/step-3.webp";
-import step4 from "@/assets/images/step-4.webp";
+import step1 from "/images/experiments/step/step-1.webp";
+import step2 from "/images/experiments/step/step-2.webp";
+import step3 from "/images/experiments/step/step-3.webp";
+import step4 from "/images/experiments/step/step-4.webp";
 
 const step = ref(0);
 const stepPictures = [step1, step2, step3, step4];
@@ -92,7 +92,6 @@ onUnmounted(() => {
     }
   }
 }
-
 
 @keyframes completed {
   50% {

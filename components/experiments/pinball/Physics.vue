@@ -161,7 +161,7 @@ const init = async () => {
   cards = await Promise.all(
     cardConfig.map(async (card, index) => {
       const y = 1000 + card.y;
-      const imageUrl = `/images/card/image-${index + 1}.jpg`;
+      const imageUrl = `/images/experiments/card/image-${index + 1}.jpg`;
       const img = await loadImage(imageUrl);
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;
@@ -183,7 +183,7 @@ const init = async () => {
   const textCards = await Promise.all(
     textConfig.map(async (text) => {
       const y = sensorBars.at(-1)!.position.y + 550;
-      const imageUrl = `/images/physics/test_text.png`;
+      const imageUrl = `/images/experiments/pinball/test_text.png`;
       const img = await loadImage(imageUrl);
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;

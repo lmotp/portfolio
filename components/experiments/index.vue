@@ -48,6 +48,11 @@ const menuList = [
     path: "/experiments/page",
     src: "/images/skills/8.webp",
   },
+  {
+    name: "Card",
+    path: "/experiments/card",
+    src: "/images/skills/9.webp",
+  },
 ];
 
 const pageTransitionStore = usePageTransitionStore();
