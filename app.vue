@@ -9,10 +9,12 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, isLoading } = storeToRefs(pageTransitionStore);
+const { isPageTransition } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { scrollTrigger, scrollY } = storeToRefs(scrollTriggerStore);
+const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
+
+const route = useRoute();
 
 const init = () => {
   const lenis = new Lenis();
@@ -26,7 +28,15 @@ const init = () => {
   gsap.ticker.lagSmoothing(0);
 
   scrollTrigger.value = ScrollTrigger;
+  lenisRef.value = lenis;
 };
+
+watch(
+  () => route.path,
+  () => {
+    window.scrollTo(0, 0);
+  }
+);
 
 onMounted(() => {
   init();

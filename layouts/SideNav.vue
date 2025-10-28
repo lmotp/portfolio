@@ -10,12 +10,13 @@ const props = defineProps<{ menu: Menu; name: string; path: string }>();
 const emits = defineEmits(["menu-click"]);
 
 const handleMenuClick = (menuPath: string) => {
-  emits("menu-click", menuPath);
+  if (menuPath === "/contact") {
+  } else emits("menu-click", menuPath);
 };
 </script>
 
 <template>
-  <div class="nav-item">
+  <div class="nav-item" :class="{ 'is-contact': menu.path === '/contact' }">
     <div class="nav-item-header">
       <button @click="handleMenuClick(menu.path)" :class="{ 'is-active': path === menu.path }">
         <strong>{{ name }}</strong>
@@ -54,16 +55,6 @@ const handleMenuClick = (menuPath: string) => {
 
     button {
       margin-bottom: 0;
-    }
-  }
-
-  &:last-child {
-    height: 158px;
-    background-color: red;
-
-    .nav-item-header p {
-      font-size: 16px;
-      color: black;
     }
   }
 
@@ -180,6 +171,16 @@ const handleMenuClick = (menuPath: string) => {
         }
       }
     }
+  }
+}
+
+.nav-item.is-contact {
+  height: 158px;
+  background-color: red;
+
+  .nav-item-header p {
+    font-size: 16px;
+    color: black;
   }
 }
 </style>

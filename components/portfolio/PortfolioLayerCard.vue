@@ -69,7 +69,18 @@ onMounted(() => {
   width: 800px;
   height: 80px;
   transform: translate(-50%, -50%);
+  background-color: transparent;
   overflow: hidden;
+  cursor: pointer;
+
+  transition: margin-left 0.3s cubic-bezier(0.19, 1, 0.22, 1), padding-left 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+    background-color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+
+  &:hover {
+    padding-left: 10px;
+    margin-left: 30px;
+    background-color: red;
+  }
 
   figure {
     height: 100%;

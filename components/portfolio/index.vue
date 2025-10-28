@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
 import gsap from "gsap";
 
 import PortfolioLayerCard from "./PortfolioLayerCard.vue";
@@ -6,7 +8,11 @@ import layerCards from "./card.json";
 
 const layerCardWrapRef = ref<HTMLElement | null>(null);
 const sectionRef = ref<HTMLElement | null>(null);
+
 const SCROLL_TO_ANGLE_FACTOR = 0.001;
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { lenisRef } = storeToRefs(scrollTriggerStore);
 
 const viewHeight = computed(() => {
   const scrollAmount = (Math.PI * 2) / SCROLL_TO_ANGLE_FACTOR;
@@ -14,7 +20,6 @@ const viewHeight = computed(() => {
 
   return vh;
 });
-
 const cards = computed(() => {
   const values = Object.values(layerCards);
   const repetitionCount = 6;
@@ -59,11 +64,14 @@ const updatePosition = (e?: Event) => {
 };
 
 onMounted(() => {
+  if (lenisRef.value) lenisRef.value.options.infinite = true;
+
   updatePosition();
   window.addEventListener("scroll", updatePosition);
 });
 
 onUnmounted(() => {
+  if (lenisRef.value) lenisRef.value.options.infinite = false;
   window.removeEventListener("scroll", updatePosition);
 });
 </script>

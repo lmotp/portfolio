@@ -41,7 +41,7 @@ onMounted(() => {
 <template>
   <footer>
     <div class="footer-gutter">
-      <h2>FOOTER</h2>
+      <h2>Contact</h2>
     </div>
 
     <div class="footer-wrapper">
