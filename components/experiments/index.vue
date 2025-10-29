@@ -29,24 +29,22 @@ const arcControlPointX = arcStartX + config.arcRadius;
 const arcControlPointY = containerHeight / 2;
 
 const spotlightItems = [
-  { name: "Burn", img: "/images/skills/0.webp" },
-  { name: "Glitch", img: "/images/skills/1.webp" },
-  { name: "Kuji", img: "/images/skills/2.webp" },
-  { name: "Roll", img: "/images/skills/3.webp" },
-  { name: "Pinball", img: "/images/skills/4.webp" },
-  { name: "Blur", img: "/images/skills/5.webp" },
-  { name: "Meteor", img: "/images/skills/6.webp" },
-  { name: "Step", img: "/images/skills/7.webp" },
-  { name: "Page", img: "/images/skills/8.webp" },
-  { name: "Card", img: "/images/skills/9.webp" },
+  { name: "Burn", img: "/images/skills/0.webp", pixelImg: "/images/skills/0_pixel.png" },
+  { name: "Glitch", img: "/images/skills/1.webp", pixelImg: "/images/skills/1_pixel.png" },
+  { name: "Kuji", img: "/images/skills/2.webp", pixelImg: "/images/skills/2_pixel.png" },
+  { name: "Roll", img: "/images/skills/3.webp", pixelImg: "/images/skills/3_pixel.png" },
+  { name: "Pinball", img: "/images/skills/4.webp", pixelImg: "/images/skills/4_pixel.png" },
+  { name: "Blur", img: "/images/skills/5.webp", pixelImg: "/images/skills/5_pixel.png" },
+  { name: "Meteor", img: "/images/skills/6.webp", pixelImg: "/images/skills/6_pixel.png" },
+  { name: "Step", img: "/images/skills/7.webp", pixelImg: "/images/skills/7_pixel.png" },
+  { name: "Page", img: "/images/skills/8.webp", pixelImg: "/images/skills/8_pixel.png" },
+  { name: "Card", img: "/images/skills/9.webp", pixelImg: "/images/skills/9_pixel.png" },
 ];
 
 const init = () => {
   if (imagesContainer.value) imageElements.value = [...imagesContainer.value?.querySelectorAll(".spotlight-img")];
+  const titleElements = titlesContainer.value?.querySelectorAll("strong");
 
-  const titleElements = titlesContainer.value?.querySelectorAll("h1");
-
-  imageElements.value.forEach((img) => gsap.set(img, { opacity: 0 }));
   scrollTrigger.value?.create({
     trigger: ".spotlight",
     start: "top top",
@@ -57,32 +55,24 @@ const init = () => {
     onUpdate: (self) => {
       const progress = self.progress;
 
-      const viewportHeight = window.innerHeight;
       const titlesContainerHeight = titlesContainer.value?.scrollHeight || 0;
-      const startPosition = viewportHeight;
+      const startPosition = window.innerHeight;
       const targetPosition = -titlesContainerHeight;
       const totalDistance = startPosition - targetPosition;
-      const currentY = startPosition - progress * totalDistance;
+      const currentY = startPosition / 2 - progress * totalDistance;
 
       gsap.set(".spotlight-titles", {
         transform: `translateY(${currentY}px)`,
       });
 
       imageElements.value.forEach((img, index) => {
-        const imageProgress = getImageProgressState(index, progress);
-        if (imageProgress < 0 || imageProgress > 1) {
-          gsap.set(img, { opacity: 0 });
-        } else {
-          const pos = getBezierPosition(imageProgress);
-          gsap.set(img, {
-            x: pos.x - 100,
-            y: pos.y - 75,
-            opacity: 1,
-          });
-        }
+        const imageProgress = getImageProgressState(index, progress + 0.13);
+        const pos = getBezierPosition(imageProgress);
+
+        gsap.set(img, { x: pos.x - 100, y: pos.y - 50 });
       });
 
-      const viewportMiddle = viewportHeight / 2;
+      const viewportMiddle = window.innerHeight / 2;
       let closestIndex = 0;
       let closestDistance = Infinity;
 
@@ -97,12 +87,12 @@ const init = () => {
         }
       });
 
-      if (closestIndex !== currentActiveIndex.value && titleElements) {
+      if (titleElements) {
         if (titleElements[currentActiveIndex.value]) {
-          titleElements[currentActiveIndex.value].style.opacity = "0.25";
+          titleElements[currentActiveIndex.value].style.color = "color-mix(in srgb, #fff, transparent 50%)";
         }
 
-        titleElements[closestIndex].style.opacity = "1";
+        titleElements[closestIndex].style.color = "#fff";
         currentActiveIndex.value = closestIndex;
       }
     },
@@ -127,7 +117,7 @@ const getImageProgressState = (index: number, overallProgress: number) => {
 };
 
 onMounted(() => {
-  if (lenisRef.value) lenisRef.value.options.infinite = true;
+  // if (lenisRef.value) lenisRef.value.options.infinite = true;
 
   nextTick(init);
 });
@@ -140,12 +130,12 @@ onUnmounted(() => {
 <template>
   <div class="spotlight">
     <div ref="spotlightBgImg" class="spotlight-bg-img">
-      <img :src="spotlightItems[currentActiveIndex].img" alt="" />
+      <img class="main-img" :src="spotlightItems[currentActiveIndex].img" alt="" />
     </div>
 
     <div ref="titlesContainerElement" class="spotlight-titles-container">
       <div ref="titlesContainer" class="spotlight-titles">
-        <h1 v-for="item in spotlightItems" :key="item.name">{{ item.name }}</h1>
+        <strong v-for="item in spotlightItems" :key="item.name">{{ item.name }}</strong>
       </div>
     </div>
 
@@ -162,24 +152,6 @@ onUnmounted(() => {
 </template>
 
 <style>
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-h1 {
-  font-size: 4rem;
-  font-weight: 500;
-  line-height: 1;
-}
-
-p {
-  font-size: 1.5rem;
-  font-weight: 500;
-  line-height: 1;
-}
-
 .spotlight {
   position: relative;
   width: 100%;
@@ -189,27 +161,37 @@ p {
   .spotlight-bg-img {
     position: absolute;
     inset: 0;
-    overflow: hidden;
 
-    /* img {
-      transform: scale(1.5);
-      will-change: transform;
-    } */
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: rgba(11, 13, 15, 0.5);
+      backdrop-filter: blur(10px);
+    }
   }
 
   .spotlight-titles-container {
     position: absolute;
-    inset: 0 0 0 15vw;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 15vw;
     overflow: hidden;
-
-    clip-path: polygon(50svh 0px, 0px 50%, 50svh 100%, 100% calc(100% + 100svh), 100% -100svh);
+    clip-path: polygon(50svh 0, 0 50%, 50svh 100%, 100% calc(100% + 100svh), 100% -100svh);
 
     &::after,
     &::before {
       content: "";
       position: absolute;
       width: 100svh;
-      height: 2.5px;
+      height: 1.5px;
       background-color: #fff;
       pointer-events: none;
       z-index: 10;
@@ -232,16 +214,16 @@ p {
       left: 15%;
       display: flex;
       flex-direction: column;
-      gap: 5rem;
       width: 75%;
       height: 100%;
       transform: translateY(100%);
       z-index: 2;
 
-      h1 {
-        color: #fff;
-        opacity: 0.25;
-        transition: opacity 0.3s ease;
+      strong {
+        font-size: 58px;
+        line-height: 2.25;
+        color: color-mix(in srgb, #fff, transparent 50%);
+        transition: color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
     }
   }
@@ -261,6 +243,12 @@ p {
       width: 200px;
       height: 150px;
       will-change: transform;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
 
@@ -268,9 +256,14 @@ p {
     position: absolute;
     top: 50%;
     left: 10%;
-    color: #fff;
+    margin-right: 1rem;
     z-index: 2;
     transform: translateY(-50%);
+
+    p {
+      font-weight: 500;
+      color: #fff;
+    }
   }
 }
 
