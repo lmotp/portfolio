@@ -29,16 +29,16 @@ const config = {
 
 const introImage = "/images/portfolio/intro-img.png";
 const spotlightItems = [
-  { name: "Burn", img: "/images/skills/0.webp" },
-  { name: "Glitch", img: "/images/skills/1.webp" },
-  { name: "Kuji", img: "/images/skills/2.webp" },
-  { name: "Roll", img: "/images/skills/3.webp" },
-  { name: "Pinball", img: "/images/skills/4.webp" },
-  { name: "Blur", img: "/images/skills/5.webp" },
-  { name: "Meteor", img: "/images/skills/6.webp" },
-  { name: "Step", img: "/images/skills/7.webp" },
-  { name: "Page", img: "/images/skills/8.webp" },
-  { name: "Card", img: "/images/skills/9.webp" },
+  { name: "Portfolio-1", img: "/images/skills/0.webp" },
+  { name: "Portfolio-2", img: "/images/skills/1.webp" },
+  { name: "Portfolio-3", img: "/images/skills/2.webp" },
+  { name: "Portfolio-4", img: "/images/skills/3.webp" },
+  { name: "Portfolio-5", img: "/images/skills/4.webp" },
+  { name: "Portfolio-6", img: "/images/skills/5.webp" },
+  { name: "Portfolio-7", img: "/images/skills/6.webp" },
+  { name: "Portfolio-8", img: "/images/skills/7.webp" },
+  { name: "Portfolio-9", img: "/images/skills/8.webp" },
+  { name: "Portfolio-10", img: "/images/skills/9.webp" },
 ];
 
 const init = () => {
@@ -109,15 +109,22 @@ const init = () => {
       },
     });
 
-    scrollTrigger.value?.create({
-      trigger: ".outro",
-      start: `top+=${window.innerHeight * 3}px bottom`,
-      end: `top+=${window.innerHeight * 3}px top`,
-      scrub: 1,
-      onUpdate: (self) => {
-        gsap.set(".outro", { y: window.innerHeight * self.progress * -1 });
+    const outroTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".outro",
+        start: `top+=${window.innerHeight * 3.5}px bottom`,
+        end: `top+=${window.innerHeight * 3.5}px top`,
+        scrub: 1,
       },
     });
+
+    outroTl.add("outro", ">=");
+    outroTl.to(".outro", { duration: 1, y: window.innerHeight * -1 }, "outro");
+    outroTl.to(
+      ".outro-box",
+      { duration: 2.5, transform: "translateY(0)", left: "0%", right: "0%", top: "20%", ease: "power2.inOut" },
+      "outro"
+    );
   }
 };
 
@@ -236,7 +243,9 @@ onUnmounted(() => {
   </div>
 
   <div class="outro wrapper">
-    <h1>Momentes in still motion.</h1>
+    <div class="outro-box">
+      <h2>Momentes in still motion.</h2>
+    </div>
   </div>
 </template>
 
@@ -245,17 +254,6 @@ onUnmounted(() => {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
-}
-
-.outro {
-  position: fixed;
-  top: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  background-color: black;
-  z-index: 1;
 }
 
 .spotlight {
@@ -410,12 +408,35 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 1000px) {
-  .outro {
-    padding: 2rem;
-    text-align: center;
-  }
+.outro {
+  position: fixed;
+  top: 100%;
+  background-color: black;
+  z-index: 1;
 
+  .outro-box {
+    position: absolute;
+    top: 40%;
+    left: 10%;
+    right: 10%;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: red;
+    border-radius: 1rem;
+    transform: translateY(80%);
+    transform-origin: bottom center;
+
+    h2 {
+      text-align: center;
+      color: white;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
   .spotlight {
     .spotlight-titles-container {
       clip-path: none;
@@ -433,6 +454,11 @@ onUnmounted(() => {
     .spotlight-header {
       display: none;
     }
+  }
+
+  .outro {
+    padding: 2rem;
+    text-align: center;
   }
 }
 </style>

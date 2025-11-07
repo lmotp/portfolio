@@ -6,13 +6,13 @@ import gsap from "gsap";
 import LayerCard from "./LayerCard.vue";
 import layerCards from "./card.json";
 
-const layerCardWrapRef = ref<HTMLElement | null>(null);
-const sectionRef = ref<HTMLElement | null>(null);
-
-const SCROLL_TO_ANGLE_FACTOR = 0.001;
-
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
+
+const layerCardWrapRef = ref<HTMLElement | null>(null);
+const sectionRef = ref<HTMLElement | null>(null);
+const initRotate = ref(0);
+const SCROLL_TO_ANGLE_FACTOR = 0.001;
 
 const viewHeight = computed(() => {
   const scrollAmount = (Math.PI * 2) / SCROLL_TO_ANGLE_FACTOR;
@@ -39,10 +39,12 @@ const cards = computed(() => {
   return repeatedData;
 });
 
-const updatePosition = (e?: Event) => {
+const updatePosition = (rotate?: number) => {
   if (!layerCardWrapRef?.value || !sectionRef?.value) return;
 
-  const scrollAmount = window.scrollY * SCROLL_TO_ANGLE_FACTOR * -1;
+  const scrollAmount = rotate || window.scrollY * SCROLL_TO_ANGLE_FACTOR * -1;
+
+  console.log(scrollAmount);
   const items = layerCardWrapRef.value?.querySelectorAll(".layer-card");
   const angleIncrement = (Math.PI * 2) / cards.value.length;
   const radius = 1100;
@@ -65,14 +67,24 @@ const updatePosition = (e?: Event) => {
 
 onMounted(() => {
   if (lenisRef.value) lenisRef.value.options.infinite = true;
+  window.scrollTo(0, 0);
 
-  updatePosition();
-  window.addEventListener("scroll", updatePosition);
+  gsap.to(initRotate, {
+    duration: 5,
+    value: Math.PI * -2,
+    ease: "power3.inOut",
+    onComplete: () => {
+      window.addEventListener("scroll", () => updatePosition());
+    },
+    onUpdate: () => {
+      updatePosition(initRotate.value);
+    },
+  });
 });
 
 onUnmounted(() => {
   if (lenisRef.value) lenisRef.value.options.infinite = false;
-  window.removeEventListener("scroll", updatePosition);
+  window.removeEventListener("scroll", () => updatePosition());
 });
 </script>
 
