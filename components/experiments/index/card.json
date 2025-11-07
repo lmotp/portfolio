@@ -3,70 +3,60 @@
     "id": 1,
     "url": "/experiments",
     "title": "Burn",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18"
+    "src": "/images/skills/0.webp"
   },
   "2": {
     "id": 2,
     "url": "/experiments",
     "title": "Glitch",
-    "type": "image",
-    "src": "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424"
+    "src": "/images/skills/1.webp"
   },
   "3": {
     "id": 3,
     "url": "/experiments",
     "title": "Kuji",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c"
+    "src": "/images/skills/2.webp"
   },
   "4": {
     "id": 4,
     "url": "/experiments",
     "title": "Roll",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18"
+    "src": "/images/skills/3.webp"
   },
   "5": {
     "id": 5,
     "url": "/experiments",
     "title": "Pinball",
-    "type": "image",
-    "src": "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424"
+    "src": "/images/skills/4.webp"
   },
   "6": {
     "id": 6,
     "url": "/experiments",
     "title": "Blur",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c"
+    "src": "/images/skills/5.webp"
   },
   "7": {
     "id": 7,
     "url": "/experiments",
     "title": "Meteor",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18"
+    "src": "/images/skills/6.webp"
   },
   "8": {
     "id": 8,
     "url": "/experiments",
     "title": "Step",
-    "type": "image",
-    "src": "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424"
+    "src": "/images/skills/7.webp"
   },
   "9": {
     "id": 9,
     "url": "/experiments",
     "title": "Page",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c"
+    "src": "/images/skills/8.webp"
   },
   "10": {
     "id": 10,
     "url": "/experiments",
     "title": "Card",
-    "type": "video",
-    "src": "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c"
+    "src": "/images/skills/9.webp"
   }
 }

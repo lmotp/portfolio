@@ -5,11 +5,11 @@ type cardType = {
   id: number;
   url: string;
   title: string;
-  type: string;
   src: string;
   totalAngle: number;
 };
 
+const emit = defineEmits(["onClick"]);
 const props = defineProps<cardType>();
 const imageWrapperRef = ref<HTMLElement | null>(null);
 
@@ -29,32 +29,27 @@ const init = () => {
   });
 };
 
+const hadnleClickRoute = () => {
+  const angle = props.totalAngle * props.id;
+  emit("onClick", { url: props.url, angle });
+};
+
 onMounted(() => {
   nextTick(init);
 });
 </script>
 
 <template>
-  <div ref="imageWrapperRef" class="layer-card">
+  <div ref="imageWrapperRef" class="layer-card" @click="hadnleClickRoute">
     <p>
       {{ props.title }} <span>{{ props.id }}</span>
     </p>
 
-    <NuxtLink :to="props.url">
+    <div>
       <figure>
-        <img v-if="props.type === 'image'" :src="props.src" :alt="props.title" />
-        <video
-          v-else
-          playsinline
-          muted
-          autoplay
-          loop
-          controlslist="nodownload noplaybackrate"
-          disablepictureinpicture
-          :src="props.src"
-        ></video>
+        <img :src="props.src" :alt="props.title" />
       </figure>
-    </NuxtLink>
+    </div>
   </div>
 </template>
 

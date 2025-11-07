@@ -11,7 +11,7 @@ const { lenisRef } = storeToRefs(scrollTriggerStore);
 
 const layerCardWrapRef = ref<HTMLElement | null>(null);
 const sectionRef = ref<HTMLElement | null>(null);
-const initRotate = ref(0);
+const rotate = ref(0);
 const SCROLL_TO_ANGLE_FACTOR = 0.001;
 
 const viewHeight = computed(() => {
@@ -43,11 +43,11 @@ const updatePosition = (rotate?: number) => {
   if (!layerCardWrapRef?.value || !sectionRef?.value) return;
 
   const scrollAmount = rotate || window.scrollY * SCROLL_TO_ANGLE_FACTOR * -1;
-
-  console.log(scrollAmount);
   const items = layerCardWrapRef.value?.querySelectorAll(".layer-card");
   const angleIncrement = (Math.PI * 2) / cards.value.length;
   const radius = 1100;
+
+  console.log(scrollAmount);
 
   items?.forEach((item, index) => {
     const angle = index * angleIncrement + scrollAmount;
@@ -65,19 +65,32 @@ const updatePosition = (rotate?: number) => {
   });
 };
 
+const hadnleClickRoute = ({ url, angle }: { url: string; angle: number }) => {
+  console.log(angle, rotate.value);
+  gsap.to(rotate, {
+    duration: 5,
+    value: -angle,
+    ease: "power3.inOut",
+    onUpdate: () => {
+      updatePosition(rotate.value);
+    },
+  });
+};
+
 onMounted(() => {
   if (lenisRef.value) lenisRef.value.options.infinite = true;
   window.scrollTo(0, 0);
 
-  gsap.to(initRotate, {
+  gsap.to(rotate, {
     duration: 5,
     value: Math.PI * -2,
     ease: "power3.inOut",
     onComplete: () => {
       window.addEventListener("scroll", () => updatePosition());
+      rotate.value = 0;
     },
     onUpdate: () => {
-      updatePosition(initRotate.value);
+      updatePosition(rotate.value);
     },
   });
 });
@@ -91,7 +104,13 @@ onUnmounted(() => {
 <template>
   <section ref="sectionRef" :style="{ height: `${viewHeight}dvh ` }">
     <div ref="layerCardWrapRef" class="layer-card-wrap">
-      <LayerCard v-for="(card, index) in cards" :key="index" v-bind="card" :totalAngle="(Math.PI * 2) / cards.length" />
+      <LayerCard
+        v-for="(card, index) in cards"
+        :key="index"
+        v-bind="card"
+        :totalAngle="(Math.PI * 2) / cards.length"
+        @onClick="hadnleClickRoute"
+      />
     </div>
   </section>
 </template>
