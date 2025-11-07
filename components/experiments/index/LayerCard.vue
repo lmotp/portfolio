@@ -98,7 +98,7 @@ onMounted(() => {
     gap: 16px;
     width: 250px;
     flex-shrink: 0;
-    font-size: 42px;
+    font-size: 38px;
     font-weight: bold;
     color: white;
 
