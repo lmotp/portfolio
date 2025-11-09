@@ -1,91 +1,51 @@
 <script setup lang="ts">
-import { gsap } from "gsap";
+import * as rive from "@rive-app/canvas";
+import gsap from "gsap";
 
-const overlayRef = ref<HTMLElement | null>(null);
-const blocksRef = ref<HTMLElement[]>([]);
-const isCovering = ref(false);
-const BLOCK_COUNT = 20;
+let transitionInput: rive.StateMachineInput;
+let r: rive.Rive;
 
-const createBlocks = () => {
-  if (!overlayRef.value) return;
+const init = () => {
+  r = new rive.Rive({
+    src: "/rive/navigate_ui_transition_desktop_scroll.riv",
+    canvas: document.getElementById("canvas") as HTMLCanvasElement,
+    autoplay: true,
+    stateMachines: "Transition Desktop",
+    layout: new rive.Layout({
+      fit: rive.Fit.Cover,
+      alignment: rive.Alignment.Center,
+    }),
+    onLoad: () => {
+      transitionInput = r.stateMachineInputs("Transition Desktop")[0];
+      transitionInput.value = 10;
+      r.resizeDrawingSurfaceToCanvas();
+      r.play();
 
-  overlayRef.value.innerHTML = "";
-  blocksRef.value = [];
-
-  for (let i = 0; i < BLOCK_COUNT; i++) {
-    const block = document.createElement("div");
-    block.classList.add("block");
-    overlayRef.value.appendChild(block);
-    blocksRef.value.push(block);
-  }
-};
-
-const coverPage = () => {
-  const tl = gsap.timeline({
-    onComplete: () => {
-      isCovering.value = true;
-    },
-  });
-
-  tl.to(blocksRef.value, {
-    scaleX: 1,
-    duration: 0.4,
-    stagger: 0.02,
-    ease: "power2.out",
-    transformOrigin: "left",
-  });
-};
-
-const revealPage = () => {
-  gsap.set(blocksRef.value, { scaleX: 1, transformOrigin: "right" });
-  gsap.to(blocksRef.value, {
-    scaleX: 0,
-    duration: 0.4,
-    stagger: 0.02,
-    ease: "power2.out",
-    transformOrigin: "right",
-    onComplete: () => {
-      isCovering.value = false;
+      gsap.to(transitionInput, {
+        value: 100,
+        duration: 3,
+        ease: "linear",
+        onUpdate: () => {
+          console.log(transitionInput.value);
+        },
+      });
     },
   });
 };
-
-watch(isCovering, (status) => {
-  if (status) revealPage();
-});
 
 onMounted(() => {
-  createBlocks();
-  coverPage();
+  init();
 });
 </script>
 
 <template>
-  <div class="page-transition">
-    <div ref="overlayRef" class="page-overlay"></div>
-    <slot />
-  </div>
+  <canvas id="canvas" width="500" height="500"></canvas>
 </template>
 
-<style>
-.page-transition {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 100;
-
-  .page-overlay {
-    display: flex;
-    width: 100%;
-    height: 100%;
-
-    .block {
-      flex: 1;
-      height: 100%;
-      background-color: #222;
-      transform: scaleX(0);
-      transform-origin: left;
-    }
-  }
+<style scoped>
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>

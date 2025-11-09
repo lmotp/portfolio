@@ -6,6 +6,8 @@ import gsap from "gsap";
 import LayerCard from "./LayerCard.vue";
 import layerCards from "./card.json";
 
+const router = useRouter();
+
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
 
@@ -47,8 +49,6 @@ const updatePosition = (rotate?: number) => {
   const angleIncrement = (Math.PI * 2) / cards.value.length;
   const radius = 1100;
 
-  console.log(scrollAmount);
-
   items?.forEach((item, index) => {
     const angle = index * angleIncrement + scrollAmount;
     const x = window.innerWidth / 2 + radius * Math.cos(angle);
@@ -66,13 +66,15 @@ const updatePosition = (rotate?: number) => {
 };
 
 const hadnleClickRoute = ({ url, angle }: { url: string; angle: number }) => {
-  console.log(angle, rotate.value);
   gsap.to(rotate, {
     duration: 5,
     value: -angle,
     ease: "power3.inOut",
     onUpdate: () => {
       updatePosition(rotate.value);
+    },
+    onComplete: () => {
+      router.push(`experiments/${url}`);
     },
   });
 };

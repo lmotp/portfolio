@@ -1,61 +1,51 @@
 {
   "1": {
     "id": 1,
-    "url": "/experiments",
     "title": "Burn",
     "src": "/images/skills/0.webp"
   },
   "2": {
     "id": 2,
-    "url": "/experiments",
     "title": "Glitch",
     "src": "/images/skills/1.webp"
   },
   "3": {
     "id": 3,
-    "url": "/experiments",
     "title": "Kuji",
     "src": "/images/skills/2.webp"
   },
   "4": {
     "id": 4,
-    "url": "/experiments",
     "title": "Roll",
     "src": "/images/skills/3.webp"
   },
   "5": {
     "id": 5,
-    "url": "/experiments",
     "title": "Pinball",
     "src": "/images/skills/4.webp"
   },
   "6": {
     "id": 6,
-    "url": "/experiments",
     "title": "Blur",
     "src": "/images/skills/5.webp"
   },
   "7": {
     "id": 7,
-    "url": "/experiments",
     "title": "Meteor",
     "src": "/images/skills/6.webp"
   },
   "8": {
     "id": 8,
-    "url": "/experiments",
     "title": "Step",
     "src": "/images/skills/7.webp"
   },
   "9": {
     "id": 9,
-    "url": "/experiments",
     "title": "Page",
     "src": "/images/skills/8.webp"
   },
   "10": {
     "id": 10,
-    "url": "/experiments",
     "title": "Card",
     "src": "/images/skills/9.webp"
   }

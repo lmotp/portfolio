@@ -3,7 +3,6 @@ import gsap from "gsap";
 
 type cardType = {
   id: number;
-  url: string;
   title: string;
   src: string;
   totalAngle: number;
@@ -31,7 +30,7 @@ const init = () => {
 
 const hadnleClickRoute = () => {
   const angle = props.totalAngle * props.id;
-  emit("onClick", { url: props.url, angle });
+  emit("onClick", { url: props.title.toLowerCase(), angle });
 };
 
 onMounted(() => {
