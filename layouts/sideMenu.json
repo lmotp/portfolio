@@ -63,10 +63,5 @@
         "path": "/experiments/card"
       }
     ]
-  },
-  "Contact": {
-    "path": "/contact",
-    "desc": "Contact",
-    "childs": []
   }
 }

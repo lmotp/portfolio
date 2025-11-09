@@ -3,6 +3,7 @@ import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
 import SideButton from "./SideButton.vue";
+import SideContact from "./SideContact.vue";
 import SideNav from "./SideNav.vue";
 import sideMenu from "./sideMenu.json";
 
@@ -48,6 +49,7 @@ onMounted(() => {
         v-bind="{ menu, name, path }"
         @menu-click="handleMenuClick"
       />
+      <SideContact class="nav-content" :path="path" />
     </nav>
   </Transition>
 </template>
