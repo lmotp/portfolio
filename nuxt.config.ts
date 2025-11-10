@@ -35,4 +35,9 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
   },
+
+  target: "static",
+  router: {
+    base: "/portfolio/",
+  },
 });
