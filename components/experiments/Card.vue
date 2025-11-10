@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
+
+import usePublicAsset from "~/composables/usePublicAsset";
+
 gsap.registerPlugin(SplitText);
 
 const positions = [
@@ -122,7 +125,7 @@ const onResize = () => {
         wrapper.appendChild(itemImage);
 
         const img = new Image();
-        img.src = `/images/experiments/card/${base.src}`;
+        img.src = usePublicAsset(`/images/experiments/card/${base.src}`);
         itemImage.appendChild(img);
 
         const caption = document.createElement("small");

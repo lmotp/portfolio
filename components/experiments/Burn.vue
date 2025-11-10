@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import * as THREE from "three";
 
-import usePublicAsset from "~/composables/usePublicAsset";
-
 import ImagePlaneVertex from "./shaders/burn/ImagePlaneVertex.glsl";
 import ImagePlaneFragment from "./shaders/burn/ImagePlaneFragment.glsl";
 
@@ -11,6 +9,8 @@ import ImageFireFragment from "./shaders/burn/ImageFireFragment.glsl";
 
 import ImagePointsVertex from "./shaders/burn/ImagePointsVertex.glsl";
 import ImagePointsFrag from "./shaders/burn/ImagePointsFrag.glsl";
+
+import usePublicAsset from "~/composables/usePublicAsset";
 
 const burnRef = ref<HTMLElement | null>(null);
 const timeTransition = ref(0);

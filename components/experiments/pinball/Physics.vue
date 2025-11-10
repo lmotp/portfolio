@@ -3,6 +3,8 @@ import Matter, { Events } from "matter-js";
 import { useSpeedStore } from "@/stores/speed";
 import * as polyDecomp from "poly-decomp";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 // Initialize poly-decomp
 Matter.Common.setDecomp(polyDecomp);
 const emit = defineEmits(["initPhysics"]);
@@ -73,7 +75,7 @@ const loadImage = async (url: string): Promise<HTMLImageElement> => {
     const img = new Image();
     img.onload = () => resolve(img);
     img.onerror = reject;
-    img.src = url;
+    img.src = usePublicAsset(url);
   });
 };
 

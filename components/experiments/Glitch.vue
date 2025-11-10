@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import * as THREE from "three";
 
-import usePublicAsset from "~/composables/usePublicAsset";
-
 import ImageVertex from "./shaders/glitch/ImageVertex.glsl";
 import ImageFragment from "./shaders/glitch/ImageFragment.glsl";
 
 import PostEffectVertex from "./shaders/glitch/postEffectVertex.glsl";
 import PostEffectFragment from "./shaders/glitch/postEffectFragment.glsl";
+
+import usePublicAsset from "~/composables/usePublicAsset";
 
 const glitchRef = ref<HTMLElement | null>(null);
 const resolution = ref(new THREE.Vector2(document.body.clientWidth, window.innerHeight));

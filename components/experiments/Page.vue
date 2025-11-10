@@ -2,12 +2,14 @@
 import * as rive from "@rive-app/canvas";
 import gsap from "gsap";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 let transitionInput: rive.StateMachineInput;
 let r: rive.Rive;
 
 const init = () => {
   r = new rive.Rive({
-    src: "/rive/navigate_ui_transition_desktop_scroll.riv",
+    src: usePublicAsset("/rive/navigate_ui_transition_desktop_scroll.riv"),
     canvas: document.getElementById("canvas") as HTMLCanvasElement,
     autoplay: true,
     stateMachines: "Transition Desktop",
