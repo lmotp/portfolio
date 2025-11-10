@@ -56,10 +56,10 @@ const init = async () => {
   const textureLoader = new THREE.TextureLoader();
 
   await Promise.all([
-    textureLoader.loadAsync("@/public/images/experiments/burn/noise.png"),
-    textureLoader.loadAsync("@/public/images/experiments/burn/image01.jpg"),
-    textureLoader.loadAsync("@/public/images/experiments/burn/image02.jpg"),
-    textureLoader.loadAsync("@/public/images/experiments/burn/image03.jpg"),
+    textureLoader.loadAsync("/images/experiments/burn/noise.png"),
+    textureLoader.loadAsync("/images/experiments/burn/image01.jpg"),
+    textureLoader.loadAsync("/images/experiments/burn/image02.jpg"),
+    textureLoader.loadAsync("/images/experiments/burn/image03.jpg"),
   ]).then((response) => {
     const noiseTex = response[0];
     imgTexes.value = response.slice(1);

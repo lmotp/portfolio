@@ -3,6 +3,8 @@ import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
@@ -27,18 +29,18 @@ const config = {
   arcRadius: 500,
 };
 
-const introImage = "@/public/images/portfolio/intro-img.png";
+const introImage = "/images/portfolio/intro-img.png";
 const spotlightItems = [
-  { name: "Portfolio-1", img: "@/public/images/skills/0.webp" },
-  { name: "Portfolio-2", img: "@/public/images/skills/1.webp" },
-  { name: "Portfolio-3", img: "@/public/images/skills/2.webp" },
-  { name: "Portfolio-4", img: "@/public/images/skills/3.webp" },
-  { name: "Portfolio-5", img: "@/public/images/skills/4.webp" },
-  { name: "Portfolio-6", img: "@/public/images/skills/5.webp" },
-  { name: "Portfolio-7", img: "@/public/images/skills/6.webp" },
-  { name: "Portfolio-8", img: "@/public/images/skills/7.webp" },
-  { name: "Portfolio-9", img: "@/public/images/skills/8.webp" },
-  { name: "Portfolio-10", img: "@/public/images/skills/9.webp" },
+  { name: "Portfolio-1", img: "/images/skills/0.webp" },
+  { name: "Portfolio-2", img: "/images/skills/1.webp" },
+  { name: "Portfolio-3", img: "/images/skills/2.webp" },
+  { name: "Portfolio-4", img: "/images/skills/3.webp" },
+  { name: "Portfolio-5", img: "/images/skills/4.webp" },
+  { name: "Portfolio-6", img: "/images/skills/5.webp" },
+  { name: "Portfolio-7", img: "/images/skills/6.webp" },
+  { name: "Portfolio-8", img: "/images/skills/7.webp" },
+  { name: "Portfolio-9", img: "/images/skills/8.webp" },
+  { name: "Portfolio-10", img: "/images/skills/9.webp" },
 ];
 
 const init = () => {
@@ -215,7 +217,7 @@ onUnmounted(() => {
 
     <div ref="spotlightBgImg" class="spotlight-bg-img">
       <div class="intro-img">
-        <img class="intro-img-bg" :src="spotlightItems[currentActiveIndex].img" alt="" />
+        <img class="intro-img-bg" :src="usePublicAsset(spotlightItems[currentActiveIndex].img)" alt="" />
 
         <template v-if="!isInitEnd">
           <img v-for="n of 6" :key="n" :src="introImage" alt="" class="intro-img-item" />
@@ -231,7 +233,7 @@ onUnmounted(() => {
 
     <div ref="imagesContainer" class="spotlight-images">
       <div v-for="item in spotlightItems" :key="item.name" class="spotlight-img">
-        <img :src="item.img" alt="" />
+        <img :src="usePublicAsset(item.img)" alt="" />
       </div>
     </div>
 

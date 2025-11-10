@@ -1,47 +1,48 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import usePublicAsset from "~/composables/usePublicAsset";
 
 const source = [
   [
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "@/public/images/skills/1.webp",
-      pixelSrc: "@/public/images/skills/1_pixel.png",
+      src: "/images/skills/1.webp",
+      pixelSrc: "/images/skills/1_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "@/public/images/skills/2.webp",
-      pixelSrc: "@/public/images/skills/2_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "@/public/images/skills/3.webp",
-      pixelSrc: "@/public/images/skills/3_pixel.png",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "@/public/images/skills/0.webp",
-      pixelSrc: "@/public/images/skills/0_pixel.png",
+      src: "/images/skills/2.webp",
+      pixelSrc: "/images/skills/2_pixel.png",
     },
   ],
   [
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "@/public/images/skills/5.webp",
-      pixelSrc: "@/public/images/skills/5_pixel.png",
+      src: "/images/skills/3.webp",
+      pixelSrc: "/images/skills/3_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "@/public/images/skills/6.webp",
-      pixelSrc: "@/public/images/skills/6_pixel.png",
+      src: "/images/skills/0.webp",
+      pixelSrc: "/images/skills/0_pixel.png",
+    },
+  ],
+  [
+    {
+      title: "WebGL / OGL",
+      content: "Progressive Blur",
+      src: "/images/skills/5.webp",
+      pixelSrc: "/images/skills/5_pixel.png",
+    },
+    {
+      title: "WebGL / OGL",
+      content: "Progressive Blur",
+      src: "/images/skills/6.webp",
+      pixelSrc: "/images/skills/6_pixel.png",
     },
   ],
 ];
@@ -128,8 +129,8 @@ onMounted(() => {
       <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
         <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
           <figure>
-            <img class="main" :src="value.src" alt="" />
-            <img class="pixel" :src="value.pixelSrc" alt="" />
+            <img class="main" :src="usePublicAsset(value.src)" alt="" />
+            <img class="pixel" :src="usePublicAsset(value.pixelSrc)" alt="" />
           </figure>
 
           <p class="text-wrap">

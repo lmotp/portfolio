@@ -90,7 +90,7 @@ const setPlaneMesh = () => {
   const textureLoader = new THREE.TextureLoader();
   const totalGroup = new THREE.Group();
 
-  textureLoader.load("@/public/images/experiments/kuji/kuji_front.jpg", (tex) => {
+  textureLoader.load("/images/experiments/kuji/kuji_front.jpg", (tex) => {
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
     geometry = new THREE.PlaneGeometry(tex.image.width * 0.1, tex.image.height * 0.1);
@@ -104,7 +104,7 @@ const setPlaneMesh = () => {
     totalGroup.add(mesh);
   });
 
-  textureLoader.load("@/public/images/experiments/kuji/kuji_clip.png", (tex) => {
+  textureLoader.load("/images/experiments/kuji/kuji_clip.png", (tex) => {
     kujiGeometry = new THREE.PlaneGeometry(tex.image.width * 0.1, tex.image.height * 0.1, 20, 20);
     kujiMaterial = new THREE.MeshStandardMaterial({
       map: tex,
