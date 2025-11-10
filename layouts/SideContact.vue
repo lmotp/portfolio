@@ -1,45 +1,103 @@
 <script setup lang="ts">
 const props = defineProps<{ path: string }>();
+const copiedList = ref<string[]>([]);
+
+const handleClickCopy = (text: string, type: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    if (copiedList.value.includes(type)) return;
+
+    copiedList.value.push(type);
+
+    setTimeout(() => {
+      copiedList.value = copiedList.value.filter((item) => item !== type);
+    }, 2000);
+  });
+};
 </script>
 
 <template>
   <div class="nav-item">
-    <div class="nav-item-header">
-      <button :class="{ 'is-active': path === '/contact' }">
-        <strong>Contact</strong>
+    <strong class="nav-item-header">Contact</strong>
 
+    <div class="nav-item-childs">
+      <button class="nav-child" @click="handleClickCopy('unoeye22@gmail.com', 'mail')">
+        <span> Mail </span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
           <path d="M.63 1h19.373v20"></path>
           <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
         </svg>
+
+        <Transition name="copy-fade">
+          <div v-if="copiedList.includes('mail')" class="copy-tooltip" role="tooltip">Copied</div>
+        </Transition>
       </button>
+
+      <button class="nav-child" @click="handleClickCopy('010-5408-6369', 'phone')">
+        <span>Phone</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+          <path d="M.63 1h19.373v20"></path>
+          <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+        </svg>
+
+        <Transition name="copy-fade">
+          <div v-if="copiedList.includes('phone')" class="copy-tooltip" role="tooltip">Copied</div>
+        </Transition>
+      </button>
+
+      <NuxtLink to="https://github.com/lmotp" target="_blank" class="nav-child">
+        <span>GitHub</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+          <path d="M.63 1h19.373v20"></path>
+          <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+        </svg>
+      </NuxtLink>
+
+      <NuxtLink to="/contact" class="nav-child">
+        <span>About Me</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
+          <path d="M.63 1h19.373v20"></path>
+          <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
+        </svg>
+      </NuxtLink>
     </div>
   </div>
 </template>
 
 <style scoped>
 .nav-item {
+  display: flex;
+  flex-direction: column;
   padding: 10px 14px;
   width: 420px;
-  height: 158px;
+  height: 200px;
   border-radius: 5px;
   background-color: red;
   box-shadow: 0 0 0 1px black;
 
   .nav-item-header {
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+
+  .nav-item-childs {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    gap: 4px;
+    flex: 1;
 
-    button {
+    .nav-child {
+      position: relative;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      width: 100%;
 
-      strong {
-        font-size: 24px;
+      &:last-child {
+        margin-top: auto;
+      }
+
+      span {
+        font-size: 16px;
       }
 
       svg {
@@ -64,19 +122,39 @@ const props = defineProps<{ path: string }>();
         }
       }
 
-      &:hover,
-      &.is-active {
+      .copy-tooltip {
+        position: absolute;
+        left: calc(100% + 24px);
+        top: 50%;
+        padding: 4px 8px;
+        font-size: 12px;
+        color: white;
+        border-radius: 5px;
+        background-color: black;
+        box-shadow: 0 0 0 1px white;
+
+        transform: translate(0%, -50%);
+        z-index: -1;
+
+        &.copy-fade-enter-active,
+        &.copy-fade-leave-active {
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        &.copy-fade-enter-from,
+        &.copy-fade-leave-to {
+          transform: translate(-100%, -50%);
+          opacity: 0;
+        }
+      }
+
+      &:hover {
         svg {
           path {
             stroke-dashoffset: 0;
           }
         }
       }
-    }
-
-    p {
-      font-size: 14px;
-      color: black;
     }
   }
 }
