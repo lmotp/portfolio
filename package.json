@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "NUXT_APP_BASE_URL=/Portfolio/ nuxt build --preset github_pages",
+    "build": "NUXT_APP_BASE_URL=/portfolio/ nuxt build --preset github_pages",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
