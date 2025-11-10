@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import usePublicAsset from "~/composables/usePublicAsset";
 
 type cardType = {
   id: number;
@@ -46,7 +47,7 @@ onMounted(() => {
 
     <div>
       <figure>
-        <img :src="props.src" :alt="props.title" />
+        <img :src="usePublicAsset(props.src)" :alt="props.title" />
       </figure>
     </div>
   </div>

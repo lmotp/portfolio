@@ -2,51 +2,51 @@
   "1": {
     "id": 1,
     "title": "Burn",
-    "src": "@/public/images/skills/0.webp"
+    "src": "/images/skills/0.webp"
   },
   "2": {
     "id": 2,
     "title": "Glitch",
-    "src": "@/public/images/skills/1.webp"
+    "src": "/images/skills/1.webp"
   },
   "3": {
     "id": 3,
     "title": "Kuji",
-    "src": "@/public/images/skills/2.webp"
+    "src": "/images/skills/2.webp"
   },
   "4": {
     "id": 4,
     "title": "Roll",
-    "src": "@/public/images/skills/3.webp"
+    "src": "/images/skills/3.webp"
   },
   "5": {
     "id": 5,
     "title": "Pinball",
-    "src": "@/public/images/skills/4.webp"
+    "src": "/images/skills/4.webp"
   },
   "6": {
     "id": 6,
     "title": "Blur",
-    "src": "@/public/images/skills/5.webp"
+    "src": "/images/skills/5.webp"
   },
   "7": {
     "id": 7,
     "title": "Meteor",
-    "src": "@/public/images/skills/6.webp"
+    "src": "/images/skills/6.webp"
   },
   "8": {
     "id": 8,
     "title": "Step",
-    "src": "@/public/images/skills/7.webp"
+    "src": "/images/skills/7.webp"
   },
   "9": {
     "id": 9,
     "title": "Page",
-    "src": "@/public/images/skills/8.webp"
+    "src": "/images/skills/8.webp"
   },
   "10": {
     "id": 10,
     "title": "Card",
-    "src": "@/public/images/skills/9.webp"
+    "src": "/images/skills/9.webp"
   }
 }
