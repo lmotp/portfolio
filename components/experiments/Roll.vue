@@ -6,6 +6,8 @@ import rollFragment from "~/shaders/roll/rollFragment.glsl";
 import rollVertex from "~/shaders/roll/rollVertex.glsl";
 import * as dat from "lil-gui";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 const gui = new dat.GUI();
 const settings = ref({
   angle: 0.15,
@@ -43,7 +45,7 @@ const init = () => {
 
   scene = new THREE.Scene();
 
-  new THREE.TextureLoader().load("/images/experiments/roll/texture.jpg", (tex) => {
+  new THREE.TextureLoader().load(usePublicAsset("/images/experiments/roll/texture.jpg"), (tex) => {
     geometry = new THREE.PlaneGeometry(1, 1, 80, 80);
     material = new THREE.ShaderMaterial({
       uniforms: {

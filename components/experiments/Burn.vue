@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import * as THREE from "three";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 import ImagePlaneVertex from "./shaders/burn/ImagePlaneVertex.glsl";
 import ImagePlaneFragment from "./shaders/burn/ImagePlaneFragment.glsl";
 
@@ -56,10 +58,10 @@ const init = async () => {
   const textureLoader = new THREE.TextureLoader();
 
   await Promise.all([
-    textureLoader.loadAsync("/images/experiments/burn/noise.png"),
-    textureLoader.loadAsync("/images/experiments/burn/image01.jpg"),
-    textureLoader.loadAsync("/images/experiments/burn/image02.jpg"),
-    textureLoader.loadAsync("/images/experiments/burn/image03.jpg"),
+    textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/noise.png")),
+    textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/image01.jpg")),
+    textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/image02.jpg")),
+    textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/image03.jpg")),
   ]).then((response) => {
     const noiseTex = response[0];
     imgTexes.value = response.slice(1);

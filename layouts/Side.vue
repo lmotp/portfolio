@@ -29,7 +29,7 @@ watch(isClose, (status) => {
 });
 
 onMounted(() => {
-  audio.value = new Audio("/sounds/drawer.mp3");
+  audio.value = new Audio("@/public/sounds/drawer.mp3");
 });
 </script>
 

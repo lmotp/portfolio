@@ -29,7 +29,7 @@ const config = {
   arcRadius: 500,
 };
 
-const introImage = "/images/portfolio/intro-img.png";
+const introImage = "/images/portfolios/intro-img.png";
 const spotlightItems = [
   { name: "Portfolio-1", img: "/images/skills/0.webp" },
   { name: "Portfolio-2", img: "/images/skills/1.webp" },

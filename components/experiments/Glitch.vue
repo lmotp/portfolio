@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import * as THREE from "three";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 import ImageVertex from "./shaders/glitch/ImageVertex.glsl";
 import ImageFragment from "./shaders/glitch/ImageFragment.glsl";
 
@@ -46,7 +48,7 @@ const init = () => {
   cameraBack = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2);
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load("/images/experiments/glitch/osaka.jpg", (tex) => {
+  textureLoader.load(usePublicAsset("/images/experiments/glitch/osaka.jpg"), (tex) => {
     tex.magFilter = THREE.NearestFilter;
     tex.minFilter = THREE.NearestFilter;
 

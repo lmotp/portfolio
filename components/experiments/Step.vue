@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import step1 from "/images/experiments/step/step-1.webp";
-import step2 from "/images/experiments/step/step-2.webp";
-import step3 from "/images/experiments/step/step-3.webp";
-import step4 from "/images/experiments/step/step-4.webp";
+import usePublicAsset from "~/composables/usePublicAsset";
 
 const step = ref(0);
-const stepPictures = [step1, step2, step3, step4];
 const stepPictureRotaion = [0, 3, -4, 6];
+const stepPictures = [
+  "/images/experiments/step/step-1.webp",
+  "/images/experiments/step/step-2.webp",
+  "/images/experiments/step/step-3.webp",
+  "/images/experiments/step/step-4.webp",
+];
 
 const interval = ref<any>(null);
 
@@ -31,7 +33,7 @@ onUnmounted(() => {
       <template v-for="(picture, index) of stepPictures" :key="index">
         <Transition name="fade">
           <div v-if="step >= index" class="picture-wrap" :style="{ '--rotaion': `${stepPictureRotaion[index]}deg` }">
-            <img class="picture" :src="picture" :alt="`step-${index + 1}`" />
+            <img class="picture" :src="usePublicAsset(picture)" :alt="`step-${index + 1}`" />
           </div>
         </Transition>
       </template>

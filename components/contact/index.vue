@@ -2,6 +2,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 import vertexShader from "@/shaders/contact/vertex.glsl";
 import fragmentShader from "@/shaders/contact/fragment.glsl";
 
@@ -58,12 +60,12 @@ const init = () => {
   });
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load("/images/contact/cover.jpg", (texture) => {
+  textureLoader.load(usePublicAsset("/images/contact/cover.jpg"), (texture) => {
     geometry = new THREE.PlaneGeometry(100, 100, 32, 32);
     material = new THREE.ShaderMaterial({
       uniforms: {
         uTexture: { value: texture },
-        uNoise: { value: textureLoader.load("/images/contact/noise.jpg") },
+        uNoise: { value: textureLoader.load(usePublicAsset("/images/contact/noise.jpg")) },
         uMouse: { value: mouse },
         uCenter: { value: new THREE.Vector2(0.5, 0.5) },
         uRadius: { value: 0.35 },
