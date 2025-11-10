@@ -6,42 +6,42 @@ const source = [
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "/images/skills/1.webp",
-      pixelSrc: "/images/skills/1_pixel.png",
+      src: "@/public/images/skills/1.webp",
+      pixelSrc: "@/public/images/skills/1_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "/images/skills/2.webp",
-      pixelSrc: "/images/skills/2_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/3.webp",
-      pixelSrc: "/images/skills/3_pixel.png",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/0.webp",
-      pixelSrc: "/images/skills/0_pixel.png",
+      src: "@/public/images/skills/2.webp",
+      pixelSrc: "@/public/images/skills/2_pixel.png",
     },
   ],
   [
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "/images/skills/5.webp",
-      pixelSrc: "/images/skills/5_pixel.png",
+      src: "@/public/images/skills/3.webp",
+      pixelSrc: "@/public/images/skills/3_pixel.png",
     },
     {
       title: "WebGL / OGL",
       content: "Progressive Blur",
-      src: "/images/skills/6.webp",
-      pixelSrc: "/images/skills/6_pixel.png",
+      src: "@/public/images/skills/0.webp",
+      pixelSrc: "@/public/images/skills/0_pixel.png",
+    },
+  ],
+  [
+    {
+      title: "WebGL / OGL",
+      content: "Progressive Blur",
+      src: "@/public/images/skills/5.webp",
+      pixelSrc: "@/public/images/skills/5_pixel.png",
+    },
+    {
+      title: "WebGL / OGL",
+      content: "Progressive Blur",
+      src: "@/public/images/skills/6.webp",
+      pixelSrc: "@/public/images/skills/6_pixel.png",
     },
   ],
 ];

@@ -427,7 +427,7 @@ onMounted(() => {
   width: 100%;
   height: 300svh;
 
-  mask-image: url("/images/mask.webp");
+  mask-image: url("@/public/images/mask.webp");
   mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
   mask-size: calc(100vw * var(--mask-count, 8)) 100%;
   mask-repeat: no-repeat;
@@ -571,7 +571,7 @@ onMounted(() => {
   background-color: #e3e3db;
   pointer-events: none;
 
-  mask-image: url("/images/mask.webp");
+  mask-image: url("@/public/images/mask.webp");
   mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
   mask-size: calc(100vw * var(--mask-count, 8)) 100%;
   mask-repeat: no-repeat;

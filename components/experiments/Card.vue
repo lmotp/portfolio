@@ -122,7 +122,7 @@ const onResize = () => {
         wrapper.appendChild(itemImage);
 
         const img = new Image();
-        img.src = `/images/experiments/card/${base.src}`;
+        img.src = `@/public/images/experiments/card/${base.src}`;
         itemImage.appendChild(img);
 
         const caption = document.createElement("small");

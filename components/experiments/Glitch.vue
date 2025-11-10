@@ -46,7 +46,7 @@ const init = () => {
   cameraBack = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2);
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load("/images/experiments/glitch/osaka.jpg", (tex) => {
+  textureLoader.load("@/public/images/experiments/glitch/osaka.jpg", (tex) => {
     tex.magFilter = THREE.NearestFilter;
     tex.minFilter = THREE.NearestFilter;
 

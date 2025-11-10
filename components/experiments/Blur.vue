@@ -102,7 +102,7 @@ const setScale = (mesh: THREE.Mesh, el: HTMLElement, x?: number | null, y?: numb
   mesh.scale.x = (viewport.value.width * x) / window.innerWidth;
   mesh.scale.y = (viewport.value.height * y) / window.innerHeight;
 
-  mesh.material.uniforms.uPlaneSize.value = new THREE.Vector2(mesh.scale.x, mesh.scale.y);
+  (mesh.material as THREE.ShaderMaterial).uniforms.uPlaneSize.value = new THREE.Vector2(mesh.scale.x, mesh.scale.y);
 };
 
 const scrollWindow = () => {
@@ -144,7 +144,7 @@ const animate = () => {
   renderer.render(scene, camera);
 
   mediaRefs.value.forEach(({ mesh }) => {
-    mesh.material.uniforms.uTime.value += 0.04;
+    (mesh.material as THREE.ShaderMaterial).uniforms.uTime.value += 0.04;
   });
 
   requestAnimationFrame(animate);

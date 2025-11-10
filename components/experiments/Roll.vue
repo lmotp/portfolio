@@ -43,7 +43,7 @@ const init = () => {
 
   scene = new THREE.Scene();
 
-  new THREE.TextureLoader().load("/images/experiments/roll/texture.jpg", (tex) => {
+  new THREE.TextureLoader().load("@/public/images/experiments/roll/texture.jpg", (tex) => {
     geometry = new THREE.PlaneGeometry(1, 1, 80, 80);
     material = new THREE.ShaderMaterial({
       uniforms: {
