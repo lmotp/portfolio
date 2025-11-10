@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL: "/portfolio/",
     head: {
       htmlAttrs: {
         lang: "ko",
@@ -34,10 +35,5 @@ export default defineNuxtConfig({
 
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
-  },
-
-  target: "static",
-  router: {
-    base: "/portfolio/",
   },
 });
