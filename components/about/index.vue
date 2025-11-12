@@ -4,47 +4,64 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 import usePublicAsset from "~/composables/usePublicAsset";
 
-import vertexShader from "@/shaders/contact/vertex.glsl";
-import fragmentShader from "@/shaders/contact/fragment.glsl";
+import vertexShader from "@/shaders/about/vertex.glsl";
+import fragmentShader from "@/shaders/about/fragment.glsl";
 
-const cotactRef = ref<null | HTMLCanvasElement>(null);
-const minPan = new THREE.Vector3(-10, -29, -Infinity);
-const maxPan = new THREE.Vector3(10, 29, Infinity);
+const aboutRef = ref<null | HTMLCanvasElement>(null);
 const target = new THREE.Vector3();
 const mouse = new THREE.Vector2();
+const clock = new THREE.Clock();
 
 let geometry: THREE.PlaneGeometry;
 let material: THREE.ShaderMaterial;
 let mesh: THREE.Mesh;
 
+let mouseGeometry: THREE.SphereGeometry;
+let mouseMaterial: THREE.MeshBasicMaterial;
+let mouseMesh: THREE.Mesh;
+
 let renderer: THREE.WebGLRenderer;
-let camera: THREE.PerspectiveCamera;
+let camera: THREE.OrthographicCamera;
 let scene: THREE.Scene;
 
-const clock = new THREE.Clock();
 let controls: OrbitControls;
+let maxX = 0;
+let minX = 0;
+let maxY = 0;
+let minY = 0;
 
 const init = () => {
-  if (!cotactRef.value) return;
+  if (!aboutRef.value) return;
 
   renderer = new THREE.WebGLRenderer({
-    canvas: cotactRef.value,
+    canvas: aboutRef.value,
     antialias: true,
     alpha: true,
   });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0xff0000, 1);
+  renderer.setClearColor(0x000000, 1);
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const canvasWidth = window.innerWidth;
+  const canvasHeight = window.innerHeight;
+
+  camera = new THREE.OrthographicCamera(
+    -canvasWidth / 2,
+    canvasWidth / 2,
+    canvasHeight / 2,
+    -canvasHeight / 2,
+    1,
+    1000
+  );
   camera.position.set(0, 0, 50);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false;
   controls.enableRotate = false;
   controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
 
   controls.mouseButtons = {
     LEFT: THREE.MOUSE.PAN,
@@ -52,23 +69,20 @@ const init = () => {
     RIGHT: THREE.MOUSE.PAN,
   };
 
-  controls.addEventListener("change", () => {
-    target.copy(controls.target);
-    controls.target.clamp(minPan, maxPan);
-    target.sub(controls.target);
-    camera.position.sub(target);
-  });
-
   const textureLoader = new THREE.TextureLoader();
   textureLoader.load(usePublicAsset("/images/contact/cover.jpg"), (texture) => {
-    geometry = new THREE.PlaneGeometry(100, 100, 32, 32);
+    const imageWidth = texture.image.naturalWidth;
+    const imageHeight = texture.image.naturalHeight;
+
+    geometry = new THREE.PlaneGeometry(imageWidth, imageHeight, 32, 32);
     material = new THREE.ShaderMaterial({
       uniforms: {
         uTexture: { value: texture },
         uNoise: { value: textureLoader.load(usePublicAsset("/images/contact/noise.jpg")) },
         uMouse: { value: mouse },
         uCenter: { value: new THREE.Vector2(0.5, 0.5) },
-        uRadius: { value: 0.35 },
+        uRadius: { value: 0.25 },
+        uTextureResolution: { value: new THREE.Vector2(texture.image.naturalWidth, texture.image.naturalHeight) },
         uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       },
       vertexShader,
@@ -77,7 +91,22 @@ const init = () => {
 
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+
+    const minPan = new THREE.Vector3((-imageWidth + canvasWidth) / 2, (-imageHeight + canvasHeight) / 2, -Infinity);
+    const maxPan = new THREE.Vector3((imageWidth - canvasWidth) / 2, (imageHeight - canvasHeight) / 2, Infinity);
+
+    controls.addEventListener("change", () => {
+      target.copy(controls.target);
+      controls.target.clamp(minPan, maxPan);
+      target.sub(controls.target);
+      camera.position.sub(target);
+    });
   });
+
+  // mouseGeometry = new THREE.SphereGeometry(0.1, 32, 32);
+  // mouseMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  // mouseMesh = new THREE.Mesh(mouseGeometry, mouseMaterial);
+  // scene.add(mouseMesh);
 };
 
 const handleMouseMove = (event: MouseEvent) => {
@@ -102,13 +131,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="contact" @mousemove="handleMouseMove">
-    <canvas ref="cotactRef" />
+  <div class="about" @mousemove="handleMouseMove">
+    <canvas ref="aboutRef" />
   </div>
 </template>
 
 <style scoped>
-.contact {
+.about {
   position: fixed;
   inset: 0;
   width: 100%;

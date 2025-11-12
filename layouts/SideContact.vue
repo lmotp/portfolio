@@ -52,7 +52,7 @@ const handleClickCopy = (text: string, type: string) => {
         </svg>
       </NuxtLink>
 
-      <NuxtLink to="/contact" class="nav-child">
+      <NuxtLink to="/about" class="nav-child">
         <span>About Me</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
           <path d="M.63 1h19.373v20"></path>
