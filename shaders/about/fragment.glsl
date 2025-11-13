@@ -16,6 +16,9 @@ void main() {
   vec2 st = vUv;
   vec4 textureColor = texture2D(uTexture, st);
 
-  gl_FragColor = textureColor;
+  float gray = dot(textureColor.rgb, vec3(0.1, 0.1, 0.1));
+  vec3 grayColor = vec3(gray);
+
+  gl_FragColor = vec4(grayColor, textureColor.a);
 
 }
