@@ -15,7 +15,7 @@ const mouse = new THREE.Vector2();
 const clock = new THREE.Clock();
 const gui = new dat.GUI();
 const guiObject = {
-  threshold: 1,
+  threshold: 0.15,
 };
 
 let geometry: THREE.PlaneGeometry;
@@ -48,10 +48,10 @@ const init = () => {
     1,
     1000
   );
-  camera.position.set(0, 0, 100);
+  camera.position.set(0, 0, 50);
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load(usePublicAsset("/images/about/map.png"), (texture) => {
+  textureLoader.load(usePublicAsset("/images/about/scenery-BG.webp"), (texture) => {
     const imageWidth = texture.image.naturalWidth;
     const imageHeight = texture.image.naturalHeight;
     const dpi = renderer.getPixelRatio();
@@ -70,10 +70,20 @@ const init = () => {
     });
 
     mesh = new THREE.Mesh(geometry, material);
+    mesh.scale.set(0.25, 0.25, 0.25);
     scene.add(mesh);
 
-    const minPan = new THREE.Vector3((-imageWidth + canvasWidth) / 2, (-imageHeight + canvasHeight) / 2, -Infinity);
-    const maxPan = new THREE.Vector3((imageWidth - canvasWidth) / 2, (imageHeight - canvasHeight) / 2, Infinity);
+    const OFFSET = 10;
+    const minPan = new THREE.Vector3(
+      (-imageWidth * 0.25 + canvasWidth) / 2 + OFFSET,
+      (-imageHeight * 0.25 + canvasHeight) / 2 + OFFSET,
+      -Infinity
+    );
+    const maxPan = new THREE.Vector3(
+      (imageWidth * 0.25 - canvasWidth) / 2 - OFFSET,
+      (imageHeight * 0.25 - canvasHeight) / 2 - OFFSET,
+      Infinity
+    );
 
     controls.addEventListener("change", () => {
       target.copy(controls.target);
@@ -107,6 +117,8 @@ const init = () => {
     MIDDLE: THREE.MOUSE.DOLLY,
     RIGHT: THREE.MOUSE.PAN,
   };
+
+  gui.add(guiObject, "threshold", 0, 1, 0.01);
 };
 
 const handleMouseMove = (event: MouseEvent) => {
@@ -118,6 +130,10 @@ const animate = () => {
   requestAnimationFrame(animate);
 
   controls.update();
+
+  if (material) {
+    material.uniforms.uThreshold.value = guiObject.threshold;
+  }
 
   renderer.render(scene, camera);
 };
