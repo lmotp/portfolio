@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{ path: string }>();
+const emits = defineEmits(["menuClick"]);
 const copiedList = ref<string[]>([]);
 
 const handleClickCopy = (text: string, type: string) => {
@@ -14,7 +15,9 @@ const handleClickCopy = (text: string, type: string) => {
   });
 };
 
-const handleClickAbout = () => {};
+const handleClickAbout = () => {
+  emits("menuClick");
+};
 </script>
 
 <template>
