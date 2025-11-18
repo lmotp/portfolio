@@ -13,6 +13,8 @@ const handleClickCopy = (text: string, type: string) => {
     }, 2000);
   });
 };
+
+const handleClickAbout = () => {};
 </script>
 
 <template>
@@ -52,13 +54,13 @@ const handleClickCopy = (text: string, type: string) => {
         </svg>
       </NuxtLink>
 
-      <NuxtLink to="/about" class="nav-child">
+      <button @click="handleClickAbout" class="nav-child">
         <span>About Me</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
           <path d="M.63 1h19.373v20"></path>
           <path d="M0-.5h27.844" transform="matrix(-.69574 .71829 -.69574 -.71829 19.373 1)"></path>
         </svg>
-      </NuxtLink>
+      </button>
     </div>
   </div>
 </template>

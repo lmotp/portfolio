@@ -39,7 +39,7 @@ let fboGeometry: THREE.PlaneGeometry;
 let fboQuad: THREE.Mesh;
 
 let finalScene: THREE.Scene;
-let finalQuad: THREE.Mesh;
+let finalQuad: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
 
 const init = () => {
   if (!brushRef.value) return;

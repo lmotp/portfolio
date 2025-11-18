@@ -4,27 +4,24 @@ import * as dat from "lil-gui";
 
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
-import vertexShader from "@/shaders/about/vertex.glsl";
-import fragmentShader from "@/shaders/about/SobelFragment.glsl";
+import vertexShader from "@/shaders/map/vertex.glsl";
+import fragmentShader from "@/shaders/map/SobelFragment.glsl";
 
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const aboutRef = ref<null | HTMLCanvasElement>(null);
 const target = new THREE.Vector3();
-const mouse = new THREE.Vector2();
+const mouseForShader = new THREE.Vector2(0.5, 0.5); // 0 ~ 1 (새로운 방식)
 const clock = new THREE.Clock();
 const gui = new dat.GUI();
 const guiObject = {
-  threshold: 0.15,
+  threshold: 0.5,
+  radius: 0.01,
 };
 
 let geometry: THREE.PlaneGeometry;
 let material: THREE.ShaderMaterial;
 let mesh: THREE.Mesh;
-
-let mouseGeometry: THREE.SphereGeometry;
-let mouseMaterial: THREE.MeshBasicMaterial;
-let mouseMesh: THREE.Mesh;
 
 let renderer: THREE.WebGLRenderer;
 let camera: THREE.OrthographicCamera;
@@ -48,21 +45,21 @@ const init = () => {
     1,
     1000
   );
-  camera.position.set(0, 0, 50);
+  camera.position.set(0, 0, 100);
 
   const textureLoader = new THREE.TextureLoader();
-  textureLoader.load(usePublicAsset("/images/about/scenery-BG.webp"), (texture) => {
+  textureLoader.load(usePublicAsset("/images/experiments/map/cover.jpg"), (texture) => {
     const imageWidth = texture.image.naturalWidth;
     const imageHeight = texture.image.naturalHeight;
-    const dpi = renderer.getPixelRatio();
 
     geometry = new THREE.PlaneGeometry(imageWidth, imageHeight, 32, 32);
     material = new THREE.ShaderMaterial({
       uniforms: {
+        uTime: { value: 0 },
         uTexture: { value: texture },
-        uMouse: { value: mouse },
-        uRadius: { value: 0.25 },
-        uResolution: { value: new THREE.Vector2(window.innerWidth * dpi, window.innerHeight * dpi) },
+        uMouse: { value: mouseForShader },
+        uRadius: { value: 0.01 },
+        uResolution: { value: new THREE.Vector2(canvasWidth, canvasHeight) },
         uThreshold: { value: guiObject.threshold },
       },
       vertexShader,
@@ -70,18 +67,17 @@ const init = () => {
     });
 
     mesh = new THREE.Mesh(geometry, material);
-    mesh.scale.set(0.25, 0.25, 0.25);
     scene.add(mesh);
 
     const OFFSET = 10;
     const minPan = new THREE.Vector3(
-      (-imageWidth * 0.25 + canvasWidth) / 2 + OFFSET,
-      (-imageHeight * 0.25 + canvasHeight) / 2 + OFFSET,
+      (-imageWidth + canvasWidth) / 2 + OFFSET,
+      (-imageHeight + canvasHeight) / 2 + OFFSET,
       -Infinity
     );
     const maxPan = new THREE.Vector3(
-      (imageWidth * 0.25 - canvasWidth) / 2 - OFFSET,
-      (imageHeight * 0.25 - canvasHeight) / 2 - OFFSET,
+      (imageWidth - canvasWidth) / 2 - OFFSET,
+      (imageHeight - canvasHeight) / 2 - OFFSET,
       Infinity
     );
 
@@ -92,11 +88,6 @@ const init = () => {
       camera.position.sub(target);
     });
   });
-
-  // mouseGeometry = new THREE.SphereGeometry(0.1, 32, 32);
-  // mouseMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-  // mouseMesh = new THREE.Mesh(mouseGeometry, mouseMaterial);
-  // scene.add(mouseMesh);
 
   renderer = new THREE.WebGLRenderer({
     canvas: aboutRef.value,
@@ -119,20 +110,23 @@ const init = () => {
   };
 
   gui.add(guiObject, "threshold", 0, 1, 0.01);
+  gui.add(guiObject, "radius", 0, 1, 0.01);
 };
 
 const handleMouseMove = (event: MouseEvent) => {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouseForShader.x = event.clientX / window.innerWidth;
+  mouseForShader.y = 1.0 - event.clientY / window.innerHeight;
 };
 
-const animate = () => {
+const animate = (time?: DOMHighResTimeStamp) => {
   requestAnimationFrame(animate);
 
   controls.update();
 
-  if (material) {
+  if (material && time) {
     material.uniforms.uThreshold.value = guiObject.threshold;
+    material.uniforms.uTime.value = time * 0.05;
+    material.uniforms.uRadius.value = guiObject.radius;
   }
 
   renderer.render(scene, camera);

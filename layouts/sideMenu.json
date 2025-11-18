@@ -15,6 +15,14 @@
       {
         "path": "/portfolio/2",
         "name": "Portfolio 2"
+      },
+      {
+        "path": "/portfolio/3",
+        "name": "Portfolio 3"
+      },
+      {
+        "path": "/portfolio/4",
+        "name": "Portfolio 4"
       }
     ]
   },
@@ -61,6 +69,14 @@
       {
         "name": "Card",
         "path": "/experiments/card"
+      },
+      {
+        "name": "Brush",
+        "path": "/experiments/brush"
+      },
+      {
+        "name": "Map",
+        "path": "/experiments/map"
       }
     ]
   }

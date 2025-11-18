@@ -9,9 +9,9 @@ uniform float uRadius;
 varying vec2 vUv;
 
 float circle(vec2 uv, vec2 pos, vec2 res, float r) {
-    uv -= pos;
-    uv.y *= res.y / res.x;
-    return 1.0 - smoothstep(r - (r * 0.01), r + (r * 0.01), dot(uv, uv) * 4.0);
+    vec2 dist = uv - pos;
+    dist.y *= res.x / res.y;
+    return 1.0 - smoothstep(r - (r * 0.01), r + (r * 0.01), dot(dist, dist));
 }
 
 float getLuminance(vec3 color) {
@@ -22,6 +22,7 @@ void main() {
     vec2 st = vUv;
     vec2 texelSize = 1.0 / uResolution;
 
+    // ... (Sobel Edge Detection 부분은 동일) ...
     float L_ul = getLuminance(texture2D(uTexture, st + vec2(-texelSize.x, texelSize.y)).rgb);
     float L_up = getLuminance(texture2D(uTexture, st + vec2(0.0, texelSize.y)).rgb);
     float L_ur = getLuminance(texture2D(uTexture, st + vec2(texelSize.x, texelSize.y)).rgb);
