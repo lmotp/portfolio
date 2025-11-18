@@ -10,7 +10,7 @@ const props = defineProps<{ menu: Menu; name: string; path: string }>();
 const emits = defineEmits(["menu-click"]);
 
 const handleMenuClick = (menuPath: string) => {
-  if (menuPath === "/contact") {
+  if (menuPath === "/about") {
   } else emits("menu-click", menuPath);
 };
 </script>

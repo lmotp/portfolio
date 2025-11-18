@@ -5,9 +5,11 @@ import { storeToRefs } from "pinia";
 import SideButton from "./SideButton.vue";
 import SideContact from "./SideContact.vue";
 import SideNav from "./SideNav.vue";
+import SideCard from "./SideCard.vue";
 import sideMenu from "./sideMenu.json";
 
 const isClose = ref(false);
+const isAsideOpen = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
 
 const pageTransitionStore = usePageTransitionStore();
@@ -22,6 +24,9 @@ const handleMenuClick = (menuPath: string) => {
 
   path.value = menuPath;
   isClose.value = false;
+};
+const handleContactClick = () => {
+  isAsideOpen.value = true;
 };
 
 watch(isClose, (status) => {
@@ -49,9 +54,15 @@ onMounted(() => {
         v-bind="{ menu, name, path }"
         @menu-click="handleMenuClick"
       />
-      <SideContact class="nav-content" :path="path" />
+      <SideContact class="nav-content" :path="path" @menu-click="handleContactClick" />
     </nav>
   </Transition>
+
+  <aside :class="['aside', isAsideOpen && 'is-open']">
+    <div @click="isAsideOpen = false" class="dim"></div>
+
+    <SideCard v-if="isAsideOpen" />
+  </aside>
 </template>
 
 <style scoped>
@@ -137,6 +148,32 @@ onMounted(() => {
     }
     &:last-child {
       transform: translateX(0) translateY(100vh) rotate(-24deg);
+    }
+  }
+}
+
+.aside {
+  position: fixed;
+  inset: 0;
+  isolation: isolate;
+  z-index: 10000;
+  pointer-events: none;
+
+  .dim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: rgba(11, 13, 15, 0.305);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 1s ease-out;
+  }
+
+  &.is-open {
+    pointer-events: auto;
+
+    .dim {
+      opacity: 1;
     }
   }
 }

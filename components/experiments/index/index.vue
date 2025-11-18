@@ -88,7 +88,9 @@ onMounted(() => {
     value: Math.PI * -2,
     ease: "power3.inOut",
     onComplete: () => {
-      window.addEventListener("scroll", () => updatePosition());
+      window.addEventListener("scroll", () => {
+        updatePosition();
+      });
       rotate.value = 0;
     },
     onUpdate: () => {
