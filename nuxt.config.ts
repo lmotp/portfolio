@@ -18,6 +18,8 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL: "/portfolio/",
+
     head: {
       htmlAttrs: {
         lang: "ko",
