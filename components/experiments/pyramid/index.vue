@@ -1,19 +1,20 @@
 <script setup lang="ts">
 import * as THREE from "three";
 import gsap from "gsap";
-import TWEEN from "three/addons/libs/tween.module.js";
 import { CSS3DRenderer, CSS3DObject } from "three/addons/renderers/CSS3DRenderer.js";
 import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 
 import tableData from "./data";
 
 const pyramidRef = ref<HTMLCanvasElement | null>(null);
+const elementRef = ref<HTMLDivElement[]>([]);
 const objects = ref<CSS3DObject[]>([]);
 const targets = ref({ table: <any>[], pyramid: <any>[] });
-const vector = new THREE.Vector3();
 const axis = new THREE.Vector3(0, 1, 0);
 const lookAt = new THREE.Vector3();
 const localLookAt = new THREE.Vector3();
+const type = ref<"table" | "pyramid">("table");
+const interval = ref<NodeJS.Timeout | null>(null);
 
 let renderer: CSS3DRenderer;
 let scene: THREE.Scene;
@@ -46,34 +47,22 @@ const init = () => {
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 
-  makeTables();
+  setupPositionInitialize();
+  setupTables();
   setupPyramids();
-  transform(targets.value.table, 2000);
+
+  transform(targets.value.table, 2);
+
+  interval.value = setInterval(() => {
+    type.value = type.value === "table" ? "pyramid" : "table";
+    transform(targets.value[type.value], 2);
+  }, 6000);
 
   animate();
 };
 
-const makeTables = () => {
-  for (let i = 0; i < tableData.length; i += 5) {
-    const element = document.createElement("div") as HTMLDivElement;
-    element.className = "element";
-    element.style.backgroundColor = "rgba(0,127,127," + (Math.random() * 0.5 + 0.25) + ")";
-
-    const number = document.createElement("div") as HTMLDivElement;
-    number.className = "number";
-    number.textContent = (i / 5 + 1).toString();
-    element.appendChild(number);
-
-    const symbol = document.createElement("div") as HTMLDivElement;
-    symbol.className = "symbol";
-    symbol.textContent = tableData[i].toString();
-    element.appendChild(symbol);
-
-    const details = document.createElement("div") as HTMLDivElement;
-    details.className = "details";
-    details.innerHTML = tableData[i + 1] + "<br>" + tableData[i + 2];
-    element.appendChild(details);
-
+const setupPositionInitialize = () => {
+  elementRef.value.forEach((element, index) => {
     const objectCSS = new CSS3DObject(element);
     objectCSS.position.x = Math.random() * 4000 - 2000;
     objectCSS.position.y = Math.random() * 4000 - 2000;
@@ -81,14 +70,19 @@ const makeTables = () => {
     scene.add(objectCSS);
 
     objects.value.push(objectCSS);
+  });
+};
 
+const setupTables = () => {
+  elementRef.value.forEach((_, index) => {
     const object = new THREE.Object3D();
-    object.position.x = (tableData[i + 3] as number) * 140 - 1330;
-    object.position.y = -(tableData[i + 4] as number) * 180 + 990;
+    object.position.x = tableData[index].group * 140 - 1330;
+    object.position.y = -tableData[index].period * 180 + 990;
 
     targets.value.table.push(object);
-  }
+  });
 };
+
 const setupPyramids = () => {
   const itemH = 180;
   const itemW = 140;
@@ -131,60 +125,68 @@ const setupPyramids = () => {
     targets.value.pyramid.push(object);
   }
 };
-function transform(targets: any[], duration: number) {
-  TWEEN.removeAll();
 
-  for (var i = 0; i < objects.value.length; i++) {
-    var object = objects.value[i];
-    var target = targets[i];
+const transform = (targets: any[], duration: number) => {
+  for (let i = 0; i < objects.value.length; i++) {
+    const object = objects.value[i];
+    const target = targets[i];
+    const randomDuration = Math.random() * duration + duration;
 
-    new TWEEN.Tween(object.position)
-      .to(
-        {
-          x: target.position.x,
-          y: target.position.y,
-          z: target.position.z,
-        },
-        Math.random() * duration + duration
-      )
-      .easing(TWEEN.Easing.Exponential.InOut)
-      .start();
+    gsap.to(object.position, {
+      duration: randomDuration,
+      x: target.position.x,
+      y: target.position.y,
+      z: target.position.z,
+      ease: "power3.inOut",
+    });
 
-    new TWEEN.Tween(object.rotation)
-      .to(
-        {
-          x: target.rotation.x,
-          y: target.rotation.y,
-          z: target.rotation.z,
-        },
-        Math.random() * duration + duration
-      )
-      .easing(TWEEN.Easing.Exponential.InOut)
-      .start();
+    gsap.to(object.rotation, {
+      duration: randomDuration,
+      x: target.rotation.x,
+      y: target.rotation.y,
+      z: target.rotation.z,
+      ease: "power3.inOut",
+    });
   }
-
-  new TWEEN.Tween(this)
-    .to({}, duration * 2)
-    .onUpdate(() => renderer.render(scene, camera))
-    .start();
-}
+};
 
 const animate = () => {
   requestAnimationFrame(animate);
-
   renderer.render(scene, camera);
+  controls.update();
 };
 
 onMounted(() => {
   nextTick(init);
 });
+
+onUnmounted(() => {
+  if (interval.value) {
+    clearInterval(interval.value);
+  }
+});
 </script>
 
 <template>
-  <div id="container" ref="pyramidRef"></div>
+  <div id="container" ref="pyramidRef">
+    <template v-for="data in tableData" :key="data.symbol">
+      <div
+        ref="elementRef"
+        class="element"
+        :style="{ backgroundColor: `rgba(0,127,127,${Math.random() * 0.5 + 0.25})` }"
+      >
+        <div class="number">{{ data.mass }}</div>
+        <div class="symbol">{{ data.symbol }}</div>
+        <div class="details">
+          {{ data.name }}<br />
+          {{ data.mass }}
+        </div>
+      </div>
+    </template>
+  </div>
 </template>
 
-<style>
+<style scoped>
 #container {
   background-color: black;
 
