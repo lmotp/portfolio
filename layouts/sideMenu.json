@@ -77,6 +77,10 @@
       {
         "name": "Map",
         "path": "/experiments/map"
+      },
+      {
+        "name": "Pyramid",
+        "path": "/experiments/pyramid"
       }
     ]
   }
