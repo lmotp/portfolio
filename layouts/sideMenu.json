@@ -63,8 +63,8 @@
         "path": "/experiments/step"
       },
       {
-        "name": "Page",
-        "path": "/experiments/page"
+        "name": "Processing",
+        "path": "/experiments/processing"
       },
       {
         "name": "Card",
