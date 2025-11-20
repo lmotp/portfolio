@@ -2,17 +2,14 @@
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 
-import pencilFragment from "@/shaders/processing/pencilFragment.glsl";
-import pencilVertex from "@/shaders/processing/pencilVertex.glsl";
+import { PencilLinesPass } from "./PencilLinesPass";
 
 const processingRef = ref<HTMLCanvasElement | null>(null);
 
 let renderer: THREE.WebGLRenderer;
-let normalBuffer: THREE.WebGLRenderTarget;
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
@@ -69,28 +66,11 @@ const init = () => {
   plane.position.y = -0.75;
   scene.add(plane);
 
-  normalBuffer = new THREE.WebGLRenderTarget(width, height);
-  normalBuffer.texture.format = THREE.RGBAFormat;
-  normalBuffer.texture.type = THREE.HalfFloatType;
-  normalBuffer.texture.minFilter = THREE.NearestFilter;
-  normalBuffer.texture.magFilter = THREE.NearestFilter;
-  normalBuffer.texture.generateMipmaps = false;
-  normalBuffer.stencilBuffer = false;
-
-  normalMaterial = new THREE.MeshNormalMaterial();
-
   composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, camera);
-  const pencilLinePass = new ShaderPass({
-    uniforms: {
-      tDiffuse: { value: null },
-      uResolution: { value: new THREE.Vector2(width, height) },
-    },
-    vertexShader: pencilVertex,
-    fragmentShader: pencilFragment,
-  });
-  composer.addPass(pencilLinePass);
+  const pencilLinePass = new PencilLinesPass(scene, camera);
   composer.addPass(renderPass);
+  composer.addPass(pencilLinePass);
 
   animate();
 };
