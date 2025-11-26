@@ -38,6 +38,7 @@ void main() {
   vec2 displacement = vec2((hash(gl_FragCoord.xy) * sin(gl_FragCoord.y * 0.05)), (hash(gl_FragCoord.xy) * cos(gl_FragCoord.x * 0.05))) * 2.0 / resolution.xy;
 
   float depth = readDepth(tDepth, vUv);
+  vec4 normal = texture2D(tNormal, vUv);
   vec4 pixelColor = texture2D(tDiffuse, vUv);
 
   float depth00 = readDepth(tDepth, vUv + displacement + outlineThickness * texel * vec2(-1, 1));
@@ -83,11 +84,12 @@ void main() {
     Sy[0][2] * normal02 + Sy[1][2] * normal12 + Sy[2][2] * normal22;
 
   float gradientNormal = sqrt(pow(xSobelNormal, 2.0) + pow(ySobelNormal, 2.0));
-
   float outline = gradientDepth * 25.0 + gradientNormal;
 
-  float pixelLuma = luma(pixelColor.rgb);
+  float diffuseLight = normal.a;
+  float pixelLuma = luma(pixelColor.rgb + diffuseLight * 0.65);
   float modVal = 11.0;
+
   if(pixelLuma <= 0.35 && depth <= 0.99) {
     if(mod((vUv.y + displacement.y) * resolution.y, modVal) < outlineThickness) {
       pixelColor = outlineColor;
@@ -102,6 +104,10 @@ void main() {
     if(mod((vUv.x + displacement.x) * resolution.y + (vUv.y + displacement.y) * resolution.x, modVal) <= outlineThickness) {
       pixelColor = outlineColor;
     };
+  }
+
+  if(normal.r >= 1.0 && normal.g >= 1.0 && normal.b >= 1.0) {
+    pixelColor = vec4(1.0, 1.0, 1.0, 1.0);
   }
 
   vec4 color = mix(pixelColor, outlineColor, outline);
