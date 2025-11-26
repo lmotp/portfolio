@@ -2,10 +2,15 @@
 import * as THREE from "three";
 import * as dat from "lil-gui";
 
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+
+import usePublicAsset from "~/composables/usePublicAsset";
 
 import moebiusFragment from "@/shaders/processing/moebius/moebiusFragment.glsl";
 import moebiusVertex from "@/shaders/processing/moebius/moebiusVertex.glsl";
@@ -14,6 +19,7 @@ import customNormalFragment from "@/shaders/processing/moebius/customNormalFragm
 import customNormalVertex from "@/shaders/processing/moebius/customNormalVertex.glsl";
 
 import groundNormalVertex from "@/shaders/processing/moebius/groundNormalVertex.glsl";
+import { mod } from "three/webgpu";
 
 const MoebiusRef = ref<HTMLCanvasElement | null>(null);
 const lightPosition = new THREE.Vector3(-50, 50, 15);
@@ -32,6 +38,7 @@ let ground: THREE.Mesh;
 let groundMaterial: THREE.MeshStandardMaterial;
 let customNormalMaterial: THREE.ShaderMaterial;
 let groundNormalMaterial: THREE.ShaderMaterial;
+let modelGroup: THREE.Group;
 
 let composer: EffectComposer;
 
@@ -78,6 +85,7 @@ const init = () => {
 
   setupMesh();
   setupGround();
+  setupModel();
   setupLight();
   setupPass();
 
@@ -237,7 +245,7 @@ const setupGround = () => {
 
   scene.add(ground);
 };
-const setupModel = () => {
+const setupModel = async () => {
   const containerGroup = new THREE.Group();
   containerGroup.rotation.set(0, Math.PI / 2, 0);
   containerGroup.position.set(0, 2, 0);
@@ -247,8 +255,40 @@ const setupModel = () => {
   innerGroup.rotation.set(0, -Math.PI * 0.5, 0);
   innerGroup.position.set(1.583, 0, -3.725);
 
-  containerGroup.add(innerGroup);
-  scene.add(containerGroup);
+  modelGroup = new THREE.Group();
+
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+
+  const loader = new GLTFLoader();
+  loader.setDRACOLoader(dracoLoader);
+  loader.load("/models/spaceship-optimized.glb", async (gltf) => {
+    const model = gltf.scene;
+    model.children.forEach((child: any) => {
+      child.receiveShadow = true;
+      child.castShadow = true;
+      child.scale.set(1, 1, 1);
+
+      if (child.name === "Cube001_spaceship_racer_0") child.position.set(739.26, -64.81, 64.77);
+      else child.position.set(739.26, 0, 0);
+
+      setModelConfig(child.material);
+    });
+
+    await renderer.compileAsync(model, camera, scene);
+
+    innerGroup.add(model);
+    modelGroup.add(innerGroup);
+    containerGroup.add(modelGroup);
+    scene.add(containerGroup);
+  });
+};
+const setModelConfig = (material: THREE.Material) => {
+  material.transparent = true;
+  material.alphaToCoverage = true;
+  material.depthFunc = THREE.LessEqualDepth;
+  material.depthTest = true;
+  material.depthWrite = true;
 };
 
 const setupLight = () => {
@@ -324,6 +364,11 @@ const animate = () => {
   renderer.setRenderTarget(null);
 
   composer.render();
+
+  if (modelGroup) {
+    modelGroup.rotation.x = Math.cos(clock.getElapsedTime() * 2.0) * Math.cos(clock.getElapsedTime()) * 0.15;
+    modelGroup.position.y = Math.sin(clock.getElapsedTime() * 2.0) + 1;
+  }
 };
 
 onMounted(() => {
