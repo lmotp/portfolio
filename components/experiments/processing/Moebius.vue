@@ -10,8 +10,6 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 
-import usePublicAsset from "~/composables/usePublicAsset";
-
 import moebiusFragment from "@/shaders/processing/moebius/moebiusFragment.glsl";
 import moebiusVertex from "@/shaders/processing/moebius/moebiusVertex.glsl";
 
@@ -19,7 +17,6 @@ import customNormalFragment from "@/shaders/processing/moebius/customNormalFragm
 import customNormalVertex from "@/shaders/processing/moebius/customNormalVertex.glsl";
 
 import groundNormalVertex from "@/shaders/processing/moebius/groundNormalVertex.glsl";
-import { mod } from "three/webgpu";
 
 const MoebiusRef = ref<HTMLCanvasElement | null>(null);
 const lightPosition = new THREE.Vector3(-50, 50, 15);
