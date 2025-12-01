@@ -68,7 +68,7 @@ const setupPass = () => {
   const pixelPass = new ShaderPass({
     uniforms: {
       tDiffuse: { value: null },
-      pixelSize: { value: 5.0 },
+      pixelSize: { value: 2.0 },
       resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
     },
     vertexShader: pixelVertex,
