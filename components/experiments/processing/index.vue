@@ -17,7 +17,7 @@ const options = [
   {
     id: 2,
     icon: "fas fa-tree",
-    main: "Iteresuselle",
+    main: "Pixel",
     sub: "Omuke trughte a otufta",
     image: "https://66.media.tumblr.com/5af3f8303456e376ceda1517553ba786/tumblr_o4986gakjh1qho82wo1_1280.jpg",
   },
