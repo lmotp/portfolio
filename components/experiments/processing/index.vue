@@ -24,7 +24,7 @@ const options = [
   {
     id: 3,
     icon: "fas fa-tint",
-    main: "Idiefe",
+    main: "Dot",
     sub: "Omuke trughte a otufta",
     image: "https://66.media.tumblr.com/5516a22e0cdacaa85311ec3f8fd1e9ef/tumblr_o45jwvdsL11qho82wo1_1280.jpg",
   },
