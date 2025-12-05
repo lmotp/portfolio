@@ -31,7 +31,7 @@ const options = [
   {
     id: 4,
     icon: "fas fa-sun",
-    main: "Inatethi",
+    main: "Painterly",
     sub: "Omuke trughte a otufta",
     image: "https://66.media.tumblr.com/f19901f50b79604839ca761cd6d74748/tumblr_o65rohhkQL1qho82wo1_1280.jpg",
   },
