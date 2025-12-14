@@ -55,14 +55,6 @@
         "path": "/experiments/blur"
       },
       {
-        "name": "Meteor",
-        "path": "/experiments/meteor"
-      },
-      {
-        "name": "Step",
-        "path": "/experiments/step"
-      },
-      {
         "name": "Processing",
         "path": "/experiments/processing"
       },
@@ -73,10 +65,6 @@
       {
         "name": "Brush",
         "path": "/experiments/brush"
-      },
-      {
-        "name": "Map",
-        "path": "/experiments/map"
       },
       {
         "name": "Pyramid",

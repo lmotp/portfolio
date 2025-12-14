@@ -49,7 +49,7 @@ let shadowMesh: THREE.Mesh;
 
 let pivotGroup: THREE.Group;
 
-const gui = new dat.GUI();
+// const gui = new dat.GUI();
 const settings = ref({
   scale: 0.0085,
   intensity: 1.5,
