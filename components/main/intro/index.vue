@@ -20,7 +20,7 @@ const isShowMask = ref(false);
 const maskIndex = ref(0);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isLoading, isPageTransition } = storeToRefs(pageTransitionStore);
+const { isPageTransition } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
@@ -30,13 +30,18 @@ const heroInit = () => {
 
   const heroIconsSize = heroIconsRef.value.getBoundingClientRect();
   const heroCenter = -heroIconsSize.top + window.innerHeight / 2 - heroIconsSize.height / 2;
-  const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
   const iconsInitY = [110, 40, 80, 20, 100.6];
+  const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
 
   gsap.set(".hero-icons", { y: -heroCenter });
   gsap.set(heroIcons, { yPercent: (index) => iconsInitY[index] });
   gsap.set(".hero-text .title", { y: 50, opacity: 0 });
   gsap.set(".hero-text .desc", { y: 30, opacity: 0 });
+
+  gsap.to(".hero-icons", { y: 0 });
+  gsap.to(heroIcons, { yPercent: 0 });
+  gsap.to(".hero-text .title", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+  gsap.to(".hero-text .desc", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -202,19 +207,6 @@ const maskInit = () => {
     },
   });
 };
-
-watch([isLoading, isPageTransition], ([status, isPageTransition]) => {
-  if (!heroIconsRef.value) return;
-
-  if (!status && !isPageTransition) {
-    const heroIcons = [...heroIconsRef.value.querySelectorAll(".hero-icon")];
-
-    gsap.to(".hero-icons", { y: 0 });
-    gsap.to(heroIcons, { yPercent: 0 });
-    gsap.to(".hero-text .title", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
-    gsap.to(".hero-text .desc", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
-  }
-});
 
 onMounted(() => {
   heroInit();

@@ -45,7 +45,6 @@ onMounted(() => {
 
 <template>
   <NuxtLayout>
-    <!-- <Loading /> -->
     <PageTransition v-show="isPageTransition" />
     <NuxtPage />
   </NuxtLayout>
