@@ -31,7 +31,7 @@ const emit = defineEmits(["toggle"]);
   background-color: black;
   box-shadow: 0 0 0 1px white;
   overflow: hidden;
-  z-index: 101;
+  z-index: 102;
 
   &::before {
     content: "";
@@ -144,6 +144,12 @@ const emit = defineEmits(["toggle"]);
         }
       }
     }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .side-toggle {
+    zoom: 0.8;
   }
 }
 </style>

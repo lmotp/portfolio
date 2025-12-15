@@ -40,18 +40,14 @@ const handleMenuClick = (menuPath: string) => {
 
 <style scoped>
 .nav-item {
-  width: 420px;
+  width: 100%;
   padding: 10px 14px;
   border-radius: 5px;
   background-color: white;
   box-shadow: 0 0 0 1px black;
 
-  &:first-child {
-    height: 60px;
-
-    button {
-      margin-bottom: 0;
-    }
+  &:first-child .nav-item-header {
+    margin-bottom: 0;
   }
 
   .nav-item-header {
@@ -111,29 +107,11 @@ const handleMenuClick = (menuPath: string) => {
   .nav-item-childs {
     display: flex;
     flex-wrap: wrap;
+    gap: 3px 2.5px;
 
     .child {
       display: flex;
-      padding: 3px 2.5px;
-      width: 50%;
-
-      &:nth-child(1),
-      &:nth-child(2) {
-        padding-top: 0;
-      }
-
-      &:nth-last-child(1),
-      &:nth-last-child(2) {
-        padding-bottom: 0;
-      }
-
-      &:nth-child(odd) {
-        padding-left: 0;
-      }
-
-      &:nth-child(even) {
-        padding-right: 0;
-      }
+      width: calc(50% - 2.5px);
 
       button {
         position: relative;
@@ -164,6 +142,29 @@ const handleMenuClick = (menuPath: string) => {
           &::before {
             transform: scaleX(1);
           }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-item {
+    .nav-item-header {
+      button strong {
+        font-size: 18px;
+      }
+      p {
+        font-size: 12px;
+      }
+    }
+
+    .nav-item-childs {
+      .child {
+        width: calc(100% / 3 - 2px);
+
+        button {
+          font-size: 14px;
         }
       }
     }

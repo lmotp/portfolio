@@ -90,12 +90,13 @@ onMounted(() => {
 
 .nav-wrap {
   position: fixed;
-  left: 4px;
+  left: 0;
   top: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding-block: 4px;
+  padding: 4px;
+  width: 420px;
   height: 100dvh;
   z-index: 101;
 
@@ -178,6 +179,16 @@ onMounted(() => {
     .dim {
       opacity: 1;
     }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-wrap {
+    --button-offset: 60px;
+
+    width: 100%;
+    height: calc(100dvh - var(--button-offset));
+    top: var(--button-offset);
   }
 }
 </style>

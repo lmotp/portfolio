@@ -57,38 +57,35 @@ const heroInit = () => {
   tl.add("start");
   tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
 
-  if (isMobile.value) {
-  } else {
-    tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
-    tl.fromTo(
-      heroIcons,
-      {
-        y: 0,
-      },
-      {
-        y: heroCenter,
-        stagger: 0.1,
-        immediateRender: false,
-      },
-      "start"
-    );
-    tl.add("out", "-=0.2");
-    tl.to(
-      ".hero-container .scale",
-      {
-        scale: 8.3 / 30,
-      },
-      "out"
-    );
-    tl.to(
-      ".hero-bg",
-      {
-        opacity: 0,
-        duration: 1e-4,
-      },
-      "out+=0.3"
-    );
-  }
+  tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
+  tl.fromTo(
+    heroIcons,
+    {
+      y: 0,
+    },
+    {
+      y: heroCenter,
+      stagger: 0.1,
+      immediateRender: false,
+    },
+    "start"
+  );
+  tl.add("out", "-=0.2");
+  tl.to(
+    ".hero-container .scale",
+    {
+      scale: 8.3 / 30,
+    },
+    "out"
+  );
+  tl.to(
+    ".hero-bg",
+    {
+      opacity: 0,
+      duration: 1e-4,
+    },
+    "out+=0.3"
+  );
 };
 const introInit = () => {
   if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value) return;

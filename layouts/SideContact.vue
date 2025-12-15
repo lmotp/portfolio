@@ -73,7 +73,7 @@ const handleClickAbout = () => {
   display: flex;
   flex-direction: column;
   padding: 10px 14px;
-  width: 420px;
+  width: 100%;
   flex: 1;
   border-radius: 5px;
   background-color: red;
@@ -160,6 +160,18 @@ const handleClickAbout = () => {
           }
         }
       }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-item {
+    .nav-item-header {
+      font-size: 18px;
+    }
+
+    .nav-item-childs .nav-child span {
+      font-size: 14px;
     }
   }
 }

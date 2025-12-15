@@ -5,7 +5,7 @@
     "childs": []
   },
   "Work": {
-    "path": "/",
+    "path": "/work",
     "desc": "Work",
     "childs": [
       {
@@ -55,10 +55,6 @@
         "path": "/experiments/blur"
       },
       {
-        "name": "Processing",
-        "path": "/experiments/processing"
-      },
-      {
         "name": "Card",
         "path": "/experiments/card"
       },
@@ -69,6 +65,26 @@
       {
         "name": "Pyramid",
         "path": "/experiments/pyramid"
+      },
+      {
+        "name": "Dot",
+        "path": "/experiments/dot"
+      },
+      {
+        "name": "Moebius",
+        "path": "/experiments/moebius"
+      },
+      {
+        "name": "Painterly",
+        "path": "/experiments/painterly"
+      },
+      {
+        "name": "Pencil",
+        "path": "/experiments/pencil"
+      },
+      {
+        "name": "Pixel",
+        "path": "/experiments/pixel"
       }
     ]
   }

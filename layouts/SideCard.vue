@@ -54,12 +54,12 @@ onMounted(() => {
   border-radius: 6px;
 
   letter-spacing: 1px;
-  font-weight: 100;
   box-shadow: 0px 25px 15px -20px rgba(0, 0, 0, 0.2);
 
   .profile-img {
     width: 200px;
     height: 200px;
+    max-width: initial;
     z-index: 1;
   }
 
@@ -116,5 +116,8 @@ onMounted(() => {
       color: #3c352d;
     }
   }
+}
+
+@media screen and (max-width: 768px) {
 }
 </style>
