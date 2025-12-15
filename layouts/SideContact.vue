@@ -74,7 +74,7 @@ const handleClickAbout = () => {
   flex-direction: column;
   padding: 10px 14px;
   width: 420px;
-  height: 200px;
+  flex: 1;
   border-radius: 5px;
   background-color: red;
   box-shadow: 0 0 0 1px black;

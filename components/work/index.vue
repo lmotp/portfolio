@@ -31,16 +31,16 @@ const config = {
 
 const introImage = "/images/portfolios/intro-img.png";
 const spotlightItems = [
-  { name: "Portfolio-1", img: "/images/skills/0.webp" },
-  { name: "Portfolio-2", img: "/images/skills/1.webp" },
-  { name: "Portfolio-3", img: "/images/skills/2.webp" },
-  { name: "Portfolio-4", img: "/images/skills/3.webp" },
-  { name: "Portfolio-5", img: "/images/skills/4.webp" },
-  { name: "Portfolio-6", img: "/images/skills/5.webp" },
-  { name: "Portfolio-7", img: "/images/skills/6.webp" },
-  { name: "Portfolio-8", img: "/images/skills/7.webp" },
-  { name: "Portfolio-9", img: "/images/skills/8.webp" },
-  { name: "Portfolio-10", img: "/images/skills/9.webp" },
+  { name: "work-1", img: "/images/skills/0.webp" },
+  { name: "work-2", img: "/images/skills/1.webp" },
+  { name: "work-3", img: "/images/skills/2.webp" },
+  { name: "work-4", img: "/images/skills/3.webp" },
+  { name: "work-5", img: "/images/skills/4.webp" },
+  { name: "work-6", img: "/images/skills/5.webp" },
+  { name: "work-7", img: "/images/skills/6.webp" },
+  { name: "work-8", img: "/images/skills/7.webp" },
+  { name: "work-9", img: "/images/skills/8.webp" },
+  { name: "work-10", img: "/images/skills/9.webp" },
 ];
 
 const init = () => {
@@ -220,7 +220,7 @@ onUnmounted(() => {
         <img class="intro-img-bg" :src="usePublicAsset(spotlightItems[currentActiveIndex].img)" alt="" />
 
         <template v-if="!isInitEnd">
-          <img v-for="n of 6" :key="n" :src="introImage" alt="" class="intro-img-item" />
+          <img v-for="n of 6" :key="n" :src="usePublicAsset(introImage)" alt="" class="intro-img-item" />
         </template>
       </div>
     </div>

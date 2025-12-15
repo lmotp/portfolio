@@ -2,6 +2,8 @@
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 import SideButton from "./SideButton.vue";
 import SideContact from "./SideContact.vue";
 import SideNav from "./SideNav.vue";
@@ -34,7 +36,7 @@ watch(isClose, (status) => {
 });
 
 onMounted(() => {
-  audio.value = new Audio("@/public/sounds/drawer.mp3");
+  audio.value = new Audio(usePublicAsset("/sounds/drawer.mp3"));
 });
 </script>
 
@@ -88,11 +90,12 @@ onMounted(() => {
 
 .nav-wrap {
   position: fixed;
-  left: 0;
+  left: 4px;
   top: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  padding-block: 4px;
   height: 100dvh;
   z-index: 101;
 

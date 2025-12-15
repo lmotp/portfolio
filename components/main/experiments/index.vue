@@ -191,6 +191,7 @@ onMounted(() => {
     padding: 50px 8px 150px;
     background: linear-gradient(#f8f8f8, #e8e8e8);
     z-index: 1;
+    overflow: hidden;
 
     .row {
       display: flex;

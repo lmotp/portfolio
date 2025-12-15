@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <Portfolio />
+  <Work />
 </template>
 
 <style scoped></style>

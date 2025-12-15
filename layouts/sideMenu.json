@@ -4,25 +4,25 @@
     "desc": "",
     "childs": []
   },
-  "Portfolio": {
-    "path": "/portfolio",
-    "desc": "Portfolio",
+  "Work": {
+    "path": "/work",
+    "desc": "Work",
     "childs": [
       {
-        "path": "/portfolio/1",
-        "name": "Portfolio 1"
+        "path": "/work/1",
+        "name": "Work 1"
       },
       {
-        "path": "/portfolio/2",
-        "name": "Portfolio 2"
+        "path": "/work/2",
+        "name": "Work 2"
       },
       {
-        "path": "/portfolio/3",
-        "name": "Portfolio 3"
+        "path": "/work/3",
+        "name": "Work 3"
       },
       {
-        "path": "/portfolio/4",
-        "name": "Portfolio 4"
+        "path": "/work/4",
+        "name": "Work 4"
       }
     ]
   },

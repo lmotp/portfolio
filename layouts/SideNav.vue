@@ -46,10 +46,6 @@ const handleMenuClick = (menuPath: string) => {
   background-color: white;
   box-shadow: 0 0 0 1px black;
 
-  &:not(:first-child) {
-    flex: 1;
-  }
-
   &:first-child {
     height: 60px;
 
