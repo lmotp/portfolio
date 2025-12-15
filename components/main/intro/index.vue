@@ -38,11 +38,6 @@ const heroInit = () => {
   gsap.set(".hero-text .title", { y: 50, opacity: 0 });
   gsap.set(".hero-text .desc", { y: 30, opacity: 0 });
 
-  gsap.to(".hero-icons", { y: 0 });
-  gsap.to(heroIcons, { yPercent: 0 });
-  gsap.to(".hero-text .title", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
-  gsap.to(".hero-text .desc", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
-
   const tl = gsap.timeline({
     scrollTrigger: {
       id: "section-heading",
@@ -207,6 +202,24 @@ const maskInit = () => {
     },
   });
 };
+
+watch(
+  [isPageTransition, heroIconsRef],
+  ([status, ref]) => {
+    if (!ref) return;
+
+    if (!status) {
+      const heroIcons = [...ref.querySelectorAll(".hero-icon")];
+      gsap.to(".hero-icons", { y: 0 });
+      gsap.to(heroIcons, { yPercent: 0 });
+      gsap.to(".hero-text .title", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+      gsap.to(".hero-text .desc", { y: 0, opacity: 1, duration: 1, ease: "power2.inOut" });
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 
 onMounted(() => {
   heroInit();
