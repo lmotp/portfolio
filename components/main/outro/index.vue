@@ -6,21 +6,21 @@ import OutroLayerCard from "./OutroLayerCard.vue";
 const layerCards = ref([
   {
     id: 1,
-    url: "/work",
+    url: "/",
     title: "TEST-1",
     type: "video",
     src: "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18",
   },
   {
     id: 2,
-    url: "/work",
+    url: "/",
     title: "TEST-2",
     type: "image",
     src: "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424",
   },
   {
     id: 3,
-    url: "/work",
+    url: "/",
     title: "TEST-3",
     type: "video",
     src: "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c",

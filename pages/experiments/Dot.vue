@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Pencil from "~/components/experiments/processing/Pencil.vue";
+import Dot from "~/components/experiments/Dot.vue";
 </script>
 
 <template>
-  <Pencil />
+  <Dot />
 </template>
 
 <style scoped></style>

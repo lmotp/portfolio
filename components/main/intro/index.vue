@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Logo1 from "@/components/logo/Logo1.vue";
-import Logo2 from "@/components/logo/Logo2.vue";
-import Logo3 from "@/components/logo/Logo3.vue";
-import Logo4 from "@/components/logo/Logo4.vue";
-import Logo5 from "@/components/logo/Logo5.vue";
+import Logo1 from "@/components/main/logo/Logo1.vue";
+import Logo2 from "@/components/main/logo/Logo2.vue";
+import Logo3 from "@/components/main/logo/Logo3.vue";
+import Logo4 from "@/components/main/logo/Logo4.vue";
+import Logo5 from "@/components/main/logo/Logo5.vue";
 
 import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";

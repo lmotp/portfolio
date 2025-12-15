@@ -5,23 +5,23 @@
     "childs": []
   },
   "Work": {
-    "path": "/work",
+    "path": "/",
     "desc": "Work",
     "childs": [
       {
-        "path": "/work/1",
+        "path": "/",
         "name": "Work 1"
       },
       {
-        "path": "/work/2",
+        "path": "/",
         "name": "Work 2"
       },
       {
-        "path": "/work/3",
+        "path": "/",
         "name": "Work 3"
       },
       {
-        "path": "/work/4",
+        "path": "/",
         "name": "Work 4"
       }
     ]

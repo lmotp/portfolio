@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Moebius from "~/components/experiments/processing/Moebius.vue";
+import Moebius from "~/components/experiments/Moebius.vue";
 </script>
 
 <template>

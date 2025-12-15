@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Dot from "~/components/experiments/processing/Dot.vue";
+import Painterly from "~/components/experiments/Painterly.vue";
 </script>
 
 <template>
-  <Dot />
+  <Painterly />
 </template>
 
 <style scoped></style>
