@@ -8,7 +8,7 @@
 .page-enter-from,
 .page-leave-to {
   opacity: 0;
-  filter: blur(1rem);
+  filter: blur(16px);
 }
 
 /* Slide transition */
@@ -54,5 +54,5 @@
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  filter: blur(1rem);
+  filter: blur(16px);
 }

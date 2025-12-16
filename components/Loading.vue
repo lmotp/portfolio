@@ -64,7 +64,7 @@ onUnmounted(() => {
 
   .percent {
     color: white;
-    font-size: 2rem;
+    font-size: 32px;
     font-weight: bold;
   }
   .logo-wrap {

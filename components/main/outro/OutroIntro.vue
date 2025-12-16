@@ -94,10 +94,6 @@ onMounted(() => {
       padding: 6px 6px 0;
       color: #0b0d0f;
 
-      @media (max-width: 1000px) {
-        padding-top: 0;
-      }
-
       strong {
         display: flex;
         font-size: 10px;
@@ -117,6 +113,12 @@ onMounted(() => {
       gap: 26px;
       padding-block: 50px 8px;
     }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .outro-intro .intro-wrapper .title-wrap {
+    padding-top: 0;
   }
 }
 </style>

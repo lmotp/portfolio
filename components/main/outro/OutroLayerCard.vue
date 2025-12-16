@@ -176,7 +176,7 @@ onMounted(() => {
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 768px) {
   .layer-card-wrap {
     .info-wrapper {
     }

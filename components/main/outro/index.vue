@@ -91,7 +91,7 @@ const layerCards = ref([
     .layer-card-trigger {
       position: relative;
       height: 100lvh;
-      width: 3rem;
+      width: 48px;
       opacity: 0;
       z-index: 2;
     }

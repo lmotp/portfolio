@@ -57,41 +57,119 @@ const heroInit = () => {
   tl.add("start");
   tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
 
-  tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
-  tl.fromTo(
-    heroIcons,
-    {
-      y: 0,
-    },
-    {
-      y: heroCenter,
-      stagger: 0.1,
-      immediateRender: false,
-    },
-    "start"
-  );
-  tl.add("out", "-=0.2");
-  tl.to(
-    ".hero-container .scale",
-    {
-      scale: 8.3 / 30,
-    },
-    "out"
-  );
-  tl.to(
-    ".hero-bg",
-    {
+  if (isMobile.value) {
+    tl.to(
+      ".hero-text",
+      {
+        opacity: 0,
+        y: 50,
+      },
+      "start"
+    );
+    tl.to(
+      heroIconsRef.value,
+      {
+        y: heroCenter,
+        immediateRender: false,
+      },
+      "start"
+    );
+    tl.to(
+      ".hero-container .scale",
+      {
+        scale: 0.43333,
+        duration: 1,
+      },
+      "start+=0.5"
+    );
+
+    tl.add("icons", "start+=0.5");
+    tl.to(
+      heroIcons[0],
+      {
+        y: "-174px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[1],
+      {
+        y: "7px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[2],
+      {
+        y: "7px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[3],
+      {
+        y: "188px",
+      },
+      "icons"
+    );
+    tl.to(
+      [heroIcons[0], heroIcons[2]],
+      {
+        x: "90px",
+      },
+      "icons+=0.5"
+    );
+    tl.to(
+      [heroIcons[1], heroIcons[3]],
+      {
+        x: "-90px",
+      },
+      "icons+=0.5"
+    );
+
+    tl.to(".hero-bg", {
       opacity: 0,
       duration: 1e-4,
-    },
-    "out+=0.3"
-  );
+    });
+  } else {
+    tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
+    tl.fromTo(
+      heroIcons,
+      {
+        y: 0,
+      },
+      {
+        y: heroCenter,
+        stagger: 0.1,
+        immediateRender: false,
+      },
+      "start"
+    );
+    tl.add("out", "-=0.2");
+    tl.to(
+      ".hero-container .scale",
+      {
+        // scale: 8.3 / 30,
+        scale: 0.43333,
+      },
+      "out"
+    );
+    tl.to(
+      ".hero-bg",
+      {
+        opacity: 0,
+        duration: 1e-4,
+      },
+      "out+=0.3"
+    );
+  }
 };
 const introInit = () => {
   if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value) return;
 
   const lineTexts = [...introContainerRef.value.querySelectorAll(".line span")];
   const icons = [...introMainRef.value.querySelectorAll(".intro-icon")];
+  const lines = [...introMainRef.value.querySelectorAll(".line")];
   const dumyIcons = [...introDumyRef.value.querySelectorAll(".intro-icon")];
 
   gsap.set(".intro-container", { opacity: 0 });
@@ -128,12 +206,31 @@ const introInit = () => {
     },
   });
 
+  tl.add("start");
+
   if (isMobile.value) {
-    tl.add("start");
-  } else {
-    tl.add("start");
     tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
 
+    tl.add("lines");
+
+    const m = 0.25;
+
+    for (let i = 0; i < lines.length; i++) {
+      const I = lines[i];
+      const left = I.querySelector("span.left");
+      const right = I.querySelector("span.right");
+      const icon = I.querySelector(".intro-icon");
+      tl.add(`line-${i + 1}`, `lines+=${m * i}`);
+      if (left) tl.fromTo(left, { x: 50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
+      if (right) tl.fromTo(right, { x: -50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
+      if (icon) {
+        tl.to(icon, { x: 0, duration: 0.5 }, `line-${i + 1}`);
+        tl.to(icon, { y: 0, duration: 0.5, ease: "power2.out" }, `line-${i + 1}`);
+      }
+      tl.set([...I.querySelectorAll("span")], { opacity: 1 }, `${`line-${i + 1}`}+=0.2`);
+    }
+  } else {
+    tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
     tl.add("song", "start");
     tl.to(".intro-icon.icon-1", { y: 0, duration: 0.3, ease: "power2.out" }, "song");
 
@@ -253,7 +350,7 @@ onMounted(() => {
     <div class="intro-trigger"></div>
 
     <div v-show="!isShowMask" class="intro-sticky">
-      <h3 ref="introMainRef" class="intro-main-icon title">
+      <h3 v-if="!isMobile" ref="introMainRef" class="intro-main-icon title">
         <p class="line line-1">
           <span>Your favorite</span>
           <Logo5 class="intro-icon icon-1" />
@@ -279,6 +376,46 @@ onMounted(() => {
         </p>
       </h3>
 
+      <h3 v-else ref="introMainRef" class="intro-main-icon title">
+        <p class="line line-1">
+          <span class="right">Your</span>
+          <Logo1 class="intro-icon icon-1" />
+        </p>
+        <p class="line line-2">
+          <span class="left">favorite</span>
+        </p>
+        <p class="line line-3">
+          <span class="right">songs. That</span>
+        </p>
+        <p class="line line-4">
+          <Logo2 class="intro-icon icon-2" />
+          <span class="left">must-see</span>
+        </p>
+        <p class="line line-5">
+          <span>movie.</span>
+        </p>
+        <p class="line line-6">
+          <span class="right">Your</span>
+          <Logo3 class="intro-icon icon-3" />
+          <span class="left">top</span>
+        </p>
+        <p class="line line-7">
+          <span class="left">interests</span>
+        </p>
+        <p class="line line-8">
+          <span class="right">and</span>
+          <Logo4 class="intro-icon icon-4" />
+          <Logo5 class="intro-icon icon-5" />
+          <span class="left">your</span>
+        </p>
+        <p class="line line-9">
+          <span class="left">shopping</span>
+        </p>
+        <p class="line line-10">
+          <span class="right">habits.</span>
+        </p>
+      </h3>
+
       <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
         <Logo5 class="intro-icon icon-1" />
         <Logo1 class="intro-icon icon-2" />
@@ -289,7 +426,7 @@ onMounted(() => {
     </div>
 
     <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
-      <h3 class="mask-wrap">
+      <h3 v-if="!isMobile" class="mask-wrap">
         <p class="mask-line mask-line-1">
           <span>Your favorite</span>
           <Logo5 class="mask-icon icon-1" />
@@ -314,6 +451,46 @@ onMounted(() => {
           <span>habits.</span>
         </p>
       </h3>
+
+      <h3 v-else class="mask-wrap">
+        <p class="mask-line mask-line-1">
+          <span>Your</span>
+          <Logo1 class="mask-icon icon-1" />
+        </p>
+        <p class="mask-line mask-line-2">
+          <span>favorite</span>
+        </p>
+        <p class="mask-line mask-line-3">
+          <span>songs. That</span>
+        </p>
+        <p class="mask-line mask-line-4">
+          <Logo2 class="mask-icon icon-2" />
+          <span>must-see</span>
+        </p>
+        <p class="mask-line mask-line-5">
+          <span>movie.</span>
+        </p>
+        <p class="mask-line mask-line-6">
+          <span>Your</span>
+          <Logo3 class="mask-icon icon-3" />
+          <span>top</span>
+        </p>
+        <p class="mask-line mask-line-7">
+          <span>interests</span>
+        </p>
+        <p class="mask-line mask-line-8">
+          <span>and</span>
+          <Logo4 class="mask-icon icon-4" />
+          <Logo5 class="mask-icon icon-5" :aria-hidden="true" />
+          <span>your</span>
+        </p>
+        <p class="mask-line mask-line-9">
+          <span>shopping</span>
+        </p>
+        <p class="mask-line mask-line-10">
+          <span>habits.</span>
+        </p>
+      </h3>
     </div>
   </div>
 </template>
@@ -331,7 +508,7 @@ onMounted(() => {
     position: absolute;
     top: 0;
     left: 0;
-    width: 3rem;
+    width: 48px;
     height: 100svh;
     opacity: 0;
   }
@@ -384,20 +561,12 @@ onMounted(() => {
           line-height: 0.95;
           font-size: 100px;
           font-weight: 700;
-
-          @media (max-width: 1000px) {
-            font-size: 45px;
-          }
         }
 
         .desc {
-          font-size: 14px;
+          font-size: 24px;
           line-height: 1.2;
           overflow: hidden;
-
-          @media (max-width: 1000px) {
-            font-size: 12px;
-          }
         }
       }
 
@@ -438,7 +607,7 @@ onMounted(() => {
     position: absolute;
     top: 0;
     left: 0;
-    width: 3rem;
+    width: 48px;
     height: 200svh;
     opacity: 0;
   }
@@ -496,10 +665,6 @@ onMounted(() => {
           line-height: 1.2;
           font-size: 82px;
           font-weight: 700;
-
-          @media (max-width: 1000px) {
-            font-size: 40px;
-          }
         }
 
         .intro-icon {
@@ -609,10 +774,6 @@ onMounted(() => {
         line-height: 1.2;
         font-size: 82px;
         font-weight: 700;
-
-        @media (max-width: 1000px) {
-          font-size: 40px;
-        }
       }
 
       .mask-icon {
@@ -634,6 +795,134 @@ onMounted(() => {
         }
         &.icon-5 {
           margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  .hero-container .hero-sticky {
+    .scale {
+      .hero-text {
+        .title {
+          font-size: 72px;
+        }
+        .desc {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .intro-container {
+    .intro-sticky .intro-main-icon .line span {
+      font-size: 60px;
+    }
+  }
+
+  .intro-mask {
+    .mask-wrap .mask-line span {
+      font-size: 60px;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hero-container {
+    .hero-sticky .scale {
+      .hero-text {
+        .title {
+          font-size: 45px;
+        }
+        .desc {
+          font-size: 12px;
+        }
+      }
+
+      .hero-icons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+
+        .hero-icon {
+          flex: initial;
+          max-width: 180px;
+
+          &:nth-child(even) {
+            margin-right: auto;
+          }
+          &:nth-child(odd) {
+            margin-left: auto;
+          }
+
+          &.icon-5 {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .intro-container {
+    .intro-sticky {
+      .intro-main-icon {
+        .line {
+          position: relative !important;
+          top: auto !important;
+          bottom: auto !important;
+
+          span {
+            font-size: 45px;
+            text-align: center;
+          }
+
+          .intro-icon {
+            margin-inline: 6px !important;
+
+            &.icon-5 {
+              display: none;
+            }
+          }
+        }
+      }
+
+      .intro-dumy-icon {
+        flex-direction: column;
+
+        .intro-icon {
+          order: initial !important;
+
+          &.icon-5 {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  .intro-mask {
+    .mask-wrap .mask-line {
+      position: relative !important;
+      top: auto !important;
+      bottom: auto !important;
+
+      span {
+        font-size: 45px;
+        text-align: center;
+      }
+
+      .mask-icon {
+        margin-inline: 6px !important;
+
+        &.icon-3 {
+          width: 78px;
+          height: 78px;
+          min-width: 78px;
+          min-height: 78px;
+        }
+
+        &.icon-5 {
+          display: none;
         }
       }
     }
