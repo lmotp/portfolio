@@ -46,7 +46,9 @@ const source = [
     },
   ],
 ];
+
 const skillsRef = ref<HTMLElement | null>(null);
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -76,7 +78,6 @@ const rotateInit = () => {
   if (!skillsRef.value) return;
 
   const rows = skillsRef.value.querySelectorAll(".row");
-
   rows.forEach((row, i) => {
     const skills = row.querySelectorAll(".skill-wrap");
     const tl = gsap.timeline({
@@ -99,7 +100,8 @@ const rotateInit = () => {
         duration: 1,
         stagger: 0.25,
         ease: "power4.out",
-      }
+      },
+      isMobile.value ? ">+=0.3" : ""
     );
   });
 };
@@ -268,8 +270,17 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .skills-intro .intro-wrapper .title-wrap {
-    padding-top: 0;
+  .skills-intro {
+    .intro-wrapper .title-wrap {
+      padding-top: 0;
+    }
+    .skills .row {
+      flex-direction: column;
+
+      .skill-wrap {
+        width: 100%;
+      }
+    }
   }
 }
 </style>
