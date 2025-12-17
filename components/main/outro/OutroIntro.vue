@@ -101,9 +101,9 @@ onMounted(() => {
       }
 
       h2 {
-        line-height: 1;
-        letter-spacing: -7px;
-        font-size: 175px;
+        line-height: 0.8;
+        letter-spacing: -6px;
+        font-size: 165px;
         font-weight: 700;
       }
     }
@@ -118,7 +118,9 @@ onMounted(() => {
 
 @media screen and (max-width: 768px) {
   .outro-intro .intro-wrapper .title-wrap {
-    padding-top: 0;
+    h2 {
+      font-size: 72px;
+    }
   }
 }
 </style>

@@ -214,7 +214,10 @@ footer {
     z-index: 1;
 
     h2 {
-      font-size: 175px;
+      line-height: 0.8;
+      letter-spacing: -6px;
+      font-size: 165px;
+      font-weight: 700;
     }
   }
 
@@ -250,6 +253,16 @@ footer {
           pointer-events: none;
           filter: grayscale(0.3);
         }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  footer {
+    .footer-gutter {
+      h2 {
+        font-size: 72px;
       }
     }
   }
