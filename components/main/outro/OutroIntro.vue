@@ -24,7 +24,7 @@ const init = () => {
     {
       xPercent: -10,
       rotate: 8,
-      transformOrigin: "right",
+      transformOrigin: "left",
     },
     {
       xPercent: 0,
@@ -39,7 +39,7 @@ const init = () => {
       xPercent: -10,
       rotate: -4,
       yPercent: 5,
-      transformOrigin: "left",
+      transformOrigin: "right",
       ease: "power1.out",
     },
     0
