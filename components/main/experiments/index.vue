@@ -125,20 +125,20 @@ onMounted(() => {
 
         <h2>Experiments</h2>
       </div>
-    </div>
 
-    <div ref="skillsRef" class="skills">
-      <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
-        <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
-          <figure>
-            <img class="main" :src="usePublicAsset(value.src)" alt="" />
-            <img class="pixel" :src="usePublicAsset(value.pixelSrc)" alt="" />
-          </figure>
+      <div ref="skillsRef" class="skills">
+        <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
+          <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
+            <figure>
+              <img class="main" :src="usePublicAsset(value.src)" alt="" />
+              <img class="pixel" :src="usePublicAsset(value.pixelSrc)" alt="" />
+            </figure>
 
-          <p class="text-wrap">
-            <strong>{{ value.content }}</strong>
-            <span>{{ value.title }}</span>
-          </p>
+            <p class="text-wrap">
+              <strong>{{ value.content }}</strong>
+              <span>{{ value.title }}</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -147,7 +147,7 @@ onMounted(() => {
 
 <style scoped>
 .skills-intro {
-  margin-top: -75dvh;
+  margin-top: -25dvh;
   isolation: isolate;
 
   .intro-wrapper {
@@ -182,86 +182,86 @@ onMounted(() => {
         font-weight: 700;
       }
     }
-  }
 
-  .skills {
-    position: relative;
-    padding: 50px 8px 150px;
-    background: linear-gradient(#f8f8f8, #e8e8e8);
-    z-index: 1;
-    overflow: hidden;
+    .skills {
+      position: relative;
+      padding: 50px 8px 150px;
+      background: linear-gradient(#f8f8f8, #e8e8e8);
+      z-index: 1;
+      overflow: hidden;
 
-    .row {
-      display: flex;
+      .row {
+        display: flex;
 
-      .skill-wrap {
-        width: 50%;
-        padding: 0 8px 16px;
-        cursor: pointer;
+        .skill-wrap {
+          width: 50%;
+          padding: 0 8px 16px;
+          cursor: pointer;
 
-        figure {
-          position: relative;
-          width: 100%;
-          isolation: isolate;
-          overflow: hidden;
-
-          img {
+          figure {
+            position: relative;
             width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            object-position: center;
-            object-fit: cover;
-            transform: scale(1.2);
-            image-rendering: pixelated;
-            pointer-events: none;
+            isolation: isolate;
+            overflow: hidden;
 
-            transition: all 0.3s ease;
-
-            &.main {
-              opacity: 0;
-              z-index: 5;
-            }
-
-            &.pixel {
-              z-index: 4;
-            }
-          }
-
-          &::after {
-            content: "";
-            display: block;
-            width: 100%;
-            padding-bottom: 66.8103448276%;
-          }
-
-          &:hover {
             img {
-              transform: scale(1);
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              left: 0;
+              top: 0;
+              object-position: center;
+              object-fit: cover;
+              transform: scale(1.2);
+              image-rendering: pixelated;
+              pointer-events: none;
+
+              transition: all 0.3s ease;
 
               &.main {
-                opacity: 1;
-              }
-              &.pixel {
                 opacity: 0;
+                z-index: 5;
+              }
+
+              &.pixel {
+                z-index: 4;
+              }
+            }
+
+            &::after {
+              content: "";
+              display: block;
+              width: 100%;
+              padding-bottom: 66.8103448276%;
+            }
+
+            &:hover {
+              img {
+                transform: scale(1);
+
+                &.main {
+                  opacity: 1;
+                }
+                &.pixel {
+                  opacity: 0;
+                }
               }
             }
           }
-        }
 
-        .text-wrap {
-          display: flex;
-          flex-direction: column;
-          margin-top: 8px;
+          .text-wrap {
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
 
-          span {
-            font-size: 12px;
-            color: #999;
-          }
+            span {
+              font-size: 12px;
+              color: #999;
+            }
 
-          strong {
-            color: #0b0d0f;
+            strong {
+              color: #0b0d0f;
+            }
           }
         }
       }
@@ -270,8 +270,8 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .skills-intro {
-    .intro-wrapper .title-wrap {
+  .skills-intro .intro-wrapper {
+    .title-wrap {
       h2 {
         font-size: 72px;
       }
@@ -281,6 +281,14 @@ onMounted(() => {
 
       .skill-wrap {
         width: min(100%, 600px);
+        padding-inline: 0;
+
+        &:nth-child(odd) {
+          margin-right: auto;
+        }
+        &:nth-child(even) {
+          margin-left: auto;
+        }
 
         figure::after {
           padding-bottom: 50%;

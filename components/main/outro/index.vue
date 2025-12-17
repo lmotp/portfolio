@@ -48,7 +48,7 @@ const layerCards = ref([
         </div>
       </div>
 
-      <div :aria-hidden="true">
+      <div class="layer-card-trigger-wrap" :aria-hidden="true">
         <div
           v-for="(_, index) in layerCards.length + 1"
           :key="index"
@@ -65,6 +65,7 @@ const layerCards = ref([
   width: 100%;
   padding-top: calc(100dvh * 2);
   pointer-events: none;
+  background-color: #dddee2;
   z-index: -1;
 
   .top-view-container {
@@ -88,12 +89,14 @@ const layerCards = ref([
       }
     }
 
-    .layer-card-trigger {
-      position: relative;
-      height: 100lvh;
-      width: 48px;
-      opacity: 0;
-      z-index: 2;
+    .layer-card-trigger-wrap {
+      .layer-card-trigger {
+        position: relative;
+        height: 100lvh;
+        width: 48px;
+        opacity: 0;
+        z-index: 2;
+      }
     }
   }
 }

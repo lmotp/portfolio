@@ -20,11 +20,11 @@ const init = () => {
   });
 
   mainTl.fromTo(
-    ".intro-wrapper",
+    ".outro-intro-wrapper",
     {
       xPercent: -10,
       rotate: 8,
-      transformOrigin: "left",
+      transformOrigin: "right",
     },
     {
       xPercent: 0,
@@ -39,7 +39,7 @@ const init = () => {
       xPercent: -10,
       rotate: -4,
       yPercent: 5,
-      transformOrigin: "right",
+      transformOrigin: "left",
       ease: "power1.out",
     },
     0
@@ -53,7 +53,7 @@ onMounted(() => {
 
 <template>
   <div class="outro-intro">
-    <div class="intro-wrapper">
+    <div class="outro-intro-wrapper">
       <div class="title-wrap">
         <strong>
           <span class="fw300">/&nbsp;</span>
@@ -76,16 +76,16 @@ onMounted(() => {
   position: relative;
 
   &::after {
+    background-color: #f8f8f8;
     content: "";
-    position: absolute;
+    height: 100lvh;
     left: 0;
+    position: absolute;
     top: 100%;
     width: 100%;
-    height: 100lvh;
-    background-color: #f8f8f8;
   }
 
-  .intro-wrapper {
+  .outro-intro-wrapper {
     position: relative;
     padding-inline: 6px;
     background-color: #f8f8f8;
@@ -117,7 +117,7 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .outro-intro .intro-wrapper .title-wrap {
+  .outro-intro .outro-intro-wrapper .title-wrap {
     h2 {
       font-size: 72px;
     }

@@ -10,7 +10,7 @@ import Side from "./Side.vue";
 <style scoped>
 main {
   width: 100%;
-  height: 100dvh;
   isolation: isolate;
+  overflow: clip;
 }
 </style>

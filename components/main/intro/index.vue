@@ -322,175 +322,177 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-show="!isShowMask" class="hero-container">
-    <div class="hero-trigger"></div>
-    <div class="hero-bg"></div>
-    <div class="hero-sticky">
-      <div class="scale">
-        <div class="hero-text">
-          <h2 class="title">
-            <span>Your data runs the</span>
-            <span>world</span>
-          </h2>
-          <p class="desc">Start earning from it today.</p>
-        </div>
-        <div ref="heroIconsRef" class="hero-icons">
-          <Logo1 class="hero-icon icon-1" />
-          <Logo2 class="hero-icon icon-2" />
-          <Logo3 class="hero-icon icon-3" />
-          <Logo4 class="hero-icon icon-4" />
-          <Logo5 class="hero-icon icon-5" />
+  <div class="intro">
+    <div v-show="!isShowMask" class="hero-container">
+      <div class="hero-trigger"></div>
+      <div class="hero-bg"></div>
+      <div class="hero-sticky">
+        <div class="scale">
+          <div class="hero-text">
+            <h2 class="title">
+              <span>Your data runs the</span>
+              <span>world</span>
+            </h2>
+            <p class="desc">Start earning from it today.</p>
+          </div>
+          <div ref="heroIconsRef" class="hero-icons">
+            <Logo1 class="hero-icon icon-1" />
+            <Logo2 class="hero-icon icon-2" />
+            <Logo3 class="hero-icon icon-3" />
+            <Logo4 class="hero-icon icon-4" />
+            <Logo5 class="hero-icon icon-5" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div ref="introContainerRef" class="intro-container">
-    <div v-show="!isShowMask" class="intro-bg"></div>
-    <div class="intro-trigger"></div>
+    <div ref="introContainerRef" class="intro-container">
+      <div v-show="!isShowMask" class="intro-bg"></div>
+      <div class="intro-trigger"></div>
 
-    <div v-show="!isShowMask" class="intro-sticky">
-      <h3 v-if="!isMobile" ref="introMainRef" class="intro-main-icon title">
-        <p class="line line-1">
-          <span>Your favorite</span>
+      <div v-show="!isShowMask" class="intro-sticky">
+        <h3 v-if="!isMobile" ref="introMainRef" class="intro-main-icon title">
+          <p class="line line-1">
+            <span>Your favorite</span>
+            <Logo5 class="intro-icon icon-1" />
+            <span>songs</span>
+          </p>
+
+          <p class="line line-2">
+            <span>That</span>
+            <Logo1 class="intro-icon icon-2" />
+            <span>must-see movie.</span>
+          </p>
+
+          <p class="line line-3">
+            <span>Your top</span>
+            <Logo4 class="intro-icon icon-3" />
+            <span>interests and</span>
+          </p>
+          <p class="line line-4">
+            <span>all your shopping</span>
+            <Logo2 class="intro-icon icon-4" />
+            <Logo3 class="intro-icon icon-5" />
+            <span>habits.</span>
+          </p>
+        </h3>
+
+        <h3 v-else ref="introMainRef" class="intro-main-icon title">
+          <p class="line line-1">
+            <span class="right">Your</span>
+            <Logo1 class="intro-icon icon-1" />
+          </p>
+          <p class="line line-2">
+            <span class="left">favorite</span>
+          </p>
+          <p class="line line-3">
+            <span class="right">songs. That</span>
+          </p>
+          <p class="line line-4">
+            <Logo2 class="intro-icon icon-2" />
+            <span class="left">must-see</span>
+          </p>
+          <p class="line line-5">
+            <span>movie.</span>
+          </p>
+          <p class="line line-6">
+            <span class="right">Your</span>
+            <Logo3 class="intro-icon icon-3" />
+            <span class="left">top</span>
+          </p>
+          <p class="line line-7">
+            <span class="left">interests</span>
+          </p>
+          <p class="line line-8">
+            <span class="right">and</span>
+            <Logo4 class="intro-icon icon-4" />
+            <Logo5 class="intro-icon icon-5" />
+            <span class="left">your</span>
+          </p>
+          <p class="line line-9">
+            <span class="left">shopping</span>
+          </p>
+          <p class="line line-10">
+            <span class="right">habits.</span>
+          </p>
+        </h3>
+
+        <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
           <Logo5 class="intro-icon icon-1" />
-          <span>songs</span>
-        </p>
-
-        <p class="line line-2">
-          <span>That</span>
           <Logo1 class="intro-icon icon-2" />
-          <span>must-see movie.</span>
-        </p>
-
-        <p class="line line-3">
-          <span>Your top</span>
           <Logo4 class="intro-icon icon-3" />
-          <span>interests and</span>
-        </p>
-        <p class="line line-4">
-          <span>all your shopping</span>
           <Logo2 class="intro-icon icon-4" />
           <Logo3 class="intro-icon icon-5" />
-          <span>habits.</span>
-        </p>
-      </h3>
-
-      <h3 v-else ref="introMainRef" class="intro-main-icon title">
-        <p class="line line-1">
-          <span class="right">Your</span>
-          <Logo1 class="intro-icon icon-1" />
-        </p>
-        <p class="line line-2">
-          <span class="left">favorite</span>
-        </p>
-        <p class="line line-3">
-          <span class="right">songs. That</span>
-        </p>
-        <p class="line line-4">
-          <Logo2 class="intro-icon icon-2" />
-          <span class="left">must-see</span>
-        </p>
-        <p class="line line-5">
-          <span>movie.</span>
-        </p>
-        <p class="line line-6">
-          <span class="right">Your</span>
-          <Logo3 class="intro-icon icon-3" />
-          <span class="left">top</span>
-        </p>
-        <p class="line line-7">
-          <span class="left">interests</span>
-        </p>
-        <p class="line line-8">
-          <span class="right">and</span>
-          <Logo4 class="intro-icon icon-4" />
-          <Logo5 class="intro-icon icon-5" />
-          <span class="left">your</span>
-        </p>
-        <p class="line line-9">
-          <span class="left">shopping</span>
-        </p>
-        <p class="line line-10">
-          <span class="right">habits.</span>
-        </p>
-      </h3>
-
-      <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
-        <Logo5 class="intro-icon icon-1" />
-        <Logo1 class="intro-icon icon-2" />
-        <Logo4 class="intro-icon icon-3" />
-        <Logo2 class="intro-icon icon-4" />
-        <Logo3 class="intro-icon icon-5" />
+        </div>
       </div>
-    </div>
 
-    <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
-      <h3 v-if="!isMobile" class="mask-wrap">
-        <p class="mask-line mask-line-1">
-          <span>Your favorite</span>
-          <Logo5 class="mask-icon icon-1" />
-          <span>songs</span>
-        </p>
+      <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
+        <h3 v-if="!isMobile" class="mask-wrap">
+          <p class="mask-line mask-line-1">
+            <span>Your favorite</span>
+            <Logo5 class="mask-icon icon-1" />
+            <span>songs</span>
+          </p>
 
-        <p class="mask-line mask-line-2">
-          <span>That</span>
-          <Logo1 class="mask-icon icon-2" />
-          <span>must-see movie.</span>
-        </p>
+          <p class="mask-line mask-line-2">
+            <span>That</span>
+            <Logo1 class="mask-icon icon-2" />
+            <span>must-see movie.</span>
+          </p>
 
-        <p class="mask-line mask-line-3">
-          <span>Your top</span>
-          <Logo4 class="mask-icon icon-3" />
-          <span>interests and</span>
-        </p>
-        <p class="mask-line mask-line-4">
-          <span>all your shopping</span>
-          <Logo2 class="mask-icon icon-4" />
-          <Logo3 class="mask-icon icon-5" />
-          <span>habits.</span>
-        </p>
-      </h3>
+          <p class="mask-line mask-line-3">
+            <span>Your top</span>
+            <Logo4 class="mask-icon icon-3" />
+            <span>interests and</span>
+          </p>
+          <p class="mask-line mask-line-4">
+            <span>all your shopping</span>
+            <Logo2 class="mask-icon icon-4" />
+            <Logo3 class="mask-icon icon-5" />
+            <span>habits.</span>
+          </p>
+        </h3>
 
-      <h3 v-else class="mask-wrap">
-        <p class="mask-line mask-line-1">
-          <span>Your</span>
-          <Logo1 class="mask-icon icon-1" />
-        </p>
-        <p class="mask-line mask-line-2">
-          <span>favorite</span>
-        </p>
-        <p class="mask-line mask-line-3">
-          <span>songs. That</span>
-        </p>
-        <p class="mask-line mask-line-4">
-          <Logo2 class="mask-icon icon-2" />
-          <span>must-see</span>
-        </p>
-        <p class="mask-line mask-line-5">
-          <span>movie.</span>
-        </p>
-        <p class="mask-line mask-line-6">
-          <span>Your</span>
-          <Logo3 class="mask-icon icon-3" />
-          <span>top</span>
-        </p>
-        <p class="mask-line mask-line-7">
-          <span>interests</span>
-        </p>
-        <p class="mask-line mask-line-8">
-          <span>and</span>
-          <Logo4 class="mask-icon icon-4" />
-          <Logo5 class="mask-icon icon-5" :aria-hidden="true" />
-          <span>your</span>
-        </p>
-        <p class="mask-line mask-line-9">
-          <span>shopping</span>
-        </p>
-        <p class="mask-line mask-line-10">
-          <span>habits.</span>
-        </p>
-      </h3>
+        <h3 v-else class="mask-wrap">
+          <p class="mask-line mask-line-1">
+            <span>Your</span>
+            <Logo1 class="mask-icon icon-1" />
+          </p>
+          <p class="mask-line mask-line-2">
+            <span>favorite</span>
+          </p>
+          <p class="mask-line mask-line-3">
+            <span>songs. That</span>
+          </p>
+          <p class="mask-line mask-line-4">
+            <Logo2 class="mask-icon icon-2" />
+            <span>must-see</span>
+          </p>
+          <p class="mask-line mask-line-5">
+            <span>movie.</span>
+          </p>
+          <p class="mask-line mask-line-6">
+            <span>Your</span>
+            <Logo3 class="mask-icon icon-3" />
+            <span>top</span>
+          </p>
+          <p class="mask-line mask-line-7">
+            <span>interests</span>
+          </p>
+          <p class="mask-line mask-line-8">
+            <span>and</span>
+            <Logo4 class="mask-icon icon-4" />
+            <Logo5 class="mask-icon icon-5" :aria-hidden="true" />
+            <span>your</span>
+          </p>
+          <p class="mask-line mask-line-9">
+            <span>shopping</span>
+          </p>
+          <p class="mask-line mask-line-10">
+            <span>habits.</span>
+          </p>
+        </h3>
+      </div>
     </div>
   </div>
 </template>
