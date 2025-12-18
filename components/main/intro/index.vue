@@ -77,7 +77,7 @@ const heroInit = () => {
     tl.to(
       ".hero-container .scale",
       {
-        scale: 0.43333,
+        scale: 0.355555,
         duration: 1,
       },
       "start+=0.5"
@@ -875,12 +875,16 @@ onMounted(() => {
           bottom: auto !important;
 
           span {
-            font-size: 45px;
+            font-size: 40px;
             text-align: center;
           }
 
           .intro-icon {
             margin-inline: 6px !important;
+            width: 64px !important;
+            height: 64px !important;
+            min-width: 64px !important;
+            min-height: 64px !important;
 
             &.icon-5 {
               display: none;
@@ -894,6 +898,10 @@ onMounted(() => {
 
         .intro-icon {
           order: initial !important;
+          width: 64px !important;
+          height: 64px !important;
+          min-width: 64px !important;
+          min-height: 64px !important;
 
           &.icon-5 {
             display: none;
@@ -909,19 +917,16 @@ onMounted(() => {
       bottom: auto !important;
 
       span {
-        font-size: 45px;
+        font-size: 40px;
         text-align: center;
       }
 
       .mask-icon {
         margin-inline: 6px !important;
-
-        &.icon-3 {
-          width: 78px;
-          height: 78px;
-          min-width: 78px;
-          min-height: 78px;
-        }
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
 
         &.icon-5 {
           display: none;

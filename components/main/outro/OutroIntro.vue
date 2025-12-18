@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import gsap from "gsap";
 
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+
 const init = () => {
   const mainTl = gsap.timeline({
     scrollTrigger: {
@@ -36,9 +38,9 @@ const init = () => {
   subTl.to(
     ".outro-intro",
     {
-      xPercent: -10,
-      rotate: -4,
-      yPercent: 5,
+      xPercent: isMobile.value ? 0 : -10,
+      rotate: isMobile.value ? 0 : -4,
+      yPercent: isMobile.value ? 0 : 5,
       transformOrigin: "right",
       ease: "power1.out",
     },

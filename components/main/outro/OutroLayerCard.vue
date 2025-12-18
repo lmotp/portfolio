@@ -11,6 +11,7 @@ type cardType = {
 };
 
 const props = defineProps<cardType>();
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const cardWrapRef = ref<HTMLElement | null>(null);
 const infoWrapperRef = ref<HTMLElement | null>(null);
 const imageWrapperRef = ref<HTMLElement | null>(null);
@@ -27,6 +28,24 @@ const init = () => {
       start: "top bottom",
       end: "top top",
       scrub: !0,
+    },
+  });
+  const l = gsap.timeline({
+    paused: !0,
+    scrollTrigger: {
+      trigger: f,
+      start: "top top+=1",
+      end: "bottom top",
+      scrub: !0,
+
+      onEnterBack: () => {
+        if (!cardWrapRef.value) return;
+        cardWrapRef.value.style.pointerEvents = "auto";
+      },
+      onLeave: () => {
+        if (!cardWrapRef.value) return;
+        cardWrapRef.value.style.pointerEvents = "none";
+      },
     },
   });
 
@@ -65,31 +84,12 @@ const init = () => {
     0.06
   );
 
-  const l = gsap.timeline({
-    paused: !0,
-    scrollTrigger: {
-      trigger: f,
-      start: "top top+=1",
-      end: "bottom top",
-      scrub: !0,
-
-      // onEnterBack: () => {
-      //   if (!cardWrapRef.value) return;
-      //   cardWrapRef.value.style.pointerEvents = "auto";
-      // },
-      // onLeave: () => {
-      //   if (!cardWrapRef.value) return;
-      //   cardWrapRef.value.style.pointerEvents = "none";
-      // },
-    },
-  });
-
   l.to(
     infoWrapperRef.value,
     {
-      yPercent: props.isLast ? 0 : -80,
-      xPercent: props.isLast ? 0 : -25,
-      rotate: props.isLast ? 0 : -7,
+      yPercent: props.isLast ? 0 : isMobile.value ? 0 : -80,
+      xPercent: props.isLast ? 0 : isMobile.value ? 0 : -25,
+      rotate: props.isLast ? 0 : isMobile.value ? 0 : -7,
       force3D: !0,
       ease: "none",
     },
@@ -99,9 +99,9 @@ const init = () => {
   l.to(
     imageWrapperRef.value,
     {
-      yPercent: props.isLast ? 0 : -50,
-      xPercent: props.isLast ? 0 : -5,
-      rotate: props.isLast ? 0 : -5,
+      yPercent: props.isLast ? 0 : isMobile.value ? 0 : -50,
+      xPercent: props.isLast ? 0 : isMobile.value ? 0 : -5,
+      rotate: props.isLast ? 0 : isMobile.value ? 0 : -5,
       force3D: !0,
       ease: "none",
     },
