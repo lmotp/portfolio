@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
 
 type cardType = {
   id: number;
@@ -10,17 +12,38 @@ type cardType = {
   isLast: boolean;
 };
 
+const scrollTriggerStore = useScrollTriggerStore();
+const { scrollTrigger } = storeToRefs(scrollTriggerStore);
+
 const props = defineProps<cardType>();
+const emits = defineEmits(["onClickCard"]);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const isInit = ref(false);
 const cardWrapRef = ref<HTMLElement | null>(null);
 const infoWrapperRef = ref<HTMLElement | null>(null);
 const imageWrapperRef = ref<HTMLElement | null>(null);
 
-const maskIndex = ref(0);
-
 const init = () => {
   const f = document.body.querySelector(`.layer-card-trigger:nth-child(${props.id})`) as HTMLElement;
 
+  scrollTrigger.value?.create({
+    trigger: f,
+    start: props.id === 0 ? "top bottom" : "top 55%",
+    end: "bottom top",
+    scrub: true,
+    onEnter: () => {
+      isInit.value = true;
+    },
+    onEnterBack: () => {
+      isInit.value = true;
+    },
+    onLeaveBack: () => {
+      isInit.value = false;
+    },
+    onLeave: () => {
+      isInit.value = false;
+    },
+  });
   const r = gsap.timeline({
     paused: !0,
     scrollTrigger: {
@@ -115,11 +138,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="cardWrapRef" :class="['layer-card-wrap']" :style="{ '--mask-index': maskIndex }">
+  <div ref="cardWrapRef" :class="['layer-card-wrap', isInit ? 'active' : '']">
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
         <strong class="title">Zigma</strong>
-        <button>버튼</button>
+        <button @click="$emit('onClickCard', id)">버튼</button>
       </div>
       <div class="field-guide">
         <span class="field-guide-label top-left"> Overscan </span>
@@ -186,6 +209,11 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100dvh;
+  pointer-events: none;
+
+  &.active {
+    pointer-events: auto;
+  }
 
   .info-wrapper {
     width: 100%;

@@ -2,8 +2,9 @@
 import OutroTopView from "./OutroTopView.vue";
 import OutroIntro from "./OutroIntro.vue";
 import OutroLayerCard from "./OutroLayerCard.vue";
+import OutroModal from "./OutroModal.vue";
 
-const layerCards = ref([
+const layerCards = [
   {
     id: 1,
     url: "/",
@@ -25,7 +26,19 @@ const layerCards = ref([
     type: "video",
     src: "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c",
   },
-]);
+];
+
+const activeIndex = ref<number>(0);
+const isToggle = ref(false);
+const modalConfig = computed(() => layerCards[activeIndex.value]);
+
+const handleOpenModal = (id: number) => {
+  activeIndex.value = id;
+  isToggle.value = true;
+};
+const handleCloseModal = () => {
+  isToggle.value = false;
+};
 </script>
 
 <template>
@@ -44,6 +57,7 @@ const layerCards = ref([
             v-bind="card"
             :isLast="index === layerCards.length - 1"
             :key="index"
+            @onClickCard="handleOpenModal"
           />
         </div>
       </div>
@@ -57,6 +71,8 @@ const layerCards = ref([
       </div>
     </div>
   </div>
+
+  <OutroModal v-if="isToggle" :config="modalConfig" @onClickClsoeModal="handleCloseModal" />
 </template>
 
 <style scoped>
@@ -64,9 +80,7 @@ const layerCards = ref([
   position: relative;
   width: 100%;
   padding-top: calc(100dvh * 2);
-  pointer-events: none;
   background-color: #dddee2;
-  z-index: -1;
 
   .top-view-container {
     position: relative;
