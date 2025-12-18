@@ -310,6 +310,14 @@ footer {
         font-size: 72px;
       }
     }
+
+    .footer-scroller {
+      .footer-sticky .footer-sticky-inner figure {
+        left: 20.51282vw;
+        opacity: 0.2;
+        width: 138.46154vw;
+      }
+    }
   }
 }
 </style>

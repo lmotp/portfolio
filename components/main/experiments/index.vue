@@ -152,7 +152,6 @@ onMounted(() => {
 
   .intro-wrapper {
     position: relative;
-    padding-inline: 6px;
     background-color: #f8f8f8;
 
     &::after {
