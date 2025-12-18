@@ -1,26 +1,38 @@
 <script setup lang="ts">
 import gsap from "gsap";
 
-const init = () => {
-  const wrapperTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".footer-wrapper",
-      start: "top top",
-      end: "max",
-      scrub: true,
-    },
-  });
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const footerCreditsRef = ref<HTMLElement | null>(null);
+const footerPaddingBottom = ref(0);
 
-  wrapperTl.to(
-    ".footer-wrapper",
-    {
-      xPercent: -7,
-      rotate: -6,
-      transformOrigin: "top left",
-      ease: "power1.inOut",
-    },
-    0
-  );
+const init = () => {
+  if (!footerCreditsRef.value) return;
+
+  const OFFSET = 8;
+  const { height } = footerCreditsRef.value.getBoundingClientRect();
+  footerPaddingBottom.value = OFFSET + height;
+
+  if (!isMobile.value) {
+    const wrapperTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".footer-wrapper",
+        start: "top top",
+        end: "max",
+        scrub: true,
+      },
+    });
+
+    wrapperTl.to(
+      ".footer-wrapper",
+      {
+        xPercent: -7,
+        rotate: -6,
+        transformOrigin: "top left",
+        ease: "power1.inOut",
+      },
+      0
+    );
+  }
 
   const scrollerTl = gsap.timeline({
     scrollTrigger: {
@@ -31,7 +43,16 @@ const init = () => {
     },
   });
 
-  scrollerTl.fromTo(".footer-sticky-inner", { yPercent: 15 }, { yPercent: 0 }, 0);
+  scrollerTl.fromTo(
+    ".footer-sticky-inner",
+    {
+      yPercent: 15,
+    },
+    {
+      yPercent: 0,
+    },
+    0
+  );
 };
 onMounted(() => {
   nextTick(init);
@@ -39,7 +60,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <footer>
+  <footer :style="{ paddingBottom: `${footerPaddingBottom}px` }">
     <div class="footer-gutter">
       <h2>Contact</h2>
     </div>
@@ -198,6 +219,7 @@ onMounted(() => {
           </figure>
         </div>
       </div>
+      <div ref="footerCreditsRef" class="footer-credits"></div>
     </div>
   </footer>
 </template>
@@ -205,11 +227,12 @@ onMounted(() => {
 <style lang="scss" scoped>
 footer {
   position: relative;
-  padding-bottom: 385px;
+  overflow: clip;
   isolation: isolate;
 
   .footer-gutter {
     position: relative;
+    padding: 18px 4px 0;
     background-color: #e8e8e8;
     z-index: 1;
 
@@ -222,37 +245,57 @@ footer {
   }
 
   .footer-wrapper {
+    position: relative;
     width: 100%;
-    padding: 250px 16px 16px;
+    padding: 324px 8px 8px;
     background-color: #e8e8e8;
   }
 
   .footer-scroller {
     position: absolute;
-    inset: 0;
+    inset: -50vh 0 0 0;
     z-index: -1;
 
     .footer-sticky {
       position: sticky;
       top: 0;
+      display: flex;
       height: 100dvh;
+      transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
 
       .footer-sticky-inner {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: flex-end;
-        background-color: red;
+        background-color: #ff391e;
 
         figure {
           position: absolute;
-          left: 30%;
-          bottom: 15px;
-          width: 375px;
+          left: 29%;
+          bottom: 0;
+          width: 487px;
           mix-blend-mode: multiply;
           pointer-events: none;
           filter: grayscale(0.3);
         }
+      }
+    }
+    .footer-credits {
+      height: 50lvh;
+    }
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  footer {
+    .footer-wrapper {
+      padding-top: 250px;
+    }
+
+    .footer-scroller {
+      .footer-sticky .footer-sticky-inner figure {
+        width: 375px;
       }
     }
   }
@@ -261,6 +304,8 @@ footer {
 @media screen and (max-width: 768px) {
   footer {
     .footer-gutter {
+      padding: 18px 8px 0;
+
       h2 {
         font-size: 72px;
       }
