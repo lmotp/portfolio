@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   css: ["@/assets/css/main.css"],
   ssr: false,
 
-  modules: ["@pinia/nuxt", "@nuxt/image", "@vueuse/nuxt"],
+  modules: ["@pinia/nuxt", "@nuxt/image", "@vueuse/nuxt", "@nuxt/icon"],
 
   build: {
     transpile: ["three"],

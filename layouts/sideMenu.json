@@ -51,10 +51,6 @@
         "path": "/experiments/pinball"
       },
       {
-        "name": "Blur",
-        "path": "/experiments/blur"
-      },
-      {
         "name": "Card",
         "path": "/experiments/card"
       },

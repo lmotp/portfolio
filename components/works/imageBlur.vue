@@ -225,7 +225,6 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .blur {
   position: relative;
-  background-color: #e8e8e8;
   padding-block: 150px;
   z-index: -2;
 
