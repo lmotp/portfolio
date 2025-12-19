@@ -135,7 +135,7 @@ const resizeWindow = () => {
   if (mediaRefs.value.length) {
     mediaRefs.value.forEach(({ el, mesh }) => {
       mesh.position.x =
-        -(viewport.value.width / 2) + mesh.scale.x / 2 + ((el.offsetLeft + 15) / size.width) * viewport.value.width;
+        -(viewport.value.width / 2) + mesh.scale.x / 2 + (el.offsetLeft / size.width) * viewport.value.width;
     });
   }
 };
@@ -225,8 +225,8 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .blur {
   position: relative;
-  padding-block: 150px;
   z-index: -2;
+  padding-block: 100px 150px;
 
   canvas {
     position: fixed;
@@ -239,20 +239,21 @@ onUnmounted(() => {
 
   .inner-1 {
     display: flex;
-    gap: 20px;
+    justify-content: center;
     margin: 0;
 
     .media-container {
-      max-width: 1080px;
+      max-width: 800px;
 
       .media {
-        aspect-ratio: 1080 / 950;
+        aspect-ratio: 1 / 0.8796296296296297;
       }
     }
   }
 
   .inner-2 {
     display: flex;
+
     .media-container {
       .media {
         height: 40.7142857vw;
@@ -280,6 +281,7 @@ onUnmounted(() => {
 
     .media-container:first-child {
       width: 20%;
+
       .media {
         aspect-ratio: 1 / 1;
       }

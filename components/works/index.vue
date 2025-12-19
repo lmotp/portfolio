@@ -13,6 +13,15 @@ type configType = {
 
 const { config } = defineProps<{ config: configType }>();
 const { id, title, desc, date, stack, mainImg } = config;
+const icons = computed(() => {
+  return [
+    { name: "Nuxt", src: "simple-icons:nuxtdotjs" },
+    { name: "SCSS", src: "simple-icons:sass" },
+    { name: "Chart", src: "simple-icons:chartdotjs" },
+    { name: "Storybook", src: "simple-icons:storybook" },
+    { name: "Express", src: "simple-icons:express" },
+  ].map((v) => ({ ...v, isActive: stack.includes(v.name) }));
+});
 
 const init = () => {
   const tl = gsap.timeline({
@@ -24,26 +33,7 @@ const init = () => {
     },
   });
 
-  tl.fromTo(
-    ".picture",
-    {
-      transform: "translateY(-10%) scale(1.2)",
-    },
-    {
-      transform: "translateY(10%) scale(1.2)",
-    }
-  );
-};
-
-const getIconName = (stackName: string) => {
-  const map: Record<string, string> = {
-    Nuxt: "simple-icons:nuxtdotjs",
-    Storybook: "simple-icons:storybook",
-    SCSS: "simple-icons:sass",
-    Express: "simple-icons:express",
-    Chart: "simple-icons:chartdotjs",
-  };
-  return map[stackName] || "";
+  tl.fromTo(".picture", { transform: " scale(1.1)" }, { transform: "translateY(10%) scale(1)" });
 };
 
 onMounted(() => {
@@ -72,22 +62,22 @@ onMounted(() => {
       </div>
 
       <div class="title-wrap">
-        <time :datetime="date">{{ date }}</time>
         <h2>{{ title }}</h2>
+
+        <ul>
+          <li v-for="(svg, id) of icons" :key="`stack-${id}`">
+            <Icon :name="svg.src" size="40" :class="[svg.isActive && 'active']" />
+          </li>
+        </ul>
+        <time :datetime="date">{{ date }}</time>
       </div>
     </div>
 
     <div class="info-wrap">
       <p>{{ desc }}</p>
 
-      <ul>
-        <li v-for="(value, id) of stack" :key="`stack-${id}`">
-          <Icon :name="getIconName(value)" size="48" />
-        </li>
-      </ul>
+      <imageBlur />
     </div>
-
-    <imageBlur />
   </article>
 </template>
 
@@ -107,6 +97,7 @@ onMounted(() => {
     min-height: 0;
     isolation: isolate;
     overflow: hidden;
+    box-shadow: 0 0 0 1px #000a;
 
     .picture-bg {
       display: flex;
@@ -127,27 +118,51 @@ onMounted(() => {
   }
 
   .title-wrap {
-    padding-block: 42px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: 32px 42px;
     text-align: center;
 
     h2 {
       font-size: 96px;
       text-transform: uppercase;
       color: #0b0d0f;
+      line-height: 1.5;
+    }
+
+    ul {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 24px;
+
+      li {
+        display: flex;
+
+        span {
+          color: #e8e8e8;
+
+          &.active {
+            color: #0b0d0f;
+          }
+        }
+      }
     }
 
     time {
       font-size: 14px;
       color: #868a93;
+      white-space: pre-wrap;
     }
   }
 }
 
 .info-wrap {
-  ul {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+  p {
+    font-size: 18px;
+    text-align: center;
+    color: #0b0d0f;
+    white-space: pre-wrap;
   }
 }
 </style>
