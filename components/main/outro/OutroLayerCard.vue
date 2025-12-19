@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import gsap from "gsap";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
 type cardType = {
   id: number;
-  url: string;
   title: string;
   type: string;
   src: string;
@@ -14,6 +14,9 @@ type cardType = {
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger } = storeToRefs(scrollTriggerStore);
+
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
 
 const props = defineProps<cardType>();
 const emits = defineEmits(["onClickCard"]);
@@ -132,6 +135,12 @@ const init = () => {
   );
 };
 
+const handleClickRouter = (menuPath: string) => {
+  if (menuPath === path.value) return;
+
+  path.value = `/works/${menuPath}`;
+};
+
 onMounted(() => {
   nextTick(init);
 });
@@ -142,7 +151,7 @@ onMounted(() => {
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
         <strong class="title">Zigma</strong>
-        <button @click="$emit('onClickCard', id)">버튼</button>
+        <button @click="handleClickRouter(props.title.toLowerCase())">버튼</button>
       </div>
       <div class="field-guide">
         <span class="field-guide-label top-left"> Overscan </span>
@@ -183,7 +192,7 @@ onMounted(() => {
       </div>
     </div>
     <div ref="imageWrapperRef" class="image-wrapper">
-      <NuxtLink class="link" :to="props.url">
+      <button class="link" @click="handleClickRouter(props.title.toLowerCase())">
         <figure>
           <img v-if="props.type === 'image'" :src="props.src" :alt="props.title" />
           <video
@@ -197,7 +206,7 @@ onMounted(() => {
             :src="props.src"
           ></video>
         </figure>
-      </NuxtLink>
+      </button>
     </div>
   </div>
 </template>
