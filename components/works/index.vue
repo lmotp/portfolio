@@ -21,6 +21,7 @@ const { id, title, desc, date, stack, mainImg } = config;
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
 
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const blurRef = ref<HTMLCanvasElement | null>(null);
 const blurWrapRef = ref<HTMLDivElement | null>(null);
 
@@ -68,7 +69,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="blurWrapRef" :class="['blur']">
+  <div ref="blurWrapRef" class="detail-wrap">
     <canvas ref="blurRef" id="gl"></canvas>
 
     <article :id="`work-${id}`">
@@ -95,7 +96,7 @@ onMounted(() => {
 
           <ul>
             <li v-for="(svg, id) of icons" :key="`stack-${id}`">
-              <Icon :name="svg.src" size="40" :class="[svg.isActive && 'active']" />
+              <Icon :name="svg.src" :size="isMobile ? 30 : 40" :class="[svg.isActive && 'active']" />
             </li>
           </ul>
           <time :datetime="date">{{ date }}</time>
@@ -159,7 +160,7 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.blur {
+.detail-wrap {
   canvas {
     position: fixed;
     top: 0;
@@ -168,174 +169,200 @@ onMounted(() => {
     user-select: none;
     z-index: -1;
   }
-}
 
-.article-top {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-
-  .main-picture-wrap {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    flex: 1;
-    width: 100%;
-    min-height: 0;
-    isolation: isolate;
-    overflow: hidden;
-    box-shadow: 0 0 0 1px #000a;
-
-    .picture-bg {
-      display: flex;
-      position: absolute;
-      inset: 0%;
-      background-image: linear-gradient(#000c, #fff0 55%);
-      pointer-events: none;
-      user-select: none;
-      z-index: 1;
-    }
-
-    img,
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  .title-wrap {
+  .article-top {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-block: 32px 42px;
-    text-align: center;
+    height: 100dvh;
 
-    h2 {
-      font-size: 96px;
-      text-transform: uppercase;
-      color: #0b0d0f;
-      line-height: 1.5;
-    }
-
-    ul {
-      display: flex;
-      gap: 18px;
-      margin-bottom: 24px;
-
-      li {
-        display: flex;
-
-        span {
-          color: #e8e8e8;
-
-          &.active {
-            color: #0b0d0f;
-          }
-        }
-      }
-    }
-
-    time {
-      font-size: 14px;
-      color: #868a93;
-      white-space: pre-wrap;
-    }
-  }
-}
-
-.info-wrap {
-  p {
-    font-size: 18px;
-    text-align: center;
-    color: #0b0d0f;
-    white-space: pre-wrap;
-  }
-
-  .sticky-wrap {
-    .inner-1 {
+    .main-picture-wrap {
+      position: relative;
       display: flex;
       justify-content: center;
+      align-items: stretch;
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      isolation: isolate;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px #000a;
 
-      .media-container {
-        max-width: 800px;
+      .picture-bg {
+        display: flex;
+        position: absolute;
+        inset: 0%;
+        background-image: linear-gradient(#000c, #fff0 55%);
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+      }
 
-        .media {
-          aspect-ratio: 1 / 0.8796296296296297;
-        }
+      img,
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
 
-    .inner-2 {
-      display: flex;
-
-      .media-container {
-        .media {
-          height: 40.7142857vw;
-        }
-        &:nth-child(1) {
-          width: 32.0713235%;
-        }
-        &:nth-child(2) {
-          width: 51.8926471%;
-        }
-        &:nth-child(3) {
-          width: 15.9558824%;
-        }
-        &:not(:last-child) {
-          margin-right: var(--margin);
-        }
-      }
-    }
-
-    .inner-3 {
+    .title-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      padding-block: 32px 42px;
+      text-align: center;
 
-      .media-container:first-child {
-        width: 20%;
+      h2 {
+        font-size: 96px;
+        text-transform: uppercase;
+        color: #0b0d0f;
+        line-height: 1.5;
+      }
 
-        .media {
-          aspect-ratio: 1 / 1;
+      ul {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 24px;
+
+        li {
+          display: flex;
+
+          span {
+            color: #e8e8e8;
+
+            &.active {
+              color: #0b0d0f;
+            }
+          }
         }
       }
-      .media-container:nth-child(2) {
-        width: 61.8033989%;
-        margin-top: var(--margin);
-        .media {
-          aspect-ratio: 376 / 400;
-        }
+
+      time {
+        font-size: 14px;
+        color: #868a93;
+        white-space: pre-wrap;
       }
     }
+  }
 
-    .media-container {
-      width: 100%;
-      display: inline-flex;
-      flex-direction: column;
+  .info-wrap {
+    p {
+      font-size: 18px;
+      text-align: center;
+      color: #0b0d0f;
+      white-space: pre-wrap;
+    }
 
-      .media {
+    .sticky-wrap {
+      .inner-1 {
+        display: flex;
+        justify-content: center;
+
+        .media-container {
+          max-width: 800px;
+
+          .media {
+            aspect-ratio: 1 / 0.8796296296296297;
+          }
+        }
+      }
+
+      .inner-2 {
+        display: flex;
+
+        .media-container {
+          .media {
+            height: 40.7142857vw;
+          }
+          &:nth-child(1) {
+            width: 32.0713235%;
+          }
+          &:nth-child(2) {
+            width: 51.8926471%;
+          }
+          &:nth-child(3) {
+            width: 15.9558824%;
+          }
+          &:not(:last-child) {
+            margin-right: var(--margin);
+          }
+        }
+      }
+
+      .inner-3 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .media-container:first-child {
+          width: 20%;
+
+          .media {
+            aspect-ratio: 1 / 1;
+          }
+        }
+        .media-container:nth-child(2) {
+          width: 61.8033989%;
+          margin-top: var(--margin);
+          .media {
+            aspect-ratio: 376 / 400;
+          }
+        }
+      }
+
+      .media-container {
+        width: 100%;
         display: inline-flex;
+        flex-direction: column;
 
-        img {
-          visibility: hidden;
+        .media {
+          display: inline-flex;
+
+          img {
+            visibility: hidden;
+          }
+        }
+
+        small {
+          display: block;
+          margin-top: 10px;
+          text-align: center;
+          line-height: 0.8;
+          opacity: 0;
         }
       }
 
-      small {
-        display: block;
-        margin-top: 10px;
-        text-align: center;
-        line-height: 0.8;
-        opacity: 0;
+      article {
+        margin: 125px auto 0;
+        padding: 0 var(--margin);
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .detail-wrap {
+    .article-top {
+      .title-wrap {
+        h2 {
+          font-size: 64px;
+        }
+        time {
+          font-size: 12px;
+        }
       }
     }
 
-    article {
-      margin: 125px auto 0;
-      padding: 0 var(--margin);
+    .info-wrap {
+      p {
+        font-size: 12px;
+      }
+      .sticky-wrap {
+        article {
+          margin-top: 60px;
+        }
+      }
     }
   }
 }
