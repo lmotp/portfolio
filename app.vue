@@ -15,10 +15,9 @@ const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
 
 const route = useRoute();
+const lenis = new Lenis();
 
 const init = () => {
-  const lenis = new Lenis();
-
   lenis.on("scroll", () => {
     scrollY.value = window.scrollY;
     ScrollTrigger.update();
@@ -34,7 +33,7 @@ const init = () => {
 watch(
   () => route.path,
   () => {
-    window.scrollTo(0, 0);
+    lenis.scrollTo(0);
   }
 );
 

@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { storeToRefs } from "pinia";
+import * as THREE from "three";
 import gsap from "gsap";
-import imageBlur from "./imageBlur.vue";
+
+import GL from "./imageBlur/GL.js";
 
 type configType = {
   id: number;
@@ -13,6 +17,13 @@ type configType = {
 
 const { config } = defineProps<{ config: configType }>();
 const { id, title, desc, date, stack, mainImg } = config;
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { lenisRef } = storeToRefs(scrollTriggerStore);
+
+const blurRef = ref<HTMLCanvasElement | null>(null);
+const blurWrapRef = ref<HTMLDivElement | null>(null);
+
 const icons = computed(() => {
   return [
     { name: "Nuxt", src: "simple-icons:nuxtdotjs" },
@@ -24,6 +35,21 @@ const icons = computed(() => {
 });
 
 const init = () => {
+  if (!blurRef.value || !blurWrapRef.value) return;
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas: blurRef.value,
+    alpha: true,
+    antialias: true,
+  });
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const gl = new GL(renderer, blurWrapRef.value);
+  lenisRef.value?.on("scroll", (e) => {
+    gl.onScroll(e);
+  });
+
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".article-top",
@@ -42,46 +68,108 @@ onMounted(() => {
 </script>
 
 <template>
-  <article :id="`work-${id}`">
-    <div class="article-top">
-      <div class="main-picture-wrap">
-        <div class="picture-bg"></div>
+  <div ref="blurWrapRef" :class="['blur']">
+    <canvas ref="blurRef" id="gl"></canvas>
 
-        <img v-if="mainImg.type === 'image'" class="picture" :src="mainImg.src" :alt="title" />
-        <video
-          v-else
-          class="picture"
-          playsinline
-          muted
-          autoplay
-          loop
-          controlslist="nodownload noplaybackrate"
-          disablepictureinpicture
-          :src="mainImg.src"
-        ></video>
+    <article :id="`work-${id}`">
+      <div class="article-top">
+        <div class="main-picture-wrap">
+          <div class="picture-bg"></div>
+
+          <img v-if="mainImg.type === 'image'" class="picture" :src="mainImg.src" :alt="title" />
+          <video
+            v-else
+            class="picture"
+            playsinline
+            muted
+            autoplay
+            loop
+            controlslist="nodownload noplaybackrate"
+            disablepictureinpicture
+            :src="mainImg.src"
+          ></video>
+        </div>
+
+        <div class="title-wrap">
+          <h2>{{ title }}</h2>
+
+          <ul>
+            <li v-for="(svg, id) of icons" :key="`stack-${id}`">
+              <Icon :name="svg.src" size="40" :class="[svg.isActive && 'active']" />
+            </li>
+          </ul>
+          <time :datetime="date">{{ date }}</time>
+        </div>
       </div>
 
-      <div class="title-wrap">
-        <h2>{{ title }}</h2>
+      <div class="info-wrap">
+        <p>{{ desc }}</p>
 
-        <ul>
-          <li v-for="(svg, id) of icons" :key="`stack-${id}`">
-            <Icon :name="svg.src" size="40" :class="[svg.isActive && 'active']" />
-          </li>
-        </ul>
-        <time :datetime="date">{{ date }}</time>
+        <div class="sticky-wrap">
+          <article class="inner-1">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/6.webp" alt="fashion" />
+              </figure>
+              <small>(01)</small>
+            </div>
+          </article>
+
+          <article class="inner-2">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/1.webp" alt="silueta" />
+              </figure>
+              <small>(02)</small>
+            </div>
+
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/2.webp" alt="spheres" />
+              </figure>
+              <small>(04)</small>
+            </div>
+
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/3.webp" alt="spheres" />
+              </figure>
+              <small>(04)</small>
+            </div>
+          </article>
+
+          <article class="inner-3">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/4.webp" alt="diana" />
+              </figure>
+              <small>(05)</small>
+            </div>
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/5.webp" alt="abuelo" />
+              </figure>
+              <small>(06)</small>
+            </div>
+          </article>
+        </div>
       </div>
-    </div>
-
-    <div class="info-wrap">
-      <p>{{ desc }}</p>
-
-      <imageBlur />
-    </div>
-  </article>
+    </article>
+  </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+.blur {
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    user-select: none;
+    z-index: -1;
+  }
+}
+
 .article-top {
   display: flex;
   flex-direction: column;
@@ -163,6 +251,92 @@ onMounted(() => {
     text-align: center;
     color: #0b0d0f;
     white-space: pre-wrap;
+  }
+
+  .sticky-wrap {
+    .inner-1 {
+      display: flex;
+      justify-content: center;
+
+      .media-container {
+        max-width: 800px;
+
+        .media {
+          aspect-ratio: 1 / 0.8796296296296297;
+        }
+      }
+    }
+
+    .inner-2 {
+      display: flex;
+
+      .media-container {
+        .media {
+          height: 40.7142857vw;
+        }
+        &:nth-child(1) {
+          width: 32.0713235%;
+        }
+        &:nth-child(2) {
+          width: 51.8926471%;
+        }
+        &:nth-child(3) {
+          width: 15.9558824%;
+        }
+        &:not(:last-child) {
+          margin-right: var(--margin);
+        }
+      }
+    }
+
+    .inner-3 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .media-container:first-child {
+        width: 20%;
+
+        .media {
+          aspect-ratio: 1 / 1;
+        }
+      }
+      .media-container:nth-child(2) {
+        width: 61.8033989%;
+        margin-top: var(--margin);
+        .media {
+          aspect-ratio: 376 / 400;
+        }
+      }
+    }
+
+    .media-container {
+      width: 100%;
+      display: inline-flex;
+      flex-direction: column;
+
+      .media {
+        display: inline-flex;
+
+        img {
+          visibility: hidden;
+        }
+      }
+
+      small {
+        display: block;
+        margin-top: 10px;
+        text-align: center;
+        line-height: 0.8;
+        opacity: 0;
+      }
+    }
+
+    article {
+      margin: 125px auto 0;
+      padding: 0 var(--margin);
+    }
   }
 }
 </style>
