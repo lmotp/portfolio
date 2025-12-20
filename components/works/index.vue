@@ -102,59 +102,63 @@ onMounted(() => {
           <time :datetime="date">{{ date }}</time>
         </div>
       </div>
+    </article>
 
-      <div class="info-wrap">
-        <p>{{ desc }}</p>
+    <div class="info-wrap">
+      <p>{{ desc }}</p>
 
-        <div class="sticky-wrap">
-          <article class="inner-1">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/6.webp" alt="fashion" />
-              </figure>
-              <small>(01)</small>
-            </div>
-          </article>
+      <div class="sticky-wrap">
+        <article class="inner-1">
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/6.webp" alt="fashion" />
+            </figure>
+            <small>(01)</small>
+          </div>
+        </article>
 
-          <article class="inner-2">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/1.webp" alt="silueta" />
-              </figure>
-              <small>(02)</small>
-            </div>
+        <article class="inner-2">
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/1.webp" alt="silueta" />
+            </figure>
+            <small>(02)</small>
+          </div>
 
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/2.webp" alt="spheres" />
-              </figure>
-              <small>(04)</small>
-            </div>
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/2.webp" alt="spheres" />
+            </figure>
+            <small>(04)</small>
+          </div>
 
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/3.webp" alt="spheres" />
-              </figure>
-              <small>(04)</small>
-            </div>
-          </article>
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/3.webp" alt="spheres" />
+            </figure>
+            <small>(04)</small>
+          </div>
+        </article>
 
-          <article class="inner-3">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/4.webp" alt="diana" />
-              </figure>
-              <small>(05)</small>
-            </div>
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/5.webp" alt="abuelo" />
-              </figure>
-              <small>(06)</small>
-            </div>
-          </article>
-        </div>
+        <article class="inner-3">
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/4.webp" alt="diana" />
+            </figure>
+            <small>(05)</small>
+          </div>
+          <div class="media-container">
+            <figure class="media">
+              <img src="@/public/images/skills/5.webp" alt="abuelo" />
+            </figure>
+            <small>(06)</small>
+          </div>
+        </article>
       </div>
+    </div>
+
+    <article class="bottom-section">
+      <p>Additional content here...</p>
     </article>
   </div>
 </template>
@@ -338,6 +342,9 @@ onMounted(() => {
         padding: 0 var(--margin);
       }
     }
+  }
+
+  .bottom-section {
   }
 }
 
