@@ -6,20 +6,14 @@ import gsap from "gsap";
 
 import GL from "./imageBlur/GL.js";
 
-type configType = {
-  id: number;
-  title: string;
-  desc: string;
-  date: string;
-  stack: string[];
-  mainImg: { src: string; type: string };
-};
-
-const { config } = defineProps<{ config: configType }>();
-const { id, title, desc, date, stack, mainImg } = config;
+const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
+const { id, title, desc, date, stack, src, type } = config;
+const { nextTitle, nextSrc, nextType } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
+
+const router = useRouter();
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const blurRef = ref<HTMLCanvasElement | null>(null);
@@ -32,10 +26,26 @@ const icons = computed(() => {
     { name: "Chart", src: "simple-icons:chartdotjs" },
     { name: "Storybook", src: "simple-icons:storybook" },
     { name: "Express", src: "simple-icons:express" },
-  ].map((v) => ({ ...v, isActive: stack.includes(v.name) }));
+  ].map((v) => ({ ...v, isActive: stack?.includes(v.name) }));
 });
 
 const init = () => {
+  setGsapAnimation();
+  setDetailImage();
+};
+
+const setGsapAnimation = () => {
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".article-top",
+      start: "top top",
+      end: "bottom top",
+      scrub: true,
+    },
+  });
+  tl.fromTo(".article-top .picture", { transform: " scale(1.1)" }, { transform: "translateY(10%) scale(1)" });
+};
+const setDetailImage = () => {
   if (!blurRef.value || !blurWrapRef.value) return;
 
   const renderer = new THREE.WebGLRenderer({
@@ -50,18 +60,9 @@ const init = () => {
   lenisRef.value?.on("scroll", (e) => {
     gl.onScroll(e);
   });
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".article-top",
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-    },
-  });
-
-  tl.fromTo(".picture", { transform: " scale(1.1)" }, { transform: "translateY(10%) scale(1)" });
 };
+
+const handleClickNextWrok = () => {};
 
 onMounted(() => {
   nextTick(init);
@@ -77,7 +78,7 @@ onMounted(() => {
         <div class="main-picture-wrap">
           <div class="picture-bg"></div>
 
-          <img v-if="mainImg.type === 'image'" class="picture" :src="mainImg.src" :alt="title" />
+          <img v-if="type === 'image'" class="picture" :src="src" :alt="title" />
           <video
             v-else
             class="picture"
@@ -87,7 +88,7 @@ onMounted(() => {
             loop
             controlslist="nodownload noplaybackrate"
             disablepictureinpicture
-            :src="mainImg.src"
+            :src="src"
           ></video>
         </div>
 
@@ -96,69 +97,86 @@ onMounted(() => {
 
           <ul>
             <li v-for="(svg, id) of icons" :key="`stack-${id}`">
-              <Icon :name="svg.src" :size="isMobile ? 30 : 40" :class="[svg.isActive && 'active']" />
+              <Icon :name="svg.src" :size="isMobile ? 30 : 40" :class="['icon', svg.isActive && 'active']" />
             </li>
           </ul>
           <time :datetime="date">{{ date }}</time>
         </div>
       </div>
+
+      <div class="info-wrap">
+        <p>{{ desc }}</p>
+
+        <div class="sticky-wrap">
+          <article class="inner-1">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/6.webp" alt="fashion" />
+              </figure>
+              <small>(01)</small>
+            </div>
+          </article>
+
+          <article class="inner-2">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/1.webp" alt="silueta" />
+              </figure>
+              <small>(02)</small>
+            </div>
+
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/2.webp" alt="spheres" />
+              </figure>
+              <small>(04)</small>
+            </div>
+
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/3.webp" alt="spheres" />
+              </figure>
+              <small>(04)</small>
+            </div>
+          </article>
+
+          <article class="inner-3">
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/4.webp" alt="diana" />
+              </figure>
+              <small>(05)</small>
+            </div>
+            <div class="media-container">
+              <figure class="media">
+                <img src="@/public/images/skills/5.webp" alt="abuelo" />
+              </figure>
+              <small>(06)</small>
+            </div>
+          </article>
+        </div>
+      </div>
     </article>
 
-    <div class="info-wrap">
-      <p>{{ desc }}</p>
+    <article class="bottom-section" @click="handleClickNextWrok">
+      <div class="main-picture-wrap">
+        <div class="picture-bg"></div>
 
-      <div class="sticky-wrap">
-        <article class="inner-1">
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/6.webp" alt="fashion" />
-            </figure>
-            <small>(01)</small>
-          </div>
-        </article>
-
-        <article class="inner-2">
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/1.webp" alt="silueta" />
-            </figure>
-            <small>(02)</small>
-          </div>
-
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/2.webp" alt="spheres" />
-            </figure>
-            <small>(04)</small>
-          </div>
-
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/3.webp" alt="spheres" />
-            </figure>
-            <small>(04)</small>
-          </div>
-        </article>
-
-        <article class="inner-3">
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/4.webp" alt="diana" />
-            </figure>
-            <small>(05)</small>
-          </div>
-          <div class="media-container">
-            <figure class="media">
-              <img src="@/public/images/skills/5.webp" alt="abuelo" />
-            </figure>
-            <small>(06)</small>
-          </div>
-        </article>
+        <img v-if="nextType === 'image'" class="picture" :src="nextSrc" :alt="nextTitle" />
+        <video
+          v-else
+          class="picture"
+          playsinline
+          muted
+          autoplay
+          loop
+          controlslist="nodownload noplaybackrate"
+          disablepictureinpicture
+          :src="nextSrc"
+        ></video>
       </div>
-    </div>
 
-    <article class="bottom-section">
-      <p>Additional content here...</p>
+      <h3>{{ nextTitle }}</h3>
     </article>
   </div>
 </template>
@@ -178,36 +196,6 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     height: 100dvh;
-
-    .main-picture-wrap {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      flex: 1;
-      width: 100%;
-      min-height: 0;
-      isolation: isolate;
-      overflow: hidden;
-      box-shadow: 0 0 0 1px #000a;
-
-      .picture-bg {
-        display: flex;
-        position: absolute;
-        inset: 0%;
-        background-image: linear-gradient(#000c, #fff0 55%);
-        pointer-events: none;
-        user-select: none;
-        z-index: 1;
-      }
-
-      img,
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
 
     .title-wrap {
       display: flex;
@@ -250,6 +238,8 @@ onMounted(() => {
   }
 
   .info-wrap {
+    margin-bottom: 150px;
+
     p {
       font-size: 18px;
       text-align: center;
@@ -345,6 +335,36 @@ onMounted(() => {
   }
 
   .bottom-section {
+  }
+
+  .main-picture-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    isolation: isolate;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #000a;
+
+    .picture-bg {
+      display: flex;
+      position: absolute;
+      inset: 0%;
+      background-image: linear-gradient(#000c, #fff0 55%);
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+
+    img,
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 }
 

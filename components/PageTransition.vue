@@ -10,7 +10,7 @@ const { isPageTransition, path } = storeToRefs(pageTransitionStore);
 
 const overlayRef = ref<HTMLElement | null>(null);
 const blocksRef = ref<HTMLElement[]>([]);
-const BLOCK_COUNT = 20;
+const BLOCK_COUNT = computed(() => (window.innerWidth <= 768 ? 10 : 20));
 
 const coverPage = (url: string) => {
   if (isPageTransition.value) return;

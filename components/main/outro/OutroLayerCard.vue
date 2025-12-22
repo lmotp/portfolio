@@ -4,11 +4,17 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
-type cardType = {
+type configType = {
   id: number;
   title: string;
-  type: string;
+  desc: string;
+  date: string;
+  stack: string[];
   src: string;
+  type: string;
+};
+
+type cardType = configType & {
   isLast: boolean;
 };
 

@@ -2,33 +2,7 @@
 import OutroTopView from "./OutroTopView.vue";
 import OutroIntro from "./OutroIntro.vue";
 import OutroLayerCard from "./OutroLayerCard.vue";
-
-const layerCards = [
-  {
-    id: 1,
-    title: "Monimo",
-    type: "video",
-    src: "https://player.vimeo.com/progressive_redirect/playback/1075238854/rendition/1440p/file.mp4?loc=external&log_user=0&signature=ab2898724061630d120ac55f4d347abc72e77432b75945a58a7436f1975b7a18",
-  },
-  {
-    id: 2,
-    title: "Lisn",
-    type: "image",
-    src: "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424",
-  },
-  {
-    id: 3,
-    title: "Neweast Art",
-    type: "video",
-    src: "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c",
-  },
-  {
-    id: 4,
-    title: "Meum",
-    type: "video",
-    src: "https://player.vimeo.com/progressive_redirect/playback/1126153699/rendition/1080p/file.mp4?loc=external&log_user=0&signature=0e4e19a7416f19cb66ae7d7d8d8bd8c22eac61b25ef9a9c7619e496fb044e6b8",
-  },
-];
+import { workData } from "~/utils/data";
 </script>
 
 <template>
@@ -43,9 +17,9 @@ const layerCards = [
       <div class="layer-card-scroller">
         <div class="layer-card-sticky">
           <OutroLayerCard
-            v-for="(card, index) in layerCards"
+            v-for="(card, index) in workData"
             v-bind="card"
-            :isLast="index === layerCards.length - 1"
+            :isLast="index === workData.length - 1"
             :key="index"
           />
         </div>
@@ -53,7 +27,7 @@ const layerCards = [
 
       <div class="layer-card-trigger-wrap" :aria-hidden="true">
         <div
-          v-for="(_, index) in layerCards.length + 1"
+          v-for="(_, index) in workData.length + 1"
           :key="index"
           :class="['layer-card-trigger', `index-${index}`]"
         ></div>
