@@ -12,15 +12,21 @@ const layerCards = [
   },
   {
     id: 2,
-    title: "Neweast Art",
+    title: "Lisn",
     type: "image",
     src: "https://www.datocms-assets.com/136821/1724083284-highresstills_thelineanimation_azukielementals_09.jpeg?fit=crop&h=1928&w=3424",
   },
   {
     id: 3,
-    title: "TEST-3",
+    title: "Neweast Art",
     type: "video",
     src: "https://player.vimeo.com/progressive_redirect/playback/1007627724/rendition/1080p/file.mp4?loc=external&log_user=0&signature=41fcd2bd8b9c45ffb168fd843955caf3daa868b55bceb67f951cce974f296f6c",
+  },
+  {
+    id: 4,
+    title: "Meum",
+    type: "video",
+    src: "https://player.vimeo.com/progressive_redirect/playback/1126153699/rendition/1080p/file.mp4?loc=external&log_user=0&signature=0e4e19a7416f19cb66ae7d7d8d8bd8c22eac61b25ef9a9c7619e496fb044e6b8",
   },
 ];
 </script>

@@ -353,7 +353,7 @@ onMounted(() => {
     .article-top {
       .title-wrap {
         h2 {
-          font-size: 64px;
+          font-size: 56px;
         }
         time {
           font-size: 12px;

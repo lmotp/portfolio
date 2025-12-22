@@ -136,9 +136,8 @@ const init = () => {
 };
 
 const handleClickRouter = (menuPath: string) => {
-  if (menuPath === path.value) return;
-
-  path.value = `/works/${menuPath}`;
+  const transformPath = menuPath.toLowerCase().replace(" ", "");
+  transformPath === path.value ? null : (path.value = `/works/${transformPath}`);
 };
 
 onMounted(() => {
@@ -150,8 +149,8 @@ onMounted(() => {
   <div ref="cardWrapRef" :class="['layer-card-wrap', isInit ? 'active' : '']">
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
-        <strong class="title">Zigma</strong>
-        <button @click="handleClickRouter(props.title.toLowerCase())">버튼</button>
+        <strong class="title">{{ props.title }}</strong>
+        <button @click="handleClickRouter(props.title)">버튼</button>
       </div>
       <div class="field-guide">
         <span class="field-guide-label top-left"> Overscan </span>
