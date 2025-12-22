@@ -15,9 +15,13 @@ const { lenisRef } = storeToRefs(scrollTriggerStore);
 
 const router = useRouter();
 
+const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const blurRef = ref<HTMLCanvasElement | null>(null);
 const blurWrapRef = ref<HTMLDivElement | null>(null);
+const pictureWrapRef = ref<HTMLDivElement | null>(null);
+const bottomRef = ref<HTMLDivElement | null>(null);
+const pictureWrapHeight = ref(window.innerHeight / 2);
 
 const icons = computed(() => {
   return [
@@ -30,6 +34,10 @@ const icons = computed(() => {
 });
 
 const init = () => {
+  isInit.value = true;
+
+  if (pictureWrapRef.value) pictureWrapHeight.value = pictureWrapRef.value.getBoundingClientRect().height;
+
   setGsapAnimation();
   setDetailImage();
 };
@@ -62,7 +70,21 @@ const setDetailImage = () => {
   });
 };
 
-const handleClickNextWrok = () => {};
+const handleClickNextWrok = () => {
+  if (!bottomRef.value) return;
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      const transformPath = nextTitle.toLowerCase().replace(" ", "");
+      router.push(`/works/${transformPath}`);
+    },
+  });
+  const mainTrigger = bottomRef.value?.querySelector(".bottom-picture-wrap");
+  const textTrigger = bottomRef.value?.querySelector("h3");
+
+  tl.to(mainTrigger, { translateY: `-${window.innerHeight - pictureWrapHeight.value + 150}px`, height: "100vh" }, 0);
+  tl.to(textTrigger, { opacity: 0 }, 0);
+};
 
 onMounted(() => {
   nextTick(init);
@@ -70,13 +92,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="blurWrapRef" class="detail-wrap">
+  <div ref="blurWrapRef" class="detail-wrap" :style="{ '--pictureWrapHeight': `${pictureWrapHeight}px` }">
     <canvas ref="blurRef" id="gl"></canvas>
 
     <article :id="`work-${id}`">
       <div class="article-top">
-        <div class="main-picture-wrap">
+        <div ref="pictureWrapRef" class="main-picture-wrap">
           <div class="picture-bg"></div>
+
+          <Transition name="init">
+            <div v-show="!isInit" class="init-wrap">
+              <img v-if="type === 'image'" :src="src" :alt="title" />
+              <video v-else playsinline muted autoplay :src="src"></video>
+            </div>
+          </Transition>
 
           <img v-if="type === 'image'" class="picture" :src="src" :alt="title" />
           <video
@@ -158,8 +187,10 @@ onMounted(() => {
       </div>
     </article>
 
-    <article class="bottom-section" @click="handleClickNextWrok">
-      <div class="main-picture-wrap">
+    <article ref="bottomRef" class="bottom-section" @click="handleClickNextWrok" role="button">
+      <strong>NEXT</strong>
+
+      <div class="bottom-picture-wrap">
         <div class="picture-bg"></div>
 
         <img v-if="nextType === 'image'" class="picture" :src="nextSrc" :alt="nextTitle" />
@@ -174,9 +205,9 @@ onMounted(() => {
           disablepictureinpicture
           :src="nextSrc"
         ></video>
-      </div>
 
-      <h3>{{ nextTitle }}</h3>
+        <h3>{{ nextTitle }}</h3>
+      </div>
     </article>
   </div>
 </template>
@@ -196,6 +227,52 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     height: 100dvh;
+    isolation: isolate;
+
+    .main-picture-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      isolation: isolate;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px #000a;
+      z-index: 1;
+
+      .init-wrap {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        background-color: white;
+        overflow: hidden;
+        z-index: 99;
+
+        &.init-leave-active {
+          transition: height 1s ease-in-out;
+        }
+
+        &.init-leave-to {
+          height: var(--pictureWrapHeight);
+        }
+
+        & > * {
+          transform: scale(1.1);
+        }
+      }
+
+      .picture-bg {
+        display: flex;
+        position: absolute;
+        inset: 0%;
+        background-image: linear-gradient(#000c, #fff0 55%);
+        pointer-events: none;
+        user-select: none;
+        z-index: 101;
+      }
+    }
 
     .title-wrap {
       display: flex;
@@ -238,7 +315,7 @@ onMounted(() => {
   }
 
   .info-wrap {
-    margin-bottom: 150px;
+    margin-bottom: 120px;
 
     p {
       font-size: 18px;
@@ -335,36 +412,54 @@ onMounted(() => {
   }
 
   .bottom-section {
+    position: relative;
+    transform: translateY(150px);
+    cursor: pointer;
+
+    .bottom-picture-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      height: var(--pictureWrapHeight);
+      width: 100%;
+      min-height: 0;
+      isolation: isolate;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px #000a;
+
+      .picture-bg {
+        display: flex;
+        position: absolute;
+        inset: 0%;
+        background-image: linear-gradient(#000c, #fff0 55%);
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+      }
+
+      h3 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 96px;
+        color: #fff;
+        transform: translate(-50%, calc(-50% - 75px));
+      }
+    }
+
+    strong {
+      line-height: 1;
+      font-size: min(175px, 12.15278vw);
+      color: #0b0d0f;
+    }
   }
 
-  .main-picture-wrap {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    flex: 1;
+  img,
+  video {
     width: 100%;
-    min-height: 0;
-    isolation: isolate;
-    overflow: hidden;
-    box-shadow: 0 0 0 1px #000a;
-
-    .picture-bg {
-      display: flex;
-      position: absolute;
-      inset: 0%;
-      background-image: linear-gradient(#000c, #fff0 55%);
-      pointer-events: none;
-      user-select: none;
-      z-index: 1;
-    }
-
-    img,
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -389,6 +484,18 @@ onMounted(() => {
         article {
           margin-top: 60px;
         }
+      }
+    }
+
+    .bottom-section {
+      .bottom-picture-wrap {
+        h3 {
+          font-size: 56px;
+        }
+      }
+
+      strong {
+        font-size: 72px;
       }
     }
   }
