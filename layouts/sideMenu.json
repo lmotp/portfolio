@@ -9,20 +9,20 @@
     "desc": "Work",
     "childs": [
       {
-        "path": "/",
-        "name": "Work 1"
+        "path": "/works/monimo",
+        "name": "Monimo"
       },
       {
-        "path": "/",
-        "name": "Work 2"
+        "path": "/works/lisn",
+        "name": "Lisn"
       },
       {
-        "path": "/",
-        "name": "Work 3"
+        "path": "/works/neweastart",
+        "name": "Neweast Art"
       },
       {
-        "path": "/",
-        "name": "Work 4"
+        "path": "/works/meum",
+        "name": "Meum"
       }
     ]
   },

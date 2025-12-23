@@ -4,6 +4,8 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 type configType = {
   id: number;
   title: string;
@@ -196,10 +198,11 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
     <div ref="imageWrapperRef" class="image-wrapper">
       <button class="link" @click="handleClickRouter(props.title.toLowerCase())">
         <figure>
-          <img v-if="props.type === 'image'" :src="props.src" :alt="props.title" />
+          <img v-if="props.type === 'image'" :src="usePublicAsset(props.src)" :alt="props.title" />
           <video
             v-else
             playsinline
@@ -208,7 +211,7 @@ onMounted(() => {
             loop
             controlslist="nodownload noplaybackrate"
             disablepictureinpicture
-            :src="props.src"
+            :src="usePublicAsset(props.src)"
           ></video>
         </figure>
       </button>

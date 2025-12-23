@@ -5,6 +5,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 
 import GL from "./imageBlur/GL.js";
+import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
 const { id, title, desc, date, stack, src, type } = config;
@@ -102,12 +103,12 @@ onMounted(() => {
 
           <Transition name="init">
             <div v-show="!isInit" class="init-wrap">
-              <img v-if="type === 'image'" :src="src" :alt="title" />
-              <video v-else playsinline muted autoplay :src="src"></video>
+              <img v-if="type === 'image'" :src="usePublicAsset(src)" :alt="title" />
+              <video v-else playsinline muted autoplay :src="usePublicAsset(src)"></video>
             </div>
           </Transition>
 
-          <img v-if="type === 'image'" class="picture" :src="src" :alt="title" />
+          <img v-if="type === 'image'" class="picture" :src="usePublicAsset(src)" :alt="title" />
           <video
             v-else
             class="picture"
@@ -117,7 +118,7 @@ onMounted(() => {
             loop
             controlslist="nodownload noplaybackrate"
             disablepictureinpicture
-            :src="src"
+            :src="usePublicAsset(src)"
           ></video>
         </div>
 
@@ -193,7 +194,7 @@ onMounted(() => {
       <div class="bottom-picture-wrap">
         <div class="picture-bg"></div>
 
-        <img v-if="nextType === 'image'" class="picture" :src="nextSrc" :alt="nextTitle" />
+        <img v-if="nextType === 'image'" class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
         <video
           v-else
           class="picture"
@@ -203,7 +204,7 @@ onMounted(() => {
           loop
           controlslist="nodownload noplaybackrate"
           disablepictureinpicture
-          :src="nextSrc"
+          :src="usePublicAsset(nextSrc)"
         ></video>
 
         <h3>{{ nextTitle }}</h3>
