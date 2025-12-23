@@ -9,6 +9,12 @@ interface Menu {
 const props = defineProps<{ menu: Menu; name: string; path: string }>();
 const emits = defineEmits(["menu-click"]);
 
+const isActive = computed(() => {
+  if (props.menu.path === "/works") return props.path.includes("works");
+  else if (props.menu.path === "/experiments") return props.path.includes("experiments");
+  else return props.menu.path === props.path;
+});
+
 const handleMenuClick = (menuPath: string) => {
   if (menuPath === "/about") {
   } else emits("menu-click", menuPath);
@@ -18,7 +24,7 @@ const handleMenuClick = (menuPath: string) => {
 <template>
   <div class="nav-item">
     <div class="nav-item-header">
-      <button @click="handleMenuClick(menu.path)" :class="{ 'is-active': path === menu.path }">
+      <button @click="handleMenuClick(menu.path)" :class="{ 'is-active': isActive }">
         <strong>{{ name }}</strong>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 21 22" aria-hidden="true">
@@ -32,7 +38,9 @@ const handleMenuClick = (menuPath: string) => {
 
     <div class="nav-item-childs" v-if="menu?.childs">
       <div v-for="(child, index) in menu.childs" :key="index" class="child">
-        <button @click="handleMenuClick(child.path)">{{ child.name }}</button>
+        <button :class="child.path === path ? 'active' : ''" @click="handleMenuClick(child.path)">
+          {{ child.name }}
+        </button>
       </div>
     </div>
   </div>
@@ -135,7 +143,8 @@ const handleMenuClick = (menuPath: string) => {
           transform-origin: left;
         }
 
-        &:hover {
+        &:hover,
+        &.active {
           color: white;
           padding-left: 4px;
 

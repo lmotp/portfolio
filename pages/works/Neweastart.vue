@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { workData } from "~/utils/data";
 
-const index = computed(() => workData.findIndex((v) => v.title === "Neweast Art"));
+const index = computed(() => workData.findIndex((v) => v.title === "NeweastArt"));
 const config = computed(() => workData[index.value]);
 const nextConfig = computed(() => {
   const nextIndex = workData.length - 1 === index.value ? 0 : index.value + 1;
-  const { src, type, title } = workData[nextIndex];
+  const { src, title } = workData[nextIndex];
 
-  return { nextTitle: title, nextSrc: src, nextType: type };
+  return { nextTitle: title, nextSrc: src };
 });
 </script>
 

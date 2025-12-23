@@ -8,19 +8,24 @@ import GL from "./imageBlur/GL.js";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
-const { id, title, desc, date, stack, src, type } = config;
-const { nextTitle, nextSrc, nextType } = nextConfig;
+const { id, title, desc, date, stack, src } = config;
+const { nextTitle, nextSrc } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
-const { lenisRef } = storeToRefs(scrollTriggerStore);
+const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
 const router = useRouter();
+let renderer: THREE.WebGLRenderer;
+let scene: THREE.Scene;
+let animationId: any;
+let onResize: any;
 
+const isDisposed = ref(false);
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const blurRef = ref<HTMLCanvasElement | null>(null);
 const blurWrapRef = ref<HTMLDivElement | null>(null);
-const pictureWrapRef = ref<HTMLDivElement | null>(null);
+const titleWrapRef = ref<HTMLDivElement | null>(null);
 const bottomRef = ref<HTMLDivElement | null>(null);
 const pictureWrapHeight = ref(window.innerHeight / 2);
 
@@ -35,9 +40,8 @@ const icons = computed(() => {
 });
 
 const init = () => {
+  if (titleWrapRef.value) pictureWrapHeight.value = window.innerHeight - titleWrapRef.value.offsetHeight;
   isInit.value = true;
-
-  if (pictureWrapRef.value) pictureWrapHeight.value = pictureWrapRef.value.getBoundingClientRect().height;
 
   setGsapAnimation();
   setDetailImage();
@@ -52,20 +56,22 @@ const setGsapAnimation = () => {
       scrub: true,
     },
   });
-  tl.fromTo(".article-top .picture", { transform: " scale(1.1)" }, { transform: "translateY(10%) scale(1)" });
+  tl.fromTo(".article-top .picture", { transform: " scale(1)" }, { transform: "translateY(10%) scale(1)" });
 };
 const setDetailImage = () => {
   if (!blurRef.value || !blurWrapRef.value) return;
 
-  const renderer = new THREE.WebGLRenderer({
+  renderer = new THREE.WebGLRenderer({
     canvas: blurRef.value,
     alpha: true,
     antialias: true,
   });
-
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  scene = new THREE.Scene();
 
-  const gl = new GL(renderer, blurWrapRef.value);
+  const gl = new GL(renderer, scene, isDisposed.value, blurWrapRef.value);
+  animationId = gl.animationId;
+  onResize = gl.onResize;
   lenisRef.value?.on("scroll", (e) => {
     gl.onScroll(e);
   });
@@ -73,22 +79,69 @@ const setDetailImage = () => {
 
 const handleClickNextWrok = () => {
   if (!bottomRef.value) return;
+  lenisRef.value!.stop();
 
   const tl = gsap.timeline({
+    id: `work-${id}`,
     onComplete: () => {
-      const transformPath = nextTitle.toLowerCase().replace(" ", "");
+      tl.scrollTrigger?.kill();
+      tl.kill();
+
+      gsap.getById(`work-${id}`)?.kill();
+
+      const transformPath = nextTitle.toLowerCase();
       router.push(`/works/${transformPath}`);
     },
   });
   const mainTrigger = bottomRef.value?.querySelector(".bottom-picture-wrap");
   const textTrigger = bottomRef.value?.querySelector("h3");
 
-  tl.to(mainTrigger, { translateY: `-${window.innerHeight - pictureWrapHeight.value + 150}px`, height: "100vh" }, 0);
+  tl.to(mainTrigger, { translateY: `${window.innerHeight * -0.5}px`, height: `${window.innerHeight}px` }, 0);
   tl.to(textTrigger, { opacity: 0 }, 0);
 };
 
-onMounted(() => {
-  nextTick(init);
+onMounted(async () => {
+  setTimeout(() => {
+    lenisRef.value!.start();
+  }, 1000);
+
+  window.scrollTo(0, 0); // 브라우저 위치 초기화
+  lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
+
+  await nextTick(init);
+
+  scrollTrigger.value!.refresh();
+});
+
+onUnmounted(() => {
+  isDisposed.value = true;
+
+  if (animationId) cancelAnimationFrame(animationId);
+
+  scene.traverse((obj: any) => {
+    if (obj.isMesh) {
+      if (obj.geometry) obj.geometry.dispose();
+
+      if (obj.material) {
+        // 배열 형태의 재질 대응
+        const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+        for (const m of materials) {
+          // 텍스처 해제
+          Object.keys(m).forEach((key) => {
+            if (m[key] && m[key].isTexture) {
+              m[key].dispose();
+            }
+          });
+          m.dispose();
+        }
+      }
+    }
+  });
+
+  window.removeEventListener("resize", onResize);
+
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 
@@ -98,31 +151,19 @@ onMounted(() => {
 
     <article :id="`work-${id}`">
       <div class="article-top">
-        <div ref="pictureWrapRef" class="main-picture-wrap">
+        <div class="main-picture-wrap">
           <div class="picture-bg"></div>
 
           <Transition name="init">
-            <div v-show="!isInit" class="init-wrap">
-              <img v-if="type === 'image'" :src="usePublicAsset(src)" :alt="title" />
-              <video v-else playsinline muted autoplay :src="usePublicAsset(src)"></video>
+            <div v-if="!isInit" class="init-wrap">
+              <img :src="usePublicAsset(src)" :alt="title" />
             </div>
           </Transition>
 
-          <img v-if="type === 'image'" class="picture" :src="usePublicAsset(src)" :alt="title" />
-          <video
-            v-else
-            class="picture"
-            playsinline
-            muted
-            autoplay
-            loop
-            controlslist="nodownload noplaybackrate"
-            disablepictureinpicture
-            :src="usePublicAsset(src)"
-          ></video>
+          <img class="picture" :src="usePublicAsset(src)" :alt="title" />
         </div>
 
-        <div class="title-wrap">
+        <div ref="titleWrapRef" class="title-wrap">
           <h2>{{ title }}</h2>
 
           <ul>
@@ -193,20 +234,7 @@ onMounted(() => {
 
       <div class="bottom-picture-wrap">
         <div class="picture-bg"></div>
-
-        <img v-if="nextType === 'image'" class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
-        <video
-          v-else
-          class="picture"
-          playsinline
-          muted
-          autoplay
-          loop
-          controlslist="nodownload noplaybackrate"
-          disablepictureinpicture
-          :src="usePublicAsset(nextSrc)"
-        ></video>
-
+        <img class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
         <h3>{{ nextTitle }}</h3>
       </div>
     </article>
@@ -227,6 +255,7 @@ onMounted(() => {
   .article-top {
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     height: 100dvh;
     isolation: isolate;
 
@@ -235,9 +264,9 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: stretch;
-      flex: 1;
       width: 100%;
-      min-height: 0;
+      height: var(--pictureWrapHeight);
+      flex-shrink: 0;
       isolation: isolate;
       overflow: hidden;
       box-shadow: 0 0 0 1px #000a;
@@ -254,14 +283,13 @@ onMounted(() => {
         &.init-leave-active {
           transition: height 1s ease-in-out;
         }
-
         &.init-leave-to {
           height: var(--pictureWrapHeight);
         }
 
-        & > * {
+        /* & > * {
           transform: scale(1.1);
-        }
+        } */
       }
 
       .picture-bg {
@@ -316,7 +344,7 @@ onMounted(() => {
   }
 
   .info-wrap {
-    margin-bottom: 120px;
+    margin-bottom: 250px;
 
     p {
       font-size: 18px;
@@ -414,7 +442,6 @@ onMounted(() => {
 
   .bottom-section {
     position: relative;
-    transform: translateY(150px);
     cursor: pointer;
 
     .bottom-picture-wrap {
@@ -422,7 +449,7 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: stretch;
-      height: var(--pictureWrapHeight);
+      height: 50dvh;
       width: 100%;
       min-height: 0;
       isolation: isolate;
@@ -445,22 +472,24 @@ onMounted(() => {
         left: 50%;
         font-size: 96px;
         color: #fff;
-        transform: translate(-50%, calc(-50% - 75px));
+        transform: translate(-50%, -50%);
+        text-transform: uppercase;
+        white-space: nowrap;
       }
     }
 
     strong {
       line-height: 1;
-      font-size: min(175px, 12.15278vw);
+      font-size: min(120px, 12.15278vw);
       color: #0b0d0f;
     }
   }
 
-  img,
-  video {
+  img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
   }
 }
 

@@ -2,13 +2,13 @@ import * as THREE from "three";
 import Media from "./Media.js"; // 앞서 변환한 Three.js용 Media 클래스
 
 export default class GL {
-  constructor(renderer, blurWrapRef) {
+  constructor(renderer, scene, isDisposed, blurWrapRef) {
     this.images = [...blurWrapRef.querySelectorAll(".media")];
-
+    this.isDisposed = isDisposed;
     this.renderer = renderer;
+    this.scene = scene;
 
     this.createCamera();
-    this.createScene();
 
     this.onResize();
 
@@ -23,10 +23,6 @@ export default class GL {
   createCamera() {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     this.camera.position.z = 20;
-  }
-
-  createScene() {
-    this.scene = new THREE.Scene();
   }
 
   createGeometry() {
@@ -101,6 +97,8 @@ export default class GL {
   }
 
   update() {
+    if (this.isDisposed || !this.renderer) return;
+
     if (this.medias) {
       this.medias.forEach((media) => media.update());
     }

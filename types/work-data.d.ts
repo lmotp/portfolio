@@ -5,13 +5,11 @@ type configType = {
   date: string;
   stack: string[];
   src: string;
-  type: string;
 };
 
 type nextConfigType = {
   nextTitle: string;
   nextSrc: string;
-  nextType: string;
 };
 
 type cardType = configType & {

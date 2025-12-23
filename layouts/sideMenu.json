@@ -4,9 +4,9 @@
     "desc": "",
     "childs": []
   },
-  "Work": {
-    "path": "/work",
-    "desc": "Work",
+  "Works": {
+    "path": "/works",
+    "desc": "Works",
     "childs": [
       {
         "path": "/works/monimo",

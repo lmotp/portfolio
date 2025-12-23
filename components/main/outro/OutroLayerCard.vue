@@ -13,7 +13,6 @@ type configType = {
   date: string;
   stack: string[];
   src: string;
-  type: string;
 };
 
 type cardType = configType & {
@@ -144,7 +143,7 @@ const init = () => {
 };
 
 const handleClickRouter = (menuPath: string) => {
-  const transformPath = menuPath.toLowerCase().replace(" ", "");
+  const transformPath = menuPath.toLowerCase();
   transformPath === path.value ? null : (path.value = `/works/${transformPath}`);
 };
 
@@ -202,17 +201,7 @@ onMounted(() => {
     <div ref="imageWrapperRef" class="image-wrapper">
       <button class="link" @click="handleClickRouter(props.title.toLowerCase())">
         <figure>
-          <img v-if="props.type === 'image'" :src="usePublicAsset(props.src)" :alt="props.title" />
-          <video
-            v-else
-            playsinline
-            muted
-            autoplay
-            loop
-            controlslist="nodownload noplaybackrate"
-            disablepictureinpicture
-            :src="usePublicAsset(props.src)"
-          ></video>
+          <img :src="usePublicAsset(props.src)" :alt="props.title" />
         </figure>
       </button>
     </div>
