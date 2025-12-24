@@ -1,54 +1,15 @@
 <script setup lang="ts">
 import gsap from "gsap";
 import usePublicAsset from "~/composables/usePublicAsset";
-
-const source = [
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/1.webp",
-      pixelSrc: "/images/skills/1_pixel.png",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/2.webp",
-      pixelSrc: "/images/skills/2_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/3.webp",
-      pixelSrc: "/images/skills/3_pixel.png",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/0.webp",
-      pixelSrc: "/images/skills/0_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/5.webp",
-      pixelSrc: "/images/skills/5_pixel.png",
-    },
-    {
-      title: "WebGL / OGL",
-      content: "Progressive Blur",
-      src: "/images/skills/6.webp",
-      pixelSrc: "/images/skills/6_pixel.png",
-    },
-  ],
-];
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+import { experimentsData } from "~/utils/data";
 
 const skillsRef = ref<HTMLElement | null>(null);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -106,6 +67,11 @@ const rotateInit = () => {
   });
 };
 
+const handleClickRouter = (menuPath: string) => {
+  const transformPath = menuPath.toLowerCase();
+  transformPath === path.value ? null : (path.value = `/experiments/${transformPath}`);
+};
+
 onMounted(() => {
   nextTick(() => {
     init();
@@ -127,16 +93,22 @@ onMounted(() => {
       </div>
 
       <div ref="skillsRef" class="skills">
-        <div class="row" v-for="(wrap, i) of source" :key="`wrap-${i}`">
-          <div class="skill-wrap" v-for="(value, j) of wrap" :key="`value-${j}`">
+        <div class="row" v-for="(wrap, i) of experimentsData" :key="`wrap-${i}`">
+          <div
+            class="skill-wrap"
+            v-for="(value, j) of wrap"
+            :key="`value-${j}`"
+            role="button"
+            @click="handleClickRouter(value.title)"
+          >
             <figure>
               <img class="main" :src="usePublicAsset(value.src)" alt="" />
               <img class="pixel" :src="usePublicAsset(value.pixelSrc)" alt="" />
             </figure>
 
             <p class="text-wrap">
-              <strong>{{ value.content }}</strong>
-              <span>{{ value.title }}</span>
+              <strong>{{ value.title }}</strong>
+              <span>{{ value.content }}</span>
             </p>
           </div>
         </div>

@@ -39,7 +39,7 @@ const handleMenuClick = (menuPath: string) => {
     <div class="nav-item-childs" v-if="menu?.childs">
       <div v-for="(child, index) in menu.childs" :key="index" class="child">
         <button :class="child.path === path ? 'active' : ''" @click="handleMenuClick(child.path)">
-          {{ child.name }}
+          <span>{{ child.name }}</span>
         </button>
       </div>
     </div>
@@ -122,34 +122,25 @@ const handleMenuClick = (menuPath: string) => {
       width: calc(50% - 2.5px);
 
       button {
-        position: relative;
         width: 100%;
         text-align: left;
-        padding-left: 0;
-        color: black;
-        transition: color 0.3s cubic-bezier(0.19, 1, 0.22, 1) 0.1s, padding-left 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        background-color: transparent;
+        transition: background-color 200ms cubic-bezier(0.19, 1, 0.22, 1);
 
-        isolation: isolate;
-
-        &::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background-color: red;
-          z-index: -1;
-
-          transform: scaleX(0);
-          transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-          transform-origin: left;
+        span {
+          display: inline-block;
+          color: black;
+          transform: none;
+          transition: color 200ms cubic-bezier(0.19, 1, 0.22, 1), transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         &:hover,
         &.active {
-          color: white;
-          padding-left: 4px;
+          background-color: red;
 
-          &::before {
-            transform: scaleX(1);
+          span {
+            color: white;
+            transform: translateX(6px);
           }
         }
       }

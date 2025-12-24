@@ -30,13 +30,6 @@ const init = () => {
   lenisRef.value = lenis;
 };
 
-// watch(
-//   () => route.path,
-//   () => {
-//     lenis.scrollTo(0);
-//   }
-// );
-
 onMounted(() => {
   init();
 });

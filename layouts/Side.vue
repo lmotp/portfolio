@@ -4,12 +4,12 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 import usePublicAsset from "~/composables/usePublicAsset";
+import { sideMenuData } from "~/utils/data";
 
 import SideButton from "./SideButton.vue";
 import SideContact from "./SideContact.vue";
 import SideNav from "./SideNav.vue";
 import SideCard from "./SideCard.vue";
-import sideMenu from "./sideMenu.json";
 
 const isClose = ref(false);
 const isAsideOpen = ref(false);
@@ -78,7 +78,7 @@ onMounted(() => {
   <Transition :duration="{ enter: 700, leave: 800 }">
     <nav :class="['nav-wrap']" v-show="isClose">
       <SideNav
-        v-for="(menu, name, index) in sideMenu"
+        v-for="(menu, name, index) in sideMenuData"
         :key="index"
         class="nav-content"
         v-bind="{ menu, name, path }"
