@@ -4,11 +4,11 @@ import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
 const router = useRouter();
+const route = useRoute();
 
 const pageTransitionStore = usePageTransitionStore();
 const { isPageTransition, path } = storeToRefs(pageTransitionStore);
 
-const overlayRef = ref<HTMLElement | null>(null);
 const blocksRef = ref<HTMLElement[]>([]);
 const BLOCK_COUNT = computed(() => (window.innerWidth <= 768 ? 10 : 20));
 
@@ -50,13 +50,14 @@ const revealPage = () => {
 };
 
 watch(path, (url) => {
-  coverPage(url);
+  if (route.path === "/" && (url === "/works" || url === "/experiments" || url === "/")) return;
+  else coverPage(url);
 });
 </script>
 
 <template>
   <div class="page-transition">
-    <div ref="overlayRef" class="page-overlay">
+    <div class="page-overlay">
       <div ref="blocksRef" v-for="n of BLOCK_COUNT" :key="n" class="block"></div>
     </div>
     <slot />

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { usePageTransitionStore } from "@/stores/pageTransition";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 import usePublicAsset from "~/composables/usePublicAsset";
@@ -14,8 +15,10 @@ const isClose = ref(false);
 const isAsideOpen = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
 
+const scrollTriggerStore = useScrollTriggerStore();
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
+const { lenisRef } = storeToRefs(scrollTriggerStore);
 
 const handleToggleButton = () => {
   isClose.value = !isClose.value;
@@ -23,6 +26,27 @@ const handleToggleButton = () => {
 
 const handleMenuClick = (menuPath: string) => {
   if (menuPath === path.value) return;
+
+  switch (menuPath) {
+    case "/":
+      lenisRef.value!.scrollTo(0, {
+        duration: 3.5,
+      });
+      break;
+
+    case "/works":
+      lenisRef.value!.scrollTo(".outro .top-view-container", {
+        offset: window.innerHeight,
+        duration: 3.5,
+      });
+      break;
+
+    case "/experiments":
+      lenisRef.value!.scrollTo(".skills-intro", {
+        duration: 3.5,
+      });
+      break;
+  }
 
   path.value = menuPath;
   isClose.value = false;
@@ -42,7 +66,11 @@ onMounted(() => {
 
 <template>
   <header :class="['header-container']">
-    <div :class="['overlay', isClose && 'is-close']" :aria-hidden="true"></div>
+    <div
+      :class="['overlay', isClose && 'is-close']"
+      :aria-hidden="!isClose"
+      @click.self="() => (isClose = false)"
+    ></div>
 
     <SideButton @toggle="handleToggleButton" :isClose="isClose" />
   </header>
@@ -75,15 +103,16 @@ onMounted(() => {
     opacity: 0;
     backdrop-filter: blur(6px);
     background-color: rgba(20, 20, 20, 0.45);
+    z-index: 100;
     pointer-events: none;
     user-select: none;
-    z-index: 100;
 
     transition: opacity 0.3s ease-out;
 
     &.is-close {
       opacity: 1;
       pointer-events: auto;
+      user-select: auto;
     }
   }
 }
