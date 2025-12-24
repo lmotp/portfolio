@@ -99,6 +99,7 @@ onMounted(() => {
             v-for="(value, j) of wrap"
             :key="`value-${j}`"
             role="button"
+            :data-detail="true"
             @click="handleClickRouter(value.title)"
           >
             <figure>

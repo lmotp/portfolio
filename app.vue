@@ -38,6 +38,9 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <PageTransition v-show="isPageTransition" />
+    <Cursor/>
+
+    
     <NuxtPage />
   </NuxtLayout>
 </template>

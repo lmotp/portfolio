@@ -229,7 +229,7 @@ onUnmounted(() => {
       </div>
     </article>
 
-    <article ref="bottomRef" class="bottom-section" @click="handleClickNextWrok" role="button">
+    <article ref="bottomRef" class="bottom-section" role="button" :data-detail="true" @click="handleClickNextWrok">
       <strong>NEXT</strong>
 
       <div class="bottom-picture-wrap">
@@ -455,6 +455,7 @@ onUnmounted(() => {
       isolation: isolate;
       overflow: hidden;
       box-shadow: 0 0 0 1px #000a;
+      pointer-events: none;
 
       .picture-bg {
         display: flex;
@@ -482,6 +483,7 @@ onUnmounted(() => {
       line-height: 1;
       font-size: min(120px, 12.15278vw);
       color: #0b0d0f;
+      pointer-events: none;
     }
   }
 

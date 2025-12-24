@@ -157,7 +157,7 @@ onMounted(() => {
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
         <strong class="title">{{ props.title }}</strong>
-        <button @click="handleClickRouter(props.title)">버튼</button>
+        <button :data-detail="true" @click="handleClickRouter(props.title)">버튼</button>
       </div>
       <div class="field-guide">
         <span class="field-guide-label top-left"> Overscan </span>
@@ -199,7 +199,7 @@ onMounted(() => {
     </div>
 
     <div ref="imageWrapperRef" class="image-wrapper">
-      <button class="link" @click="handleClickRouter(props.title.toLowerCase())">
+      <button class="link" :data-detail="true" @click="handleClickRouter(props.title.toLowerCase())">
         <figure>
           <img :src="usePublicAsset(props.src)" :alt="props.title" />
         </figure>

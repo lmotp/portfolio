@@ -60,3 +60,7 @@ li,
 ul {
   list-style: none;
 }
+
+figure {
+  pointer-events: none;
+}
