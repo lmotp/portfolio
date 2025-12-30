@@ -14,6 +14,7 @@ const init = () => {
 
   if (!isMobile.value) {
     const wrapperTl = gsap.timeline({
+      id: "footer-wrapper",
       scrollTrigger: {
         trigger: ".footer-wrapper",
         start: "top top",
@@ -35,6 +36,7 @@ const init = () => {
   }
 
   const scrollerTl = gsap.timeline({
+    id: "footer-scroller",
     scrollTrigger: {
       trigger: ".footer-wrapper",
       start: "bottom bottom",

@@ -61,7 +61,6 @@ const init = () => {
       fragmentShader: rollFragment,
     });
 
-    console.log(material);
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 

@@ -42,7 +42,7 @@ const handleMenuClick = (menuPath: string) => {
       break;
 
     case "/experiments":
-      lenisRef.value!.scrollTo(".skills-intro", {
+      lenisRef.value!.scrollTo(".skills-intro .intro-wrapper", {
         duration: 3.5,
       });
       break;
@@ -84,7 +84,7 @@ onMounted(() => {
         v-bind="{ menu, name, path }"
         @menu-click="handleMenuClick"
       />
-      <SideContact class="nav-content" :path="path" @menu-click="handleContactClick" />
+      <SideContact class="nav-content" @menu-click="handleContactClick" />
     </nav>
   </Transition>
 

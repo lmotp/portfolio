@@ -6,7 +6,7 @@ interface Menu {
   childs?: Menu[];
 }
 
-const props = defineProps<{ menu: Menu; name: string; path: string }>();
+const props = defineProps<{ menu: Menu; name: string; path: any }>();
 const emits = defineEmits(["menu-click"]);
 
 const isActive = computed(() => {
@@ -16,8 +16,7 @@ const isActive = computed(() => {
 });
 
 const handleMenuClick = (menuPath: string) => {
-  if (menuPath === "/about") {
-  } else emits("menu-click", menuPath);
+  emits("menu-click", menuPath);
 };
 </script>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const props = defineProps<{ path: string }>();
 const emits = defineEmits(["menuClick"]);
 const copiedList = ref<string[]>([]);
 

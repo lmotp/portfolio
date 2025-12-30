@@ -5,6 +5,7 @@ const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 
 const init = () => {
   const mainTl = gsap.timeline({
+    id: "outro-intro-main",
     scrollTrigger: {
       trigger: ".outro-intro",
       start: "top bottom",
@@ -13,6 +14,7 @@ const init = () => {
     },
   });
   const subTl = gsap.timeline({
+    id: "outro-intro-sub",
     scrollTrigger: {
       trigger: ".outro-intro",
       start: "top 35%",

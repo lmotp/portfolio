@@ -9,12 +9,16 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition } = storeToRefs(pageTransitionStore);
+const { isPageTransition, path } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
 
+const pathCookie = useCookie("path", {
+  default: () => "/",
+});
 const route = useRoute();
+const router = useRouter();
 const lenis = new Lenis();
 
 const init = () => {
@@ -30,6 +34,17 @@ const init = () => {
   lenisRef.value = lenis;
 };
 
+watch(
+  toRef(() => route.path),
+  (url) => {
+    pathCookie.value = url;
+
+    lenis!.resize();
+    ScrollTrigger.refresh();
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   init();
 });
@@ -38,9 +53,8 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <PageTransition v-show="isPageTransition" />
-    <Cursor/>
+    <Cursor />
 
-    
     <NuxtPage />
   </NuxtLayout>
 </template>

@@ -13,6 +13,7 @@ const { path } = storeToRefs(pageTransitionStore);
 
 const init = () => {
   const mainTl = gsap.timeline({
+    id: "main-experiments",
     scrollTrigger: {
       trigger: ".skills-intro",
       start: "top bottom",
@@ -42,6 +43,7 @@ const rotateInit = () => {
   rows.forEach((row, i) => {
     const skills = row.querySelectorAll(".skill-wrap");
     const tl = gsap.timeline({
+      id: `sub-experiments-${i}`,
       scrollTrigger: {
         trigger: row,
         start: "top 80%",

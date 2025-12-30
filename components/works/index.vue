@@ -49,6 +49,7 @@ const init = () => {
 
 const setGsapAnimation = () => {
   const tl = gsap.timeline({
+    id: `work-${id}-picture`,
     scrollTrigger: {
       trigger: ".article-top",
       start: "top top",

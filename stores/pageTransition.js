@@ -4,7 +4,7 @@ export const usePageTransitionStore = defineStore("pageTransition", {
   state: () => ({
     isLoading: true,
     isPageTransition: false,
-    path: "/",
+    path: useCookie("path").value,
   }),
   actions: {},
 });

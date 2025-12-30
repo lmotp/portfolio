@@ -8,6 +8,7 @@ const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const init = () => {
   const mainTl = gsap.timeline({
+    id: "outro-top-view",
     scrollTrigger: {
       trigger: ".top-view-container",
       start: `top+=${window.innerHeight}px top`,

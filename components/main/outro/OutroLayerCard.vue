@@ -55,6 +55,7 @@ const init = () => {
     },
   });
   const r = gsap.timeline({
+    id: "outro-layer-card-right",
     paused: !0,
     scrollTrigger: {
       trigger: f,
@@ -64,21 +65,13 @@ const init = () => {
     },
   });
   const l = gsap.timeline({
+    id: "outro-layer-card-left",
     paused: !0,
     scrollTrigger: {
       trigger: f,
       start: "top top+=1",
       end: "bottom top",
       scrub: !0,
-
-      onEnterBack: () => {
-        if (!cardWrapRef.value) return;
-        cardWrapRef.value.style.pointerEvents = "auto";
-      },
-      onLeave: () => {
-        if (!cardWrapRef.value) return;
-        cardWrapRef.value.style.pointerEvents = "none";
-      },
     },
   });
 
