@@ -16,6 +16,7 @@ const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
 
 const pathCookie = useCookie("path", {
   default: () => "/",
+  maxAge: 60 * 60 * 24 * 7,
 });
 const route = useRoute();
 const router = useRouter();
