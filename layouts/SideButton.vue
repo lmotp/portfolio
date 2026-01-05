@@ -28,8 +28,8 @@ const emit = defineEmits(["toggle"]);
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: black;
-  box-shadow: 0 0 0 1px white;
+  background-color: var(--black);
+  box-shadow: 0 0 0 1px var(--white);
   overflow: hidden;
   z-index: 102;
 
@@ -42,14 +42,14 @@ const emit = defineEmits(["toggle"]);
     width: 100%;
     transform: scaleX(0);
     transform-origin: right;
-    background-color: red;
+    background-color: var(--blue);
     transition: transform 0.4s cubic-bezier(1, 0, 0.25, 0.995);
   }
 
   .svg-menu {
     width: 100%;
     height: 100%;
-    stroke: white;
+    stroke: var(--white);
     stroke-width: 2px;
     transition: stroke 0.6s cubic-bezier(0.19, 1, 0.22, 1);
 
@@ -111,7 +111,7 @@ const emit = defineEmits(["toggle"]);
     }
 
     .svg-menu {
-      stroke: black;
+      stroke: var(--white);
     }
   }
 

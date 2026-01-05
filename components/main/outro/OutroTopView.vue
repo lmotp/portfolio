@@ -223,7 +223,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100dvh;
-  background-color: red;
+  background-color: var(--dark-blue);
   mix-blend-mode: multiply;
   will-change: transform;
 }
@@ -237,7 +237,7 @@ onMounted(() => {
   width: calc(100% - 30px);
   height: 100svh;
   padding: 0 18px 18px;
-  color: #e8e9ee;
+  color: var(--beige);
 
   .logo-wrapper {
     position: relative;

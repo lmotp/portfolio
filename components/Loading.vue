@@ -55,7 +55,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  background-color: #141414;
+  background-color: var(--black);
   z-index: 2000;
 
   &.fade {
@@ -63,7 +63,7 @@ onUnmounted(() => {
   }
 
   .percent {
-    color: white;
+    color: var(--white);
     font-size: 32px;
     font-weight: bold;
   }

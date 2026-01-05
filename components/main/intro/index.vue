@@ -330,10 +330,13 @@ onMounted(() => {
         <div class="scale">
           <div class="hero-text">
             <h2 class="title">
-              <span>Your data runs the</span>
-              <span>world</span>
+              <span>밤의 고요함 속에서</span>
+              <span>헤엄치는 물고기</span>
             </h2>
-            <p class="desc">Start earning from it today.</p>
+            <p class="desc">
+              <span>시장의 흐름에 먼저 반응하는 물고기처럼,</span>
+              <span><strong>기만한 움직임과 정교한 인터렉션</strong>으로 가치를 만듭니다.</span>
+            </p>
           </div>
           <div ref="heroIconsRef" class="hero-icons">
             <Logo1 class="hero-icon icon-1" />
@@ -501,13 +504,14 @@ onMounted(() => {
 .intro {
   position: relative;
   z-index: 10;
+
   .hero-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 300svh;
-    background-color: #e3e3db;
+    background-color: var(--gray);
 
     .hero-trigger {
       position: absolute;
@@ -524,7 +528,7 @@ onMounted(() => {
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #141414;
+      background-color: var(--black);
       will-change: opacity;
     }
 
@@ -546,8 +550,7 @@ onMounted(() => {
         justify-content: center;
         width: 100%;
         height: 100%;
-        color: white;
-
+        color: var(--white);
         will-change: transform;
 
         .hero-text {
@@ -556,21 +559,23 @@ onMounted(() => {
           align-items: center;
           justify-content: center;
           flex: 1;
-          gap: 42px;
+          gap: 24px;
 
           .title {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            line-height: 0.95;
+            line-height: 1.15;
             font-size: 100px;
             font-weight: 700;
           }
 
           .desc {
+            display: flex;
+            flex-direction: column;
             font-size: 24px;
-            line-height: 1.2;
+            line-height: 1.5;
             overflow: hidden;
           }
         }
@@ -623,7 +628,7 @@ onMounted(() => {
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #e3e3db;
+      background-color: var(--gray);
     }
 
     .intro-sticky {
@@ -670,6 +675,7 @@ onMounted(() => {
             line-height: 1.2;
             font-size: 82px;
             font-weight: 700;
+            color: var(--black);
           }
 
           .intro-icon {
@@ -740,7 +746,7 @@ onMounted(() => {
     height: 100svh;
     text-align: center;
     overflow: hidden;
-    background-color: #e3e3db;
+    background-color: var(--gray);
     pointer-events: none;
 
     mask-image: url("@/public/images/mask.webp");
@@ -779,6 +785,7 @@ onMounted(() => {
           line-height: 1.2;
           font-size: 82px;
           font-weight: 700;
+          color: var(--black);
         }
 
         .mask-icon {

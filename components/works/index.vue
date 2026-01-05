@@ -250,7 +250,6 @@ onUnmounted(() => {
     left: 0;
     pointer-events: none;
     user-select: none;
-    z-index: -1;
   }
 
   .article-top {
@@ -259,6 +258,7 @@ onUnmounted(() => {
     justify-content: flex-end;
     height: 100dvh;
     isolation: isolate;
+    background-color: var(--gray);
 
     .main-picture-wrap {
       position: relative;
@@ -270,14 +270,14 @@ onUnmounted(() => {
       flex-shrink: 0;
       isolation: isolate;
       overflow: hidden;
-      box-shadow: 0 0 0 1px #000a;
+      box-shadow: 0 0 0 1px var(--black);
       z-index: 1;
 
       .init-wrap {
         position: fixed;
         width: 100%;
         height: 100vh;
-        background-color: white;
+        background-color: var(--white);
         overflow: hidden;
         z-index: 99;
 
@@ -287,17 +287,13 @@ onUnmounted(() => {
         &.init-leave-to {
           height: var(--pictureWrapHeight);
         }
-
-        /* & > * {
-          transform: scale(1.1);
-        } */
       }
 
       .picture-bg {
         display: flex;
         position: absolute;
         inset: 0%;
-        background-image: linear-gradient(#000c, #fff0 55%);
+        background-image: linear-gradient(var(--black), transparent 55%);
         pointer-events: none;
         user-select: none;
         z-index: 101;
@@ -314,7 +310,7 @@ onUnmounted(() => {
       h2 {
         font-size: 96px;
         text-transform: uppercase;
-        color: #0b0d0f;
+        color: var(--black);
         line-height: 1.5;
       }
 
@@ -327,10 +323,10 @@ onUnmounted(() => {
           display: flex;
 
           span {
-            color: #e8e8e8;
+            color: var(--beige);
 
             &.active {
-              color: #0b0d0f;
+              color: var(--black);
             }
           }
         }
@@ -338,19 +334,20 @@ onUnmounted(() => {
 
       time {
         font-size: 14px;
-        color: #868a93;
+        color: var(--deep-gray);
         white-space: pre-wrap;
       }
     }
   }
 
   .info-wrap {
-    margin-bottom: 250px;
+    padding-bottom: 250px;
+    background-color: var(--gray);
 
     p {
       font-size: 18px;
       text-align: center;
-      color: #0b0d0f;
+      color: var(--black);
       white-space: pre-wrap;
     }
 
@@ -444,6 +441,7 @@ onUnmounted(() => {
   .bottom-section {
     position: relative;
     cursor: pointer;
+    background-color: var(--gray);
 
     .bottom-picture-wrap {
       position: relative;
@@ -455,14 +453,14 @@ onUnmounted(() => {
       min-height: 0;
       isolation: isolate;
       overflow: hidden;
-      box-shadow: 0 0 0 1px #000a;
+      box-shadow: 0 0 0 1px var(--black);
       pointer-events: none;
 
       .picture-bg {
         display: flex;
         position: absolute;
         inset: 0%;
-        background-image: linear-gradient(#000c, #fff0 55%);
+        background-image: linear-gradient(var(--black), transparent 55%);
         pointer-events: none;
         user-select: none;
         z-index: 1;
@@ -473,7 +471,7 @@ onUnmounted(() => {
         top: 50%;
         left: 50%;
         font-size: 96px;
-        color: #fff;
+        color: var(--white);
         transform: translate(-50%, -50%);
         text-transform: uppercase;
         white-space: nowrap;
@@ -483,7 +481,7 @@ onUnmounted(() => {
     strong {
       line-height: 1;
       font-size: min(120px, 12.15278vw);
-      color: #0b0d0f;
+      color: var(--black);
       pointer-events: none;
     }
   }

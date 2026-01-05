@@ -50,8 +50,8 @@ const handleMenuClick = (menuPath: string) => {
   width: 100%;
   padding: 10px 14px;
   border-radius: 5px;
-  background-color: white;
-  box-shadow: 0 0 0 1px black;
+  background-color: var(--white);
+  box-shadow: 0 0 0 1px var(--black);
 
   &:first-child .nav-item-header {
     margin-bottom: 0;
@@ -71,12 +71,13 @@ const handleMenuClick = (menuPath: string) => {
 
       strong {
         font-size: 24px;
+        color: var(--black);
       }
 
       svg {
         width: 20px;
         height: 15px;
-        stroke: black;
+        stroke: var(--black);
         stroke-width: 2px;
         transform: rotate(45deg);
 
@@ -107,7 +108,7 @@ const handleMenuClick = (menuPath: string) => {
 
     p {
       font-size: 14px;
-      color: gray;
+      color: var(--light-black);
     }
   }
 
@@ -128,17 +129,17 @@ const handleMenuClick = (menuPath: string) => {
 
         span {
           display: inline-block;
-          color: black;
+          color: var(--black);
           transform: none;
           transition: color 200ms cubic-bezier(0.19, 1, 0.22, 1), transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         &:hover,
         &.active {
-          background-color: red;
+          background-color: var(--blue);
 
           span {
-            color: white;
+            color: var(--white);
             transform: translateX(6px);
           }
         }

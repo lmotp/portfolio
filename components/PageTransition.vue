@@ -84,7 +84,7 @@ watch(path, (url) => {
     .block {
       flex: 1;
       height: 100%;
-      background-color: #222;
+      background-color: var(--black);
       transform: scaleX(0);
       transform-origin: left;
     }

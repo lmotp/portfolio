@@ -8,6 +8,8 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
+import usePublicAsset from "~/composables/usePublicAsset";
+
 const pixelRef = ref<HTMLCanvasElement | null>(null);
 const clock = new THREE.Clock();
 const gui = new dat.GUI();
@@ -50,8 +52,8 @@ const init = () => {
 
 const setupMesh = () => {
   const loader = new THREE.TextureLoader();
-  const texChecker = pixelTexture(loader.load("/images/experiments/processing/checker.png"));
-  const texChecker2 = pixelTexture(loader.load("/images/experiments/processing/checker.png"));
+  const texChecker = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
+  const texChecker2 = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
   texChecker.repeat.set(3, 3);
   texChecker2.repeat.set(1.5, 1.5);
 

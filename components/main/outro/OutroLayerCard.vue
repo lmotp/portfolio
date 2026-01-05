@@ -217,7 +217,7 @@ onMounted(() => {
   .info-wrapper {
     width: 100%;
     height: 100%;
-    background-color: #dedfe3f2;
+    background-color: var(--layer-card-info-bg);
 
     .info-wraaper-title {
       display: flex;
@@ -233,7 +233,7 @@ onMounted(() => {
 
     .field-guide {
       position: absolute;
-      border: 1.5px dashed #0b0b0b;
+      border: 1.5px dashed var(--black);
       top: 16%;
       right: 0.46296vw;
       bottom: 0.46296vw;
@@ -245,7 +245,7 @@ onMounted(() => {
         right: 3.47222vw;
         bottom: 3.47222vw;
         left: 3.47222vw;
-        border: 1.5px solid #0b0b0b;
+        border: 1.5px solid var(--black);
 
         .field-guide-crosshair {
           position: absolute;
@@ -329,7 +329,7 @@ onMounted(() => {
         right: 5.6713vw;
         bottom: 5.09259vw;
         left: 5.6713vw;
-        border: 1.5px dashed #0b0b0b;
+        border: 1.5px dashed var(--black);
       }
 
       .field-guide-label {
@@ -413,10 +413,10 @@ onMounted(() => {
         right: 8px;
         bottom: 8px;
         left: 8px;
-        border: 1px dashed #0b0b0b;
+        border: 1px dashed var(--black);
 
         .field-guide-wrapper {
-          border: 1px solid #0b0b0b;
+          border: 1px solid var(--black);
           top: 42px;
           right: 42px;
           bottom: 42px;
@@ -472,7 +472,7 @@ onMounted(() => {
           right: 78px;
           bottom: 68px;
           left: 78px;
-          border: 1px dashed #0b0b0b;
+          border: 1px dashed var(--black);
         }
 
         .field-guide-label {

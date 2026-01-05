@@ -335,7 +335,7 @@ const connectingLineInit = () => {
       left:0;
       width: 1px;
       height: 1px;
-      background-color: #000;
+      background-color: #050505;
     `;
       connectingLine?.append(dot);
       gsap.set(dot, {
@@ -367,7 +367,7 @@ const targetCircleInit = () => {
         left:50%;
         width: 1px;
         height: 1px;
-        background-color: #000;
+        background-color: #050505;
       `;
       targetCircle?.append(dot);
       gsap.set(dot, {
@@ -502,7 +502,7 @@ onUnmounted(() => {
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        border: 1px solid #000;
+        border: 1px solid var(--black);
         transform: translate(-50%, -50%);
       }
     }

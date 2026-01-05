@@ -235,7 +235,7 @@ footer {
   .footer-gutter {
     position: relative;
     padding: 18px 4px 0;
-    background-color: #e8e8e8;
+    background-color: var(--gray);
     z-index: 1;
 
     h2 {
@@ -243,6 +243,7 @@ footer {
       letter-spacing: -6px;
       font-size: 165px;
       font-weight: 700;
+      color: var(--black);
     }
   }
 
@@ -250,7 +251,11 @@ footer {
     position: relative;
     width: 100%;
     padding: 324px 8px 8px;
-    background-color: #e8e8e8;
+    background-color: var(--gray);
+
+    .logo-wrapper {
+      color: var(--black);
+    }
   }
 
   .footer-scroller {
@@ -270,16 +275,15 @@ footer {
         inset: 0;
         display: flex;
         align-items: flex-end;
-        background-color: #ff391e;
+        background-color: var(--dark-blue);
 
         figure {
           position: absolute;
-          left: 29%;
+          left: 30%;
           bottom: 0;
-          width: 487px;
+          width: 486px;
           mix-blend-mode: multiply;
           pointer-events: none;
-          filter: grayscale(0.3);
         }
       }
     }

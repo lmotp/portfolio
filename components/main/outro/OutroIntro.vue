@@ -80,7 +80,7 @@ onMounted(() => {
   position: relative;
 
   &::after {
-    background-color: #f8f8f8;
+    background-color: var(--white);
     content: "";
     height: 100lvh;
     left: 0;
@@ -92,11 +92,11 @@ onMounted(() => {
   .outro-intro-wrapper {
     position: relative;
     padding-inline: 6px;
-    background-color: #f8f8f8;
+    background-color: var(--white);
 
     .title-wrap {
       padding: 6px 6px 0;
-      color: #0b0d0f;
+      color: var(--black);
 
       strong {
         display: flex;
@@ -116,6 +116,7 @@ onMounted(() => {
       display: flex;
       gap: 26px;
       padding-block: 50px 8px;
+      color: var(--black);
     }
   }
 }

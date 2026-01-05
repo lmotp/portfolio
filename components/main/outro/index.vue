@@ -41,7 +41,7 @@ import { workData } from "~/utils/data";
   position: relative;
   width: 100%;
   padding-top: calc(100dvh * 2);
-  background-color: #dddee2;
+  background-color: var(--gray);
 
   .top-view-container {
     position: relative;

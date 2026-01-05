@@ -75,12 +75,13 @@ const handleClickAbout = () => {
   width: 100%;
   flex: 1;
   border-radius: 5px;
-  background-color: red;
-  box-shadow: 0 0 0 1px black;
+  background-color: var(--blue);
+  box-shadow: 0 0 0 1px var(--black);
 
   .nav-item-header {
     margin-bottom: 10px;
     font-size: 24px;
+    color: var(--white);
   }
 
   .nav-item-childs {
@@ -102,12 +103,13 @@ const handleClickAbout = () => {
 
       span {
         font-size: 16px;
+        color: var(--white);
       }
 
       svg {
         width: 20px;
         height: 15px;
-        stroke: black;
+        stroke: var(--black);
         stroke-width: 2px;
         transform: rotate(45deg);
 
@@ -132,10 +134,10 @@ const handleClickAbout = () => {
         top: 50%;
         padding: 4px 8px;
         font-size: 12px;
-        color: white;
+        color: var(--white);
         border-radius: 5px;
-        background-color: black;
-        box-shadow: 0 0 0 1px white;
+        background-color: var(--black);
+        box-shadow: 0 0 0 1px var(--white);
 
         transform: translate(0%, -50%);
         z-index: -1;

@@ -127,7 +127,7 @@ onMounted(() => {
 
   .intro-wrapper {
     position: relative;
-    background-color: #f8f8f8;
+    background-color: var(--gray);
 
     &::after {
       content: "";
@@ -136,12 +136,12 @@ onMounted(() => {
       top: 100%;
       width: 100%;
       height: 100lvh;
-      background-color: #f8f8f8;
+      background-color: var(--gray);
     }
 
     .title-wrap {
       padding: 6px 6px 0;
-      color: #0b0d0f;
+      color: var(--black);
 
       strong {
         display: flex;
@@ -160,7 +160,7 @@ onMounted(() => {
     .skills {
       position: relative;
       padding: 50px 8px 150px;
-      background: linear-gradient(#f8f8f8, #e8e8e8);
+      background-color: var(--gray);
       z-index: 1;
       overflow: hidden;
 
@@ -230,11 +230,11 @@ onMounted(() => {
 
             span {
               font-size: 12px;
-              color: #999;
+              color: var(--light-black);
             }
 
             strong {
-              color: #0b0d0f;
+              color: var(--black);
             }
           }
         }

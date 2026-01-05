@@ -4,7 +4,19 @@
 
   /* Color */
   --white: #ffffff;
-  --black: #252920;
+  --black: #050505;
+  --light-black: #61777d;
+  --beige: #e3e3db;
+  --gray: #dddee2;
+  --deep-gray: #868a93;
+
+  --layer-card-info-bg: #dedfe3f2;
+
+  --green: #50c878;
+  --dark-green: #008d62;
+
+  --blue: #1f51ff;
+  --dark-blue: #1660b3;
 
   /* Card */
   --card-aspect: 0.718;

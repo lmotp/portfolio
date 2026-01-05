@@ -25,7 +25,7 @@ const init = () => {
   if (!dotRef.value) return;
 
   renderer = new THREE.WebGLRenderer({ canvas: dotRef.value, alpha: true });
-  renderer.setClearColor("#010101");
+  renderer.setClearColor("#050505");
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true;

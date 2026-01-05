@@ -47,7 +47,7 @@ onMounted(() => {
   transform: scale(0.5);
 
   padding: 20px;
-  background-color: #eddfcb;
+  background-color: var(--beige);
   color: rgba(0, 0, 0, 0.7);
   overflow: hidden;
   border: solid 1px rgba(0, 0, 0, 0.15);
@@ -69,7 +69,7 @@ onMounted(() => {
     left: 20px;
     font-size: 14px;
     font-weight: 700;
-    color: #3c352d;
+    color: var(--black);
     text-transform: uppercase;
     writing-mode: vertical-lr;
 
@@ -80,7 +80,7 @@ onMounted(() => {
     margin-top: 15px;
     font-size: 16px;
     font-weight: 700;
-    color: #3c352d;
+    color: var(--black);
     text-align: center;
   }
 
@@ -90,7 +90,7 @@ onMounted(() => {
     margin-top: 10px;
     width: 10px;
     height: 1px;
-    background-color: #3c352d;
+    background-color: var(--black);
     transform: translateX(-50%);
   }
 
@@ -113,7 +113,7 @@ onMounted(() => {
     p {
       text-align: center;
       font-size: 8px;
-      color: #3c352d;
+      color: var(--black);
     }
   }
 }
