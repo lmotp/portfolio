@@ -10,7 +10,7 @@ const props = defineProps<{ menu: Menu; name: string; path: any }>();
 const emits = defineEmits(["menu-click"]);
 
 const isActive = computed(() => {
-  if (props.menu.path === "/works") return props.path.includes("works");
+  if (props.menu.path === "/archives") return props.path.includes("archives");
   else if (props.menu.path === "/experiments") return props.path.includes("experiments");
   else return props.menu.path === props.path;
 });

@@ -137,7 +137,7 @@ const init = () => {
 
 const handleClickRouter = (menuPath: string) => {
   const transformPath = menuPath.toLowerCase();
-  transformPath === path.value ? null : (path.value = `/works/${transformPath}`);
+  transformPath === path.value ? null : (path.value = `/archives/${transformPath}`);
 };
 
 onMounted(() => {

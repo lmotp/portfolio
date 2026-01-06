@@ -2,7 +2,7 @@
 import OutroTopView from "./OutroTopView.vue";
 import OutroIntro from "./OutroIntro.vue";
 import OutroLayerCard from "./OutroLayerCard.vue";
-import { workData } from "~/utils/data";
+import { archivesData } from "~/utils/data";
 </script>
 
 <template>
@@ -17,9 +17,9 @@ import { workData } from "~/utils/data";
       <div class="layer-card-scroller">
         <div class="layer-card-sticky">
           <OutroLayerCard
-            v-for="(card, index) in workData"
+            v-for="(card, index) in archivesData"
             v-bind="card"
-            :isLast="index === workData.length - 1"
+            :isLast="index === archivesData.length - 1"
             :key="index"
           />
         </div>
@@ -27,7 +27,7 @@ import { workData } from "~/utils/data";
 
       <div class="layer-card-trigger-wrap" :aria-hidden="true">
         <div
-          v-for="(_, index) in workData.length + 1"
+          v-for="(_, index) in archivesData.length + 1"
           :key="index"
           :class="['layer-card-trigger', `index-${index}`]"
         ></div>
@@ -60,14 +60,14 @@ import { workData } from "~/utils/data";
       .layer-card-sticky {
         position: sticky;
         top: 0;
-        height: 100lvh;
+        height: 100dvh;
       }
     }
 
     .layer-card-trigger-wrap {
       .layer-card-trigger {
         position: relative;
-        height: 100lvh;
+        height: 100dvh;
         width: 48px;
         opacity: 0;
         z-index: 2;

@@ -50,9 +50,9 @@ const revealPage = () => {
 };
 
 watch(path, (url) => {
-  if (route.path === "/" && (url === "/works" || url === "/experiments" || url === "/")) {
+  if (route.path === "/" && (url === "/archives" || url === "/experiments" || url === "/")) {
     return;
-  } else if (route.path.split("/").length === 3 && (url === "/works" || url === "/experiments")) {
+  } else if (route.path.split("/").length === 3 && (url === "/archives" || url === "/experiments")) {
     coverPage("/");
   } else {
     coverPage(url!);

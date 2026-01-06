@@ -34,7 +34,7 @@ const handleMenuClick = (menuPath: string) => {
       });
       break;
 
-    case "/works":
+    case "/archives":
       lenisRef.value!.scrollTo(".outro .top-view-container", {
         offset: window.innerHeight,
         duration: 3.5,

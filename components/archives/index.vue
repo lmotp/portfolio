@@ -49,7 +49,7 @@ const init = () => {
 
 const setGsapAnimation = () => {
   const tl = gsap.timeline({
-    id: `work-${id}-picture`,
+    id: `archive-${id}-picture`,
     scrollTrigger: {
       trigger: ".article-top",
       start: "top top",
@@ -80,18 +80,17 @@ const setDetailImage = () => {
 
 const handleClickNextWrok = () => {
   if (!bottomRef.value) return;
-  lenisRef.value!.stop();
 
   const tl = gsap.timeline({
-    id: `work-${id}`,
+    id: `archive-${id}`,
     onComplete: () => {
       tl.scrollTrigger?.kill();
       tl.kill();
 
-      gsap.getById(`work-${id}`)?.kill();
+      gsap.getById(`archives-${id}`)?.kill();
 
       const transformPath = nextTitle.toLowerCase();
-      router.push(`/works/${transformPath}`);
+      router.push(`/archives/${transformPath}`);
     },
   });
   const mainTrigger = bottomRef.value?.querySelector(".bottom-picture-wrap");
@@ -102,12 +101,16 @@ const handleClickNextWrok = () => {
 };
 
 onMounted(async () => {
+  lenisRef.value!.stop();
+
   setTimeout(() => {
     lenisRef.value!.start();
-  }, 1000);
+  }, 1250);
 
   window.scrollTo(0, 0); // 브라우저 위치 초기화
   lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
+
+  console.log(lenisRef.value);
 
   await nextTick(init);
 
@@ -150,7 +153,7 @@ onUnmounted(() => {
   <div ref="blurWrapRef" class="detail-wrap" :style="{ '--pictureWrapHeight': `${pictureWrapHeight}px` }">
     <canvas ref="blurRef" id="gl"></canvas>
 
-    <article :id="`work-${id}`">
+    <article :id="`archive-${id}`">
       <div class="article-top">
         <div class="main-picture-wrap">
           <div class="picture-bg"></div>
@@ -323,7 +326,7 @@ onUnmounted(() => {
           display: flex;
 
           span {
-            color: var(--beige);
+            color: var(--icon-gray);
 
             &.active {
               color: var(--black);
@@ -334,7 +337,7 @@ onUnmounted(() => {
 
       time {
         font-size: 14px;
-        color: var(--deep-gray);
+        color: var(--dark-gray);
         white-space: pre-wrap;
       }
     }

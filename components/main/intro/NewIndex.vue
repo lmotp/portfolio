@@ -49,31 +49,119 @@ const heroInit = () => {
         introInit();
       },
     },
-    defaults: { overwrite: "auto" },
+    defaults: {
+      overwrite: "auto",
+    },
   });
 
   tl.add("start");
   tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
 
   if (isMobile.value) {
-    tl.to(".hero-text", { opacity: 0, y: 50 }, "start");
-    tl.to(heroIconsRef.value, { y: heroCenter, immediateRender: false }, "start");
-    tl.to(".hero-container .scale", { scale: 0.355555, duration: 1 }, "start+=0.5");
+    tl.to(
+      ".hero-text",
+      {
+        opacity: 0,
+        y: 50,
+      },
+      "start"
+    );
+    tl.to(
+      heroIconsRef.value,
+      {
+        y: heroCenter,
+        immediateRender: false,
+      },
+      "start"
+    );
+    tl.to(
+      ".hero-container .scale",
+      {
+        scale: 0.355555,
+        duration: 1,
+      },
+      "start+=0.5"
+    );
 
     tl.add("icons", "start+=0.5");
-    tl.to(heroIcons[0], { y: "-174px" }, "icons");
-    tl.to(heroIcons[1], { y: "7px" }, "icons");
-    tl.to(heroIcons[2], { y: "7px" }, "icons");
-    tl.to(heroIcons[3], { y: "188px" }, "icons");
-    tl.to([heroIcons[0], heroIcons[2]], { x: "90px" }, "icons+=0.5");
-    tl.to([heroIcons[1], heroIcons[3]], { x: "-90px" }, "icons+=0.5");
-    tl.to(".hero-bg", { opacity: 0, duration: 1e-4 });
+    tl.to(
+      heroIcons[0],
+      {
+        y: "-174px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[1],
+      {
+        y: "7px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[2],
+      {
+        y: "7px",
+      },
+      "icons"
+    );
+    tl.to(
+      heroIcons[3],
+      {
+        y: "188px",
+      },
+      "icons"
+    );
+    tl.to(
+      [heroIcons[0], heroIcons[2]],
+      {
+        x: "90px",
+      },
+      "icons+=0.5"
+    );
+    tl.to(
+      [heroIcons[1], heroIcons[3]],
+      {
+        x: "-90px",
+      },
+      "icons+=0.5"
+    );
+
+    tl.to(".hero-bg", {
+      opacity: 0,
+      duration: 1e-4,
+    });
   } else {
     tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
-    tl.fromTo(heroIcons, { y: 0 }, { y: heroCenter, stagger: 0.1, immediateRender: false }, "start");
+    tl.fromTo(
+      heroIcons,
+      {
+        y: 0,
+      },
+      {
+        y: heroCenter,
+        stagger: 0.1,
+        immediateRender: false,
+      },
+      "start"
+    );
     tl.add("out", "-=0.2");
-    tl.to(".hero-container .scale", { scale: 8.3 / 30 }, "out");
-    tl.to(".hero-bg", { opacity: 0, duration: 1e-4 }, "out+=0.3");
+    tl.to(
+      ".hero-container .scale",
+      {
+        // scale: 8.3 / 30,
+        scale: 0.43333,
+      },
+      "out"
+    );
+    tl.to(
+      ".hero-bg",
+      {
+        opacity: 0,
+        duration: 1e-4,
+      },
+      "out+=0.3"
+    );
   }
 };
 const introInit = () => {
@@ -122,15 +210,16 @@ const introInit = () => {
 
   if (isMobile.value) {
     tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
+
     tl.add("lines");
 
     const m = 0.25;
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const left = line.querySelector("span.left");
-      const right = line.querySelector("span.right");
-      const icon = line.querySelector(".intro-icon");
+      const I = lines[i];
+      const left = I.querySelector("span.left");
+      const right = I.querySelector("span.right");
+      const icon = I.querySelector(".intro-icon");
       tl.add(`line-${i + 1}`, `lines+=${m * i}`);
       if (left) tl.fromTo(left, { x: 50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
       if (right) tl.fromTo(right, { x: -50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
@@ -138,51 +227,66 @@ const introInit = () => {
         tl.to(icon, { x: 0, duration: 0.5 }, `line-${i + 1}`);
         tl.to(icon, { y: 0, duration: 0.5, ease: "power2.out" }, `line-${i + 1}`);
       }
-      tl.set([...line.querySelectorAll("span")], { opacity: 1 }, `${`line-${i + 1}`}+=0.2`);
+      tl.set([...I.querySelectorAll("span")], { opacity: 1 }, `${`line-${i + 1}`}+=0.2`);
     }
   } else {
     tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
-
     tl.add("song", "start");
     tl.to(".intro-icon.icon-1", { y: 0, duration: 0.3, ease: "power2.out" }, "song");
 
     tl.add("song2");
     tl.to(".intro-icon.icon-1", { x: 0 }, "song2");
+
     tl.fromTo(".line-1 span:last-child", { x: -50 }, { x: 0 }, "song2+=0.1");
     tl.set(".line-1 span:last-child", { opacity: 1 }, "song2+=0.2");
     tl.fromTo(".line-1 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.3");
     tl.set(".line-1 span:first-child", { opacity: 1 }, "song2+=0.4");
 
     tl.add("watch", "song2+=0.5");
-    tl.to(".intro-icon.icon-2", { y: 0, duration: 0.3 }, "song2");
-    tl.to(".intro-icon.icon-2", { x: 0 }, "watch");
-    tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "watch+=0.2");
-    tl.set(".line-2 span:first-child", { opacity: 1 }, "watch+=0.3");
-    tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "watch+=0.4");
-    tl.set(".line-2 span:last-child", { opacity: 1 }, "watch+=0.5");
+    tl.to(".intro-icon.icon-2", { y: 0, duration: 1e-4 }, "song2");
+    tl.to(".intro-icon.icon-2", { x: 0, duration: 0.3, ease: "power1.inOut" }, "song2");
+    tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.2");
+    tl.set(".line-2 span:first-child", { opacity: 1 }, "song2+=0.3");
+    tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "song2+=0.4");
+    tl.set(".line-2 span:last-child", { opacity: 1 }, "song2+=0.5");
 
-    tl.add("game", "watch+=0.5");
+    tl.add("game", "song2+=0.3");
+
+    const g = introContainerRef.value.querySelector(".intro-icon.icon-2");
+    const m = gsap.getProperty(g, "y");
+
+    tl.to(
+      ".intro-icon.icon-3",
+      { y: 0, duration: 0.3, width: 86, height: 86, maxWidth: 86, maxHeight: 86, ease: "power2.out" },
+      "song2"
+    );
     tl.to(".intro-icon.icon-3", { x: 0, duration: 0.5, ease: "power1.inOut" }, "game");
     tl.fromTo(".line-3 span:first-child", { x: -50 }, { x: 0 }, "game+=0.2");
     tl.set(".line-3 span:first-child", { opacity: 1 }, "game+=0.3");
     tl.fromTo(".line-3 span:last-child", { x: 50 }, { x: 0 }, "game+=0.4");
     tl.set(".line-3 span:last-child", { opacity: 1 }, "game+=0.5");
 
-    tl.add("shop", "game+=0.5");
-    tl.to(".intro-icon.icon-4", { y: 0, duration: 0.3 }, "game");
-    tl.to(".intro-icon.icon-4", { x: 0 }, "shop");
+    tl.add("shop", "song2+=0.4");
+    tl.to(".intro-icon.icon-4", { y: `-=${m}`, duration: 0.3, ease: "power2.out" }, "song2+=0.3");
+    tl.to(".intro-icon.icon-4", { y: 0, duration: 0.3, ease: "power2.out" }, "song2+=0.3");
+
+    tl.to(".intro-icon.icon-4", { x: 0, duration: 0.5, ease: "power1.inOut" }, "shop");
     tl.fromTo(".line-4 span:last-child", { x: -50 }, { x: 0 }, "shop+=0.2");
     tl.set(".line-4 span:last-child", { opacity: 1 }, "shop+=0.3");
-    tl.fromTo(".line-4 span:first-child", { x: 50 }, { x: 0 }, "shop+=0.4");
+    tl.fromTo(".line-4 span:first-child", { x: -50 }, { x: 0 }, "shop+=0.4");
     tl.set(".line-4 span:first-child", { opacity: 1 }, "shop+=0.5");
 
-    tl.add("cloth", "shop+=0.5");
-    tl.to(".intro-icon.icon-5", { y: 0, duration: 0.3 }, "shop");
-    tl.to(".intro-icon.icon-5", { x: 0 }, "cloth");
+    tl.add("cloth", "song2+=0.8");
+    tl.to(".intro-icon.icon-5", { y: `-=${m}`, duration: 0.3, ease: "power2.out" }, "shop+=0.3");
+    tl.to(".intro-icon.icon-5", { y: 0, duration: 0.3, ease: "power2.out" }, "shop+=0.3");
+
+    tl.to(".intro-icon.icon-5", { x: 0, duration: 0.5, ease: "power1.inOut" }, "cloth");
     tl.fromTo(".line-5 span:last-child", { x: -50 }, { x: 0 }, "cloth+=0.2");
     tl.set(".line-5 span:last-child", { opacity: 1 }, "cloth+=0.3");
-    tl.fromTo(".line-5 span:first-child", { x: 50 }, { x: 0 }, "cloth+=0.4");
+    tl.fromTo(".line-5 span:first-child", { x: -50 }, { x: 0 }, "cloth+=0.4");
     tl.set(".line-5 span:first-child", { opacity: 1 }, "cloth+=0.5");
+
+    tl.set(".intro-mask", { opacity: 1 }, "cloth+=0.5");
   }
 };
 const maskInit = () => {
@@ -260,149 +364,153 @@ onMounted(() => {
       <div v-show="!isShowMask" class="intro-sticky">
         <h3 v-if="!isMobile" ref="introMainRef" class="intro-main-icon title">
           <p class="line line-1">
-            <span class="left">상상을</span>
-            <Logo1 class="intro-icon icon-1" />
-            <span>화면으로 연출합니다.</span>
+            <span>상상을 화면으로</span>
+            <Logo5 class="intro-icon icon-1" />
+            <span>연출합니다.</span>
           </p>
 
           <p class="line line-2">
-            <span>정보를 가치</span>
-            <Logo2 class="intro-icon icon-2" />
-            <span>있게 담는 법</span>
+            <span>정보를 가치 있게</span>
+            <Logo1 class="intro-icon icon-2" />
+            <span>담는 법</span>
           </p>
 
           <p class="line line-3">
             <span>어떤 환경에도</span>
-            <Logo3 class="intro-icon icon-3" />
+            <Logo4 class="intro-icon icon-3" />
             <span>유연하게</span>
           </p>
           <p class="line line-4">
             <span>보이지 않는</span>
-            <Logo4 class="intro-icon icon-4" />
-            <span>디테일의 힘</span>
+            <Logo2 class="intro-icon icon-4" />
+            <span>디테일의 힘.</span>
           </p>
 
           <p class="line line-5">
             <span>코드에 리듬을</span>
-            <Logo5 class="intro-icon icon-5" />
+            <Logo3 class="intro-icon icon-5" />
             <span>더하다</span>
           </p>
         </h3>
 
         <h3 v-else ref="introMainRef" class="intro-main-icon title">
           <p class="line line-1">
-            <span class="right">상상을</span>
+            <span class="right">Your</span>
             <Logo1 class="intro-icon icon-1" />
           </p>
           <p class="line line-2">
-            <span class="left">화면으로 연출</span>
+            <span class="left">favorite</span>
           </p>
           <p class="line line-3">
-            <span class="right">정보를</span>
-            <Logo2 class="intro-icon icon-2" />
-            <span class="left">가치</span>
+            <span class="right">songs. That</span>
           </p>
           <p class="line line-4">
-            <span class="left">있게 담는 법</span>
+            <Logo2 class="intro-icon icon-2" />
+            <span class="left">must-see</span>
           </p>
           <p class="line line-5">
-            <span class="right">어떤</span>
-            <Logo3 class="intro-icon icon-3" />
-            <span class="left">환경에도</span>
+            <span>movie.</span>
           </p>
           <p class="line line-6">
-            <span class="left">유연하게</span>
+            <span class="right">Your</span>
+            <Logo3 class="intro-icon icon-3" />
+            <span class="left">top</span>
           </p>
           <p class="line line-7">
-            <span class="right">보이지</span>
-            <Logo4 class="intro-icon icon-4" />
-            <span class="left"> 않는</span>
+            <span class="left">interests</span>
           </p>
           <p class="line line-8">
-            <span class="right">코드에&nbsp;</span>
-            <span class="left">리듬을</span>
+            <span class="right">and</span>
+            <Logo4 class="intro-icon icon-4" />
+            <Logo5 class="intro-icon icon-5" />
+            <span class="left">your</span>
           </p>
           <p class="line line-9">
-            <span class="left">더하다</span>
+            <span class="left">shopping</span>
+          </p>
+          <p class="line line-10">
+            <span class="right">habits.</span>
           </p>
         </h3>
 
         <div ref="introDumyRef" class="intro-dumy-icon" :aria-hidden="true">
-          <Logo1 class="intro-icon icon-1" />
-          <Logo2 class="intro-icon icon-2" />
-          <Logo3 class="intro-icon icon-3" />
-          <Logo4 class="intro-icon icon-4" />
-          <Logo5 class="intro-icon icon-5" />
+          <Logo5 class="intro-icon icon-1" />
+          <Logo1 class="intro-icon icon-2" />
+          <Logo4 class="intro-icon icon-3" />
+          <Logo2 class="intro-icon icon-4" />
+          <Logo3 class="intro-icon icon-5" />
         </div>
       </div>
 
       <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
         <h3 v-if="!isMobile" class="mask-wrap">
           <p class="mask-line mask-line-1">
-            <span>상상을</span>
-            <Logo1 class="mask-icon icon-1" />
-            <span>화면으로 연출합니다.</span>
+            <span>상상을 화면으로</span>
+            <Logo5 class="mask-icon icon-1" />
+            <span>연출합니다.</span>
           </p>
 
           <p class="mask-line mask-line-2">
-            <span>정보를 가치</span>
-            <Logo2 class="mask-icon icon-2" />
-            <span>있게 담는 법</span>
+            <span>정보를 가치 있게</span>
+            <Logo1 class="mask-icon icon-2" />
+            <span>담는 법</span>
           </p>
 
           <p class="mask-line mask-line-3">
             <span>어떤 환경에도</span>
-            <Logo3 class="mask-icon icon-3" />
+            <Logo4 class="mask-icon icon-3" />
             <span>유연하게</span>
           </p>
           <p class="mask-line mask-line-4">
             <span>보이지 않는</span>
-            <Logo4 class="mask-icon icon-4" />
+            <Logo2 class="mask-icon icon-4" />
             <span>디테일의 힘</span>
           </p>
 
           <p class="mask-line mask-line-5">
             <span>코드에 리듬을</span>
-            <Logo5 class="mask-icon icon-5" />
+            <Logo3 class="mask-icon icon-5" />
             <span>더하다</span>
           </p>
         </h3>
 
         <h3 v-else class="mask-wrap">
           <p class="mask-line mask-line-1">
-            <span class="right">상상을</span>
+            <span>Your</span>
             <Logo1 class="mask-icon icon-1" />
           </p>
           <p class="mask-line mask-line-2">
-            <span class="left">화면으로 연출</span>
+            <span>favorite</span>
           </p>
           <p class="mask-line mask-line-3">
-            <span class="right">정보를</span>
-            <Logo2 class="mask-icon icon-2" />
-            <span class="left">가치</span>
+            <span>songs. That</span>
           </p>
           <p class="mask-line mask-line-4">
-            <span class="left">있게 담는 법</span>
+            <Logo2 class="mask-icon icon-2" />
+            <span>must-see</span>
           </p>
           <p class="mask-line mask-line-5">
-            <span class="right">어떤</span>
-            <Logo3 class="mask-icon icon-3" />
-            <span class="left">환경에도</span>
+            <span>movie.</span>
           </p>
           <p class="mask-line mask-line-6">
-            <span class="left">유연하게</span>
+            <span>Your</span>
+            <Logo3 class="mask-icon icon-3" />
+            <span>top</span>
           </p>
           <p class="mask-line mask-line-7">
-            <span class="right">보이지</span>
-            <Logo4 class="mask-icon icon-4" />
-            <span class="left"> 않는</span>
+            <span>interests</span>
           </p>
           <p class="mask-line mask-line-8">
-            <span class="right">코드에&nbsp;</span>
-            <span class="left">리듬을</span>
+            <span>and</span>
+            <Logo4 class="mask-icon icon-4" />
+            <Logo5 class="mask-icon icon-5" :aria-hidden="true" />
+            <span>your</span>
           </p>
           <p class="mask-line mask-line-9">
-            <span class="left">더하다</span>
+            <span>shopping</span>
+          </p>
+          <p class="mask-line mask-line-10">
+            <span>habits.</span>
           </p>
         </h3>
       </div>
@@ -523,6 +631,11 @@ onMounted(() => {
     width: 100%;
     height: 300svh;
 
+    mask-image: url("@/public/images/mask.webp");
+    mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
+    mask-size: calc(100vw * var(--mask-count, 8)) 100%;
+    mask-repeat: no-repeat;
+
     .intro-trigger {
       position: absolute;
       top: 0;
@@ -583,10 +696,6 @@ onMounted(() => {
           &.line-5 {
             position: absolute;
             top: 200%;
-
-            span:first-child {
-              margin-right: 18px;
-            }
           }
 
           span {
@@ -620,6 +729,24 @@ onMounted(() => {
         height: 100%;
         pointer-events: none;
         opacity: 0;
+
+        .intro-icon {
+          &.icon-1 {
+            order: 5;
+          }
+          &.icon-2 {
+            order: 1;
+          }
+          &.icon-3 {
+            order: 4;
+          }
+          &.icon-4 {
+            order: 2;
+          }
+          &.icon-5 {
+            order: 3;
+          }
+        }
       }
 
       .intro-icon {
@@ -682,10 +809,6 @@ onMounted(() => {
         &.mask-line-5 {
           position: absolute;
           top: 200%;
-
-          span:first-child {
-            margin-right: 18px;
-          }
         }
 
         span {
@@ -703,6 +826,12 @@ onMounted(() => {
           min-height: 78px;
           margin-inline: 18px;
 
+          &.icon-3 {
+            width: 86px;
+            height: 86px;
+            min-width: 86px;
+            min-height: 86px;
+          }
           &.icon-4 {
             margin-right: 4px;
           }
@@ -720,7 +849,7 @@ onMounted(() => {
     .hero-container .hero-sticky {
       .scale {
         .hero-text {
-          .title span {
+          .title {
             font-size: 72px;
           }
           .desc {
@@ -749,9 +878,8 @@ onMounted(() => {
     .hero-container {
       .hero-sticky .scale {
         .hero-text {
-          .title span {
-            font-size: min(45px, 12vw);
-            line-height: 1;
+          .title {
+            font-size: 45px;
           }
           .desc {
             font-size: 12px;
@@ -790,12 +918,7 @@ onMounted(() => {
             top: auto !important;
             bottom: auto !important;
 
-            &.line-5 span:first-child {
-              margin-right: 0;
-            }
-
             span {
-              line-height: 1.5;
               font-size: 40px;
               text-align: center;
             }
@@ -818,6 +941,7 @@ onMounted(() => {
           flex-direction: column;
 
           .intro-icon {
+            order: initial !important;
             width: 64px !important;
             height: 64px !important;
             min-width: 64px !important;
@@ -836,12 +960,7 @@ onMounted(() => {
         top: auto !important;
         bottom: auto !important;
 
-        &.mask-line-5 span:first-child {
-          margin-right: 0;
-        }
-
         span {
-          line-height: 1.5;
           font-size: 40px;
           text-align: center;
         }

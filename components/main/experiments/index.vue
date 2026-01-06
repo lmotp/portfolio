@@ -262,6 +262,7 @@ onMounted(() => {
         }
         &:nth-child(even) {
           margin-left: auto;
+          text-align: right;
         }
 
         figure::after {

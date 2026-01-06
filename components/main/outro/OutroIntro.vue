@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { archivesData } from "~/utils/data";
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const linkData = computed(() => archivesData.map((v) => v.title));
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -64,12 +66,18 @@ onMounted(() => {
           About The Line
         </strong>
 
-        <h2>Highlights</h2>
+        <h2>ARCHIVES</h2>
       </div>
 
       <div class="link-wrap">
-        <a href="#" class="link">T1</a>
-        <a href="#" class="link">T2</a>
+        <NuxtLink
+          v-for="(data, index) of linkData"
+          :key="`data-${index}`"
+          :to="`/archives/${data.toLowerCase()}`"
+          class="link"
+        >
+          {{ data }}
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -82,7 +90,7 @@ onMounted(() => {
   &::after {
     background-color: var(--white);
     content: "";
-    height: 100lvh;
+    height: 100dvh;
     left: 0;
     position: absolute;
     top: 100%;
@@ -95,7 +103,7 @@ onMounted(() => {
     background-color: var(--white);
 
     .title-wrap {
-      padding: 6px 6px 0;
+      padding-top: 6px;
       color: var(--black);
 
       strong {

@@ -1,4 +1,4 @@
-export const workData = [
+export const archivesData = [
   {
     id: 1,
     title: "Monimo",
@@ -7,7 +7,7 @@ export const workData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `1차 / 2023.07.10 ~ 2024.04.10\n2차 / 2024.10.13 ~ 2025.06.15`,
     stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
-    src: "/images/works/work-3.avif",
+    src: "/images/archives/archive-3.avif",
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ export const workData = [
     사내 프로젝트 Nuxt 3 + Express 개발`,
     date: `2024.04.10 ~ 2024.10.10`,
     stack: ["Nuxt", "SCSS", "Express"],
-    src: "/images/works/work-3.avif",
+    src: "/images/archives/archive-3.avif",
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ export const workData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `2023.01.01 ~ 2023.02.01`,
     stack: ["Nuxt", "SCSS"],
-    src: "/images/works/work-3.avif",
+    src: "/images/archives/archive-3.avif",
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ export const workData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `2022.04.10 ~ 2023.04.10`,
     stack: ["Nuxt", "SCSS"],
-    src: "/images/works/work-3.avif",
+    src: "/images/archives/archive-3.avif",
   },
 ];
 export const experimentsData = [
@@ -130,24 +130,24 @@ export const sideMenuData = {
     desc: "",
     childs: [],
   },
-  Works: {
-    path: "/works",
-    desc: "Works",
+  archives: {
+    path: "/archives",
+    desc: "Archives",
     childs: [
       {
-        path: "/works/monimo",
+        path: "/archives/monimo",
         name: "Monimo",
       },
       {
-        path: "/works/lisn",
+        path: "/archives/lisn",
         name: "Lisn",
       },
       {
-        path: "/works/neweastart",
+        path: "/archives/neweastart",
         name: "Neweast Art",
       },
       {
-        path: "/works/meum",
+        path: "/archives/meum",
         name: "Meum",
       },
     ],
