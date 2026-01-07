@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
 import { archivesData } from "~/utils/data";
+
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const linkData = computed(() => archivesData.map((v) => v.title));
@@ -52,6 +57,11 @@ const init = () => {
   );
 };
 
+const handleClickRouter = (menuPath: string) => {
+  const transformPath = menuPath.toLowerCase();
+  transformPath === path.value ? null : (path.value = `/archives/${transformPath}`);
+};
+
 onMounted(() => {
   nextTick(init);
 });
@@ -70,14 +80,14 @@ onMounted(() => {
       </div>
 
       <div class="link-wrap">
-        <NuxtLink
+        <button
           v-for="(data, index) of linkData"
           :key="`data-${index}`"
-          :to="`/archives/${data.toLowerCase()}`"
+          @click="handleClickRouter(data.toLowerCase())"
           class="link"
         >
           {{ data }}
-        </NuxtLink>
+        </button>
       </div>
     </div>
   </div>
@@ -125,6 +135,26 @@ onMounted(() => {
       gap: 26px;
       padding-block: 50px 8px;
       color: var(--black);
+
+      .link {
+        position: relative;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          background-color: black;
+          transform: scaleX(0);
+          transition: transform 0.3s ease-in-out;
+        }
+
+        &:hover::after {
+          transform: scaleX(1);
+        }
+      }
     }
   }
 }

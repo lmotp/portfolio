@@ -3,7 +3,6 @@ import gsap from "gsap";
 import Intro from "./intro/index.vue";
 import Outro from "./outro/index.vue";
 import Experiments from "./experiments/index.vue";
-import Footer from "./footer/index.vue";
 
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
@@ -50,7 +49,6 @@ onUnmounted(() => {
   <Intro />
   <Outro />
   <Experiments />
-  <Footer />
 </template>
 
 <style scoped></style>

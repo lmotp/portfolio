@@ -150,7 +150,7 @@ onMounted(() => {
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
         <strong class="title">{{ props.title }}</strong>
-        <button :data-detail="true" @click="handleClickRouter(props.title)">버튼</button>
+        <button :data-detail="true" @click="handleClickRouter(props.title)">View Project</button>
       </div>
       <div class="field-guide">
         <span class="field-guide-label top-left"> Overscan </span>
@@ -228,6 +228,12 @@ onMounted(() => {
       .title {
         font-size: 5.55556vw;
         line-height: 0.8;
+      }
+
+      button {
+        font-weight: bold;
+        text-decoration: underline;
+        text-underline-offset: 4px;
       }
     }
 
@@ -390,6 +396,7 @@ onMounted(() => {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          filter: brightness(85%);
         }
       }
     }

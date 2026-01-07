@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   googleFonts: {
     families: {
       Orbitron: [400, 700, 900],
+      "Dela Gothic One": true,
       // Inter: [300, 400, 700],
     },
     display: "swap", // 성능 최적화
@@ -31,19 +32,21 @@ export default defineNuxtConfig({
     baseURL: "/portfolio/",
 
     head: {
+      title: "나의 Nuxt 3 애플리케이션", // 기본 타이틀
       htmlAttrs: {
         lang: "ko",
       },
+      meta: [{ name: "description", content: "Nuxt 3로 만든 멋진 웹사이트입니다." }],
       link: [
         {
           rel: "stylesheet",
           type: "text/css",
           href: "https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css",
         },
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       ],
     },
   },
-
   pinia: {
     storesDirs: ["./stores/**", "./custom-folder/stores/**"],
   },

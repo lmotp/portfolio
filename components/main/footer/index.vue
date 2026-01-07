@@ -56,7 +56,14 @@ onMounted(() => {
 <template>
   <footer :style="{ paddingBottom: `${footerPaddingBottom}px` }">
     <div class="footer-gutter">
-      <h2>Contact</h2>
+      <button>
+        <strong>Let's Talk </strong>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 19">
+          <path
+            d="m10.392 16.88 7.232-7.264-7.264-7.232 1.696-1.76 8.992 8.992-8.96 8.992zM.568 8.304h18.4v2.656H.568z"
+          ></path>
+        </svg>
+      </button>
     </div>
 
     <div class="footer-wrapper">
@@ -93,12 +100,25 @@ footer {
     background-color: var(--gray);
     z-index: 1;
 
-    h2 {
-      line-height: 0.8;
-      letter-spacing: -6px;
-      font-size: 165px;
-      font-weight: 700;
-      color: var(--black);
+    button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+
+      strong {
+        line-height: 0.8;
+        font-size: 165px;
+        font-weight: 700;
+        color: var(--black);
+      }
+
+      svg {
+        width: 154px;
+        height: 130px;
+        color: var(--black);
+      }
     }
   }
 

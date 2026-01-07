@@ -7,7 +7,7 @@ export const archivesData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `1차 / 2023.07.10 ~ 2024.04.10\n2차 / 2024.10.13 ~ 2025.06.15`,
     stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
-    src: "/images/archives/archive-3.avif",
+    src: "/images/archives/3.png",
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ export const archivesData = [
     사내 프로젝트 Nuxt 3 + Express 개발`,
     date: `2024.04.10 ~ 2024.10.10`,
     stack: ["Nuxt", "SCSS", "Express"],
-    src: "/images/archives/archive-3.avif",
+    src: "/images/archives/1.png",
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ export const archivesData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `2023.01.01 ~ 2023.02.01`,
     stack: ["Nuxt", "SCSS"],
-    src: "/images/archives/archive-3.avif",
+    src: "/images/archives/5.png",
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ export const archivesData = [
     데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
     date: `2022.04.10 ~ 2023.04.10`,
     stack: ["Nuxt", "SCSS"],
-    src: "/images/archives/archive-3.avif",
+    src: "/images/archives/4.png",
   },
 ];
 export const experimentsData = [

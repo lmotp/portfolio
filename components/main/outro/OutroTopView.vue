@@ -42,7 +42,7 @@ onMounted(() => {
         loop
         controlslist="nodownload noplaybackrate"
         disablepictureinpicture
-        src="https://player.vimeo.com/progressive_redirect/playback/1017272898/rendition/720p/file.mp4?loc=external&amp;log_user=0&amp;signature=d02d61e39102e10801a1316ce6ba75bc842b6f7008f05fe111b3cac233caf241"
+        src="@/public/images/archives/2.mp4"
       ></video>
     </div>
   </div>
