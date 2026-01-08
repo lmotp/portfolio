@@ -72,7 +72,7 @@ onMounted(() => {
     <div class="outro-intro-wrapper">
       <div class="title-wrap">
         <strong>
-          <span class="fw300">/&nbsp;</span>
+          <span>/&nbsp;</span>
           About The Line
         </strong>
 
@@ -80,12 +80,7 @@ onMounted(() => {
       </div>
 
       <div class="link-wrap">
-        <button
-          v-for="(data, index) of linkData"
-          :key="`data-${index}`"
-          @click="handleClickRouter(data.toLowerCase())"
-          class="link"
-        >
+        <button v-for="(data, index) of linkData" :key="`data-${index}`" @click="handleClickRouter(data)" class="link">
           {{ data }}
         </button>
       </div>

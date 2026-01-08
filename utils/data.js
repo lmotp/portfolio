@@ -69,20 +69,6 @@ export const experimentsData = [
   ],
   [
     {
-      title: "Kuji",
-      content: "ThreeJS / Ineraction",
-      src: "/images/skills/5.webp",
-      pixelSrc: "/images/skills/5_pixel.png",
-    },
-    {
-      title: "Roll",
-      content: "ThreeJS",
-      src: "/images/skills/6.webp",
-      pixelSrc: "/images/skills/6_pixel.png",
-    },
-  ],
-  [
-    {
       title: "Brush",
       content: "WebGL / Mouse",
       src: "/images/skills/7.webp",
@@ -130,7 +116,7 @@ export const sideMenuData = {
     desc: "",
     childs: [],
   },
-  archives: {
+  Archives: {
     path: "/archives",
     desc: "Archives",
     childs: [
@@ -172,15 +158,6 @@ export const sideMenuData = {
         name: "Glitch",
         path: "/experiments/glitch",
       },
-      {
-        name: "Kuji",
-        path: "/experiments/kuji",
-      },
-      {
-        name: "Roll",
-        path: "/experiments/roll",
-      },
-
       {
         name: "Brush",
         path: "/experiments/brush",

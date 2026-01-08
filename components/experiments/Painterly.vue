@@ -71,7 +71,7 @@ const setupModel = () => {
   const loader = new GLTFLoader();
   loader.setDRACOLoader(dracoLoader);
   loader.setMeshoptDecoder(MeshoptDecoder);
-  loader.load("/models/plant-optimized.glb", async (gltf) => {
+  loader.load(usePublicAsset("/models/plant-optimized.glb"), async (gltf) => {
     const model = gltf.scene;
 
     await renderer.compileAsync(model, camera, scene);

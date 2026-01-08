@@ -55,7 +55,7 @@ const setupModel = () => {
   const loader = new GLTFLoader();
   loader.setDRACOLoader(dracoLoader);
 
-  loader.load("/models/the_creation_of_adam.glb", async (gltf) => {
+  loader.load(usePublicAsset("/models/the_creation_of_adam.glb"), async (gltf) => {
     const model = gltf.scene;
     model.position.set(2.25, -2, 0);
     model.rotation.y = -Math.PI / 2;

@@ -259,7 +259,7 @@ const setupModel = async () => {
 
   const loader = new GLTFLoader();
   loader.setDRACOLoader(dracoLoader);
-  loader.load("/models/spaceship-optimized.glb", async (gltf) => {
+  loader.load(usePublicAsset("/models/spaceship-optimized.glb"), async (gltf) => {
     const model = gltf.scene;
     model.children.forEach((child: any) => {
       child.receiveShadow = true;
