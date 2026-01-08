@@ -162,7 +162,7 @@ footer {
 
       strong {
         line-height: 0.8;
-        font-size: 165px;
+        font-size: min(165px, 12.15278vw);
         font-weight: 700;
         color: var(--black);
       }
