@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import gsap from "gsap";
-import usePublicAsset from "~/composables/usePublicAsset";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 import { experimentsData } from "~/utils/data";
 
-const skillsRef = ref<HTMLElement | null>(null);
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
-
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
+
+const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const linkData = computed(() => experimentsData.map((v) => v.title));
 
 const init = () => {
   const mainTl = gsap.timeline({
     id: "main-experiments",
     scrollTrigger: {
-      trigger: ".skills-intro",
+      trigger: ".experiments",
       start: "top bottom",
       end: "top center",
       scrub: true,
@@ -36,111 +35,61 @@ const init = () => {
   );
 };
 
-const rotateInit = () => {
-  if (!skillsRef.value) return;
-
-  const rows = skillsRef.value.querySelectorAll(".row");
-  rows.forEach((row, i) => {
-    const skills = row.querySelectorAll(".skill-wrap");
-    const tl = gsap.timeline({
-      id: `sub-experiments-${i}`,
-      scrollTrigger: {
-        trigger: row,
-        start: "top 80%",
-      },
-    });
-
-    tl.fromTo(
-      skills,
-      {
-        y: 1000,
-        rotation: (index) => (index % 2 === 0 ? -60 : 60),
-        transformOrigin: "center center",
-      },
-      {
-        y: 0,
-        rotation: 0,
-        duration: 1,
-        stagger: 0.25,
-        ease: "power4.out",
-      },
-      isMobile.value ? ">+=0.3" : ""
-    );
-  });
-};
-
 const handleClickRouter = (menuPath: string) => {
   const transformPath = menuPath.toLowerCase();
   transformPath === path.value ? null : (path.value = `/experiments/${transformPath}`);
 };
 
-onMounted(() => {
-  nextTick(() => {
-    init();
-    rotateInit();
-  });
+onMounted(async () => {
+  await nextTick(init);
 });
 </script>
 
 <template>
-  <div class="skills-intro">
+  <section class="experiments">
     <div class="intro-wrapper">
       <div class="title-wrap">
-        <strong>
-          <span class="fw300">/&nbsp;</span>
-          About The Line
-        </strong>
-
-        <h2>Experiments</h2>
+        <strong>/ About The Line </strong>
+        <h2>EXPERIMENTS</h2>
       </div>
 
-      <div ref="skillsRef" class="skills">
-        <div class="row" v-for="(wrap, i) of experimentsData" :key="`wrap-${i}`">
-          <div
-            class="skill-wrap"
-            v-for="(value, j) of wrap"
-            :key="`value-${j}`"
-            role="button"
-            :data-detail="true"
-            @click="handleClickRouter(value.title)"
-          >
-            <figure>
-              <img class="main" :src="usePublicAsset(value.src)" alt="" />
-              <img class="pixel" :src="usePublicAsset(value.pixelSrc)" alt="" />
-            </figure>
-
-            <p class="text-wrap">
-              <strong>{{ value.title }}</strong>
-              <span>{{ value.content }}</span>
-            </p>
-          </div>
-        </div>
+      <div class="link-wrap">
+        <button v-for="(data, index) of linkData" :key="`data-${index}`" @click="handleClickRouter(data)" class="link">
+          {{ data }}
+        </button>
       </div>
     </div>
-  </div>
+
+    <div class="content">
+      <ul>
+        <li v-for="(data, index) of experimentsData" :key="`experiments-${index}`">
+          <button :data-detail="true" @click="handleClickRouter(data.title)">
+            <p>
+              <strong>{{ data.title }}</strong>
+              <span>{{ data.content }}</span>
+            </p>
+
+            <NuxtImg :src="data.src" :alt="data.title" />
+          </button>
+        </li>
+      </ul>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.skills-intro {
+.experiments {
   margin-top: -25dvh;
+  padding-bottom: 250px;
   isolation: isolate;
 
   .intro-wrapper {
     position: relative;
+    padding: 0 6px 25dvh;
     background-color: var(--gray);
 
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 100%;
-      width: 100%;
-      height: 100lvh;
-      background-color: var(--gray);
-    }
-
     .title-wrap {
-      padding: 6px 6px 0;
+      padding-top: 6px;
       color: var(--black);
 
       strong {
@@ -157,85 +106,90 @@ onMounted(() => {
       }
     }
 
-    .skills {
-      position: relative;
-      padding: 50px 8px 150px;
-      background-color: var(--gray);
-      z-index: 1;
-      overflow: hidden;
+    .link-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 26px;
+      padding: 50px 10px 8px;
+      color: var(--black);
 
-      .row {
-        display: flex;
+      .link {
+        position: relative;
 
-        .skill-wrap {
-          width: 50%;
-          padding: 0 8px 16px;
-          cursor: pointer;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          background-color: black;
+          transform: scaleX(0);
+          transition: transform 0.3s ease-in-out;
+        }
 
-          figure {
-            position: relative;
-            width: 100%;
-            isolation: isolate;
-            overflow: hidden;
+        &:hover::after {
+          transform: scaleX(1);
+        }
+      }
+    }
+  }
 
-            img {
-              width: 100%;
-              height: 100%;
-              position: absolute;
-              left: 0;
-              top: 0;
-              object-position: center;
-              object-fit: cover;
-              transform: scale(1.2);
-              image-rendering: pixelated;
-              pointer-events: none;
+  .content {
+    ul {
+      display: flex;
+      flex-direction: column;
 
-              transition: all 0.3s ease;
+      li {
+        position: relative;
+        width: 100%;
+        color: var(--black);
+        background-color: var(--gray);
+        transition: background-color 0.3s ease-out, color 0.3s ease-in-out;
 
-              &.main {
-                opacity: 0;
-                z-index: 5;
-              }
+        &:hover {
+          color: var(--white);
+          background-color: var(--black);
+        }
 
-              &.pixel {
-                z-index: 4;
-              }
-            }
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-bottom: 1px solid var(--black);
+          pointer-events: none;
+          user-select: none;
+        }
 
-            &::after {
-              content: "";
-              display: block;
-              width: 100%;
-              padding-bottom: 66.8103448276%;
-            }
+        &:first-child::after {
+          border-top: 1px solid var(--black);
+        }
 
-            &:hover {
-              img {
-                transform: scale(1);
+        button {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 30px;
+          padding: 28px 50px 28px 18px;
+          width: 100%;
 
-                &.main {
-                  opacity: 1;
-                }
-                &.pixel {
-                  opacity: 0;
-                }
-              }
-            }
-          }
-
-          .text-wrap {
+          p {
             display: flex;
+            align-items: flex-start;
             flex-direction: column;
-            margin-top: 8px;
-
-            span {
-              font-size: 12px;
-              color: var(--light-black);
-            }
+            gap: 4px;
 
             strong {
-              color: var(--black);
+              font-size: clamp(28px, 4vw, 42px);
             }
+            span {
+              color: var(--dark-gray);
+              font-size: 14px;
+            }
+          }
+          img {
+            width: 50px;
+            aspect-ratio: 1;
           }
         }
       }
@@ -244,29 +198,23 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 768px) {
-  .skills-intro .intro-wrapper {
-    .title-wrap {
-      h2 {
-        font-size: 72px;
+  .experiments {
+    padding-bottom: 150px;
+
+    .intro-wrapper {
+      padding-bottom: 15dvh;
+
+      .title-wrap {
+        h2 {
+          font-size: 72px;
+        }
       }
     }
-    .skills .row {
-      flex-direction: column;
 
-      .skill-wrap {
-        width: min(100%, 600px);
-        padding-inline: 0;
-
-        &:nth-child(odd) {
-          margin-right: auto;
-        }
-        &:nth-child(even) {
-          margin-left: auto;
-          text-align: right;
-        }
-
-        figure::after {
-          padding-bottom: 50%;
+    .content ul li {
+      button p {
+        span {
+          font-size: 12px;
         }
       }
     }

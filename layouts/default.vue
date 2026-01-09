@@ -12,5 +12,6 @@ main {
   width: 100%;
   isolation: isolate;
   overflow: clip;
+  background-color: var(--gray);
 }
 </style>

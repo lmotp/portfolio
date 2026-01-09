@@ -71,11 +71,7 @@ onMounted(() => {
   <div class="outro-intro">
     <div class="outro-intro-wrapper">
       <div class="title-wrap">
-        <strong>
-          <span>/&nbsp;</span>
-          About The Line
-        </strong>
-
+        <strong>/ About The Line </strong>
         <h2>ARCHIVES</h2>
       </div>
 

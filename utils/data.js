@@ -143,76 +143,70 @@ export const archivesData = [
   },
 ];
 export const experimentsData = [
-  [
-    {
-      title: "Pinball",
-      content: "MatterJS / ThreeJS",
-      src: "/images/skills/1.webp",
-      pixelSrc: "/images/skills/1_pixel.png",
-    },
-    {
-      title: "Card",
-      content: "Mouse / Interaction",
-      src: "/images/skills/2.webp",
-      pixelSrc: "/images/skills/2_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "Burn",
-      content: "WebGL / ThreeJS",
-      src: "/images/skills/3.webp",
-      pixelSrc: "/images/skills/3_pixel.png",
-    },
-    {
-      title: "Glitch",
-      content: "WebGL / ThreeJS",
-      src: "/images/skills/0.webp",
-      pixelSrc: "/images/skills/0_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "Brush",
-      content: "WebGL / Mouse",
-      src: "/images/skills/7.webp",
-      pixelSrc: "/images/skills/7_pixel.png",
-    },
-    {
-      title: "Dot",
-      content: "Processing / WebGL / ThreeJS",
-      src: "/images/skills/8.webp",
-      pixelSrc: "/images/skills/8_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "Moebius",
-      content: "Processing / WebGL / ThreeJS",
-      src: "/images/skills/9.webp",
-      pixelSrc: "/images/skills/9_pixel.png",
-    },
-    {
-      title: "Painterly",
-      content: "Processing / WebGL / ThreeJS",
-      src: "/images/skills/10.webp",
-      pixelSrc: "/images/skills/10_pixel.png",
-    },
-  ],
-  [
-    {
-      title: "Pencil",
-      content: "Processing / WebGL / ThreeJS",
-      src: "/images/skills/11.webp",
-      pixelSrc: "/images/skills/11_pixel.png",
-    },
-    {
-      title: "Pixel",
-      content: "Processing / WebGL / ThreeJS",
-      src: "/images/skills/12.webp",
-      pixelSrc: "/images/skills/12_pixel.png",
-    },
-  ],
+  {
+    title: "Pinball",
+    content: "MatterJS / ThreeJS",
+    src: "/images/skills/1.webp",
+    pixelSrc: "/images/skills/1_pixel.png",
+  },
+  {
+    title: "Card",
+    content: "Mouse / Interaction",
+    src: "/images/skills/2.webp",
+    pixelSrc: "/images/skills/2_pixel.png",
+  },
+
+  {
+    title: "Burn",
+    content: "WebGL / ThreeJS",
+    src: "/images/skills/3.webp",
+    pixelSrc: "/images/skills/3_pixel.png",
+  },
+  {
+    title: "Glitch",
+    content: "WebGL / ThreeJS",
+    src: "/images/skills/0.webp",
+    pixelSrc: "/images/skills/0_pixel.png",
+  },
+
+  {
+    title: "Brush",
+    content: "WebGL / Mouse",
+    src: "/images/skills/7.webp",
+    pixelSrc: "/images/skills/7_pixel.png",
+  },
+  {
+    title: "Dot",
+    content: "Processing / WebGL / ThreeJS",
+    src: "/images/skills/8.webp",
+    pixelSrc: "/images/skills/8_pixel.png",
+  },
+
+  {
+    title: "Moebius",
+    content: "Processing / WebGL / ThreeJS",
+    src: "/images/skills/9.webp",
+    pixelSrc: "/images/skills/9_pixel.png",
+  },
+  {
+    title: "Painterly",
+    content: "Processing / WebGL / ThreeJS",
+    src: "/images/skills/10.webp",
+    pixelSrc: "/images/skills/10_pixel.png",
+  },
+
+  {
+    title: "Pencil",
+    content: "Processing / WebGL / ThreeJS",
+    src: "/images/skills/11.webp",
+    pixelSrc: "/images/skills/11_pixel.png",
+  },
+  {
+    title: "Pixel",
+    content: "Processing / WebGL / ThreeJS",
+    src: "/images/skills/12.webp",
+    pixelSrc: "/images/skills/12_pixel.png",
+  },
 ];
 export const sideMenuData = {
   Home: {
