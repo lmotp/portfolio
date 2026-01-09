@@ -17,7 +17,7 @@ const nextConfig = computed(() => {
       <article class="inner-1">
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[0].img" alt="" />
+            <img :src="config.content[0].img" alt="" />
             <figcaption>{{ config.content[0].caption }}</figcaption>
             <small>(01)</small>
           </figure>
@@ -27,7 +27,7 @@ const nextConfig = computed(() => {
       <article class="inner-2">
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[1].img" alt="" />
+            <img :src="config.content[1].img" alt="" />
             <figcaption>{{ config.content[1].caption }}</figcaption>
             <small>(02)</small>
           </figure>
@@ -35,7 +35,7 @@ const nextConfig = computed(() => {
 
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[2].img" alt="" />
+            <img :src="config.content[2].img" alt="" />
             <figcaption>{{ config.content[2].caption }}</figcaption>
             <small>(03)</small>
           </figure>
@@ -43,7 +43,7 @@ const nextConfig = computed(() => {
 
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[3].img" alt="" />
+            <img :src="config.content[3].img" alt="" />
             <figcaption>{{ config.content[3].caption }}</figcaption>
             <small>(04)</small>
           </figure>
@@ -53,7 +53,7 @@ const nextConfig = computed(() => {
       <article class="inner-3">
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[4].img" alt="" />
+            <img :src="config.content[4].img" alt="" />
             <figcaption>{{ config.content[4].caption }}</figcaption>
             <small>(05)</small>
           </figure>
@@ -61,7 +61,7 @@ const nextConfig = computed(() => {
 
         <div class="media-container">
           <figure class="media">
-            <NuxtImg :src="config.content[5].img" alt="" />
+            <img :src="config.content[5].img" alt="" />
             <figcaption>{{ config.content[5].caption }}</figcaption>
             <small>(06)</small>
           </figure>

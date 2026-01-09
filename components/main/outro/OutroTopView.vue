@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { isIntroEnd } = storeToRefs(scrollTriggerStore);
-const videoSrc = usePublicAsset("images/archives/2.mp4");
+const videoSrc = usePublicAsset("/images/archives/2.mp4");
 
 const init = () => {
   const mainTl = gsap.timeline({

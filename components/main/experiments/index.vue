@@ -69,7 +69,7 @@ onMounted(async () => {
               <span>{{ data.content }}</span>
             </p>
 
-            <NuxtImg :src="usePublicAsset(data.src)" :alt="data.title" />
+            <img :src="usePublicAsset(data.src)" :alt="data.title" />
           </button>
         </li>
       </ul>
