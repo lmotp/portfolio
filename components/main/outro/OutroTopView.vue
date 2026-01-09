@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { isIntroEnd } = storeToRefs(scrollTriggerStore);
+const videoSrc = usePublicAsset("images/archives/2.mp4");
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -42,7 +43,7 @@ onMounted(() => {
         loop
         controlslist="nodownload noplaybackrate"
         disablepictureinpicture
-        src="@/public/images/archives/2.mp4"
+        :src="videoSrc"
       ></video>
     </div>
   </div>
