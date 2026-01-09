@@ -32,7 +32,7 @@ export default defineNuxtConfig({
     baseURL: "/portfolio/",
 
     head: {
-      title: "나의 Nuxt 3 애플리케이션", // 기본 타이틀
+      title: "CHEOLSOON | UI Publisher Portfolio",
       htmlAttrs: {
         lang: "ko",
       },
@@ -43,7 +43,7 @@ export default defineNuxtConfig({
           type: "text/css",
           href: "https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css",
         },
-        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/x-icon", href: "/portfolio/favicon.ico" },
       ],
     },
   },

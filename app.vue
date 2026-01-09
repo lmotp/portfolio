@@ -19,7 +19,6 @@ const pathCookie = useCookie("path", {
   maxAge: 60 * 60 * 24 * 7,
 });
 const route = useRoute();
-const router = useRouter();
 const lenis = new Lenis();
 
 const init = () => {
@@ -38,8 +37,17 @@ const init = () => {
 watch(
   toRef(() => route.path),
   (url) => {
-    pathCookie.value = url;
+    let title;
 
+    if (url.includes("/archives")) title = `Archives | ${url.split("/").at(-1)?.toUpperCase()}`;
+    else if (url.includes("/experiments")) title = `Experiments | ${url.split("/").at(-1)?.toUpperCase()}`;
+    else title = "CHEOLSOON | UI Publisher Portfolio";
+
+    useHead({
+      title: title,
+    });
+
+    pathCookie.value = url;
     lenis!.resize();
     ScrollTrigger.refresh();
   },

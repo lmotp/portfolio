@@ -76,36 +76,16 @@ export default class GL {
     }
   }
 
-  easeInOut(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  }
-
   onScroll({ scroll }) {
-    if (this.medias) {
-      this.medias.forEach((media) => media.onScroll(scroll));
-      this.checkHeroProgress(scroll);
-    }
-  }
-
-  checkHeroProgress(scroll) {
-    const p = this.easeInOut(Math.min(scroll / (this.screen.height * 0.57), 1));
-    let height = this.medias[0].$el.offsetHeight;
-    const scale = 1 + 0.05 * p;
-
-    this.medias[0].setScale(null, height * scale);
-    this.medias[0].blurStrength = 1 - 0.8 * (1 - p);
+    if (this.medias) this.medias.forEach((media) => media.onScroll(scroll));
   }
 
   update() {
     if (this.isDisposed || !this.renderer) return;
-
-    if (this.medias) {
-      this.medias.forEach((media) => media.update());
-    }
+    if (this.medias) this.medias.forEach((media) => media.update());
 
     // Three.js 렌더링 방식
     this.renderer.render(this.scene, this.camera);
-
     this.animationId = window.requestAnimationFrame(this.update.bind(this));
   }
 

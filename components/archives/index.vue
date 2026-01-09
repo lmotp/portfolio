@@ -8,7 +8,7 @@ import GL from "./imageBlur/GL.js";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
-const { id, title, desc, date, stack, src } = config;
+const { id, title, desc, date, stack, src, content } = config;
 const { nextTitle, nextSrc } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
@@ -27,7 +27,9 @@ const blurRef = ref<HTMLCanvasElement | null>(null);
 const blurWrapRef = ref<HTMLDivElement | null>(null);
 const titleWrapRef = ref<HTMLDivElement | null>(null);
 const bottomRef = ref<HTMLDivElement | null>(null);
+const infoWrapRef = ref<HTMLDivElement | null>(null);
 const pictureWrapHeight = ref(window.innerHeight / 2);
+const observer = ref<IntersectionObserver | null>(null);
 
 const icons = computed(() => {
   return [
@@ -44,6 +46,7 @@ const init = () => {
   isInit.value = true;
 
   setGsapAnimation();
+  setTextObserver();
   setDetailImage();
 };
 
@@ -58,6 +61,22 @@ const setGsapAnimation = () => {
     },
   });
   tl.fromTo(".article-top .picture", { transform: " scale(1)" }, { transform: "translateY(10%) scale(1)" });
+};
+const setTextObserver = () => {
+  if (!infoWrapRef.value) return;
+  const caoptions = infoWrapRef.value.querySelectorAll("figcaption");
+  const callback = (entries: IntersectionObserverEntry[]) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add("active");
+      else entry.target.classList.remove("active");
+    });
+  };
+  const options = {
+    rootMargin: "0px 0px -20px 0px",
+    threshold: 1,
+  };
+  observer.value = new IntersectionObserver(callback, options);
+  caoptions.forEach((el) => observer.value!.observe(el));
 };
 const setDetailImage = () => {
   if (!blurRef.value || !blurWrapRef.value) return;
@@ -110,8 +129,6 @@ onMounted(async () => {
   window.scrollTo(0, 0); // 브라우저 위치 초기화
   lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
 
-  console.log(lenisRef.value);
-
   await nextTick(init);
 
   scrollTrigger.value!.refresh();
@@ -120,6 +137,7 @@ onMounted(async () => {
 onUnmounted(() => {
   isDisposed.value = true;
 
+  if (observer.value) observer.value.disconnect();
   if (animationId) cancelAnimationFrame(animationId);
 
   scene.traverse((obj: any) => {
@@ -179,57 +197,9 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="info-wrap">
+      <div ref="infoWrapRef" class="info-wrap">
         <p>{{ desc }}</p>
-
-        <div class="sticky-wrap">
-          <article class="inner-1">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/6.webp" alt="fashion" />
-              </figure>
-              <small>(01)</small>
-            </div>
-          </article>
-
-          <article class="inner-2">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/1.webp" alt="silueta" />
-              </figure>
-              <small>(02)</small>
-            </div>
-
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/2.webp" alt="spheres" />
-              </figure>
-              <small>(04)</small>
-            </div>
-
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/3.webp" alt="spheres" />
-              </figure>
-              <small>(04)</small>
-            </div>
-          </article>
-
-          <article class="inner-3">
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/4.webp" alt="diana" />
-              </figure>
-              <small>(05)</small>
-            </div>
-            <div class="media-container">
-              <figure class="media">
-                <img src="@/public/images/skills/5.webp" alt="abuelo" />
-              </figure>
-              <small>(06)</small>
-            </div>
-          </article>
-        </div>
+        <slot></slot>
       </div>
     </article>
 
@@ -354,83 +324,45 @@ onUnmounted(() => {
       white-space: pre-wrap;
     }
 
-    .sticky-wrap {
-      .inner-1 {
-        display: flex;
-        justify-content: center;
-
-        .media-container {
-          max-width: 800px;
-
-          .media {
-            aspect-ratio: 1 / 0.8796296296296297;
-          }
-        }
-      }
-
-      .inner-2 {
-        display: flex;
-
-        .media-container {
-          .media {
-            height: 40.7142857vw;
-          }
-          &:nth-child(1) {
-            width: 32.0713235%;
-          }
-          &:nth-child(2) {
-            width: 51.8926471%;
-          }
-          &:nth-child(3) {
-            width: 15.9558824%;
-          }
-          &:not(:last-child) {
-            margin-right: var(--margin);
-          }
-        }
-      }
-
-      .inner-3 {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-        .media-container:first-child {
-          width: 20%;
-
-          .media {
-            aspect-ratio: 1 / 1;
-          }
-        }
-        .media-container:nth-child(2) {
-          width: 61.8033989%;
-          margin-top: var(--margin);
-          .media {
-            aspect-ratio: 376 / 400;
-          }
-        }
-      }
-
+    :deep(.sticky-wrap) {
       .media-container {
         width: 100%;
         display: inline-flex;
         flex-direction: column;
 
         .media {
+          position: relative;
           display: inline-flex;
+          flex-direction: column;
 
           img {
             visibility: hidden;
           }
-        }
 
-        small {
-          display: block;
-          margin-top: 10px;
-          text-align: center;
-          line-height: 0.8;
-          opacity: 0;
+          figcaption {
+            position: relative;
+            padding: 6px 0 6px 2px;
+            line-height: 1;
+            font-size: 14px;
+            opacity: 0.1;
+            filter: blur(3px);
+            color: var(--black);
+            transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+
+            &.active {
+              opacity: 1;
+              filter: blur(0);
+            }
+          }
+
+          small {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            line-height: 0.8;
+            font-size: 12px;
+            color: var(--white);
+          }
         }
       }
 

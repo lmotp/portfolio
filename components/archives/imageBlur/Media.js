@@ -67,8 +67,8 @@ export default class Media {
   }
 
   setScale(x, y) {
-    x = x || this.$el.offsetWidth;
-    y = y || this.$el.offsetHeight;
+    x = x || this.img.offsetWidth;
+    y = y || this.img.offsetHeight;
 
     // Three.js의 scale 객체 사용
     this.mesh.scale.x = (this.viewport.width * x) / this.screen.width;
