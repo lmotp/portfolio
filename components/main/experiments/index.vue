@@ -9,6 +9,7 @@ const { path } = storeToRefs(pageTransitionStore);
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const linkData = computed(() => experimentsData.map((v) => v.title));
+const mouseThumbnail = ref("");
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -39,6 +40,9 @@ const handleClickRouter = (menuPath: string) => {
   const transformPath = menuPath.toLowerCase();
   transformPath === path.value ? null : (path.value = `/experiments/${transformPath}`);
 };
+const handleMouseEnter = (src: string) => {
+  mouseThumbnail.value = usePublicAsset(src);
+};
 
 onMounted(async () => {
   await nextTick(init);
@@ -62,14 +66,18 @@ onMounted(async () => {
 
     <div class="content">
       <ul>
-        <li v-for="(data, index) of experimentsData" :key="`experiments-${index}`">
-          <button :data-detail="true" @click="handleClickRouter(data.title)">
+        <li
+          v-for="(data, index) of experimentsData"
+          :key="`experiments-${index}`"
+          @mouseenter="handleMouseEnter(data.src)"
+        >
+          <button :data-experiments-index="index"  :data-detail="true" @click="handleClickRouter(data.title)">
             <p>
               <strong>{{ data.title }}</strong>
               <span>{{ data.content }}</span>
             </p>
 
-            <img :src="usePublicAsset(data.src)" :alt="data.title" />
+            <img :src="usePublicAsset(data.pixelSrc)" :alt="data.title" />
           </button>
         </li>
       </ul>
@@ -79,6 +87,7 @@ onMounted(async () => {
 
 <style scoped>
 .experiments {
+  position: relative;
   margin-top: -25dvh;
   padding-bottom: 250px;
   isolation: isolate;
@@ -149,7 +158,7 @@ onMounted(async () => {
 
         &:hover {
           color: var(--white);
-          background-color: var(--black);
+          background-color: var(--blue);
         }
 
         &::after {
@@ -193,6 +202,17 @@ onMounted(async () => {
           }
         }
       }
+    }
+  }
+
+  .mouse-thumbnail {
+    pointer-events: none;
+    user-select: none;
+    background-color: red;
+
+    img {
+      width: 300px;
+      aspect-ratio: 16 / 9;
     }
   }
 }
