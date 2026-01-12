@@ -31,7 +31,7 @@ onMounted(() => {
         break;
 
       case "/experiments":
-        lenisRef.value!.scrollTo(".skills-intro", {
+        lenisRef.value!.scrollTo(".experiments .intro-wrapper", {
           duration: 3.5,
         });
         break;
@@ -54,4 +54,3 @@ onUnmounted(() => {
 </template>
 
 <style scoped></style>
-

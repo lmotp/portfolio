@@ -40,7 +40,7 @@ let modelGroup: THREE.Group;
 let composer: EffectComposer;
 
 const clock = new THREE.Clock();
-const gui = new dat.GUI();
+// const gui = new dat.GUI();
 
 const init = () => {
   if (!MoebiusRef.value) return;

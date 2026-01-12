@@ -146,66 +146,56 @@ export const experimentsData = [
   {
     title: "Pinball",
     content: "MatterJS / ThreeJS",
-    src: "/images/skills/0.webp",
-    pixelSrc: "/images/skills/0_pixel.png",
+    src: "/images/experiments/thumbnail/pinball.png",
   },
   {
     title: "Card",
     content: "Mouse / Interaction",
-    src: "/images/skills/1.webp",
-    pixelSrc: "/images/skills/1_pixel.png",
+    src: "/images/experiments/thumbnail/card.png",
   },
 
   {
     title: "Burn",
     content: "WebGL / ThreeJS",
-    src: "/images/skills/2.webp",
-    pixelSrc: "/images/skills/2_pixel.png",
+    src: "/images/experiments/thumbnail/burn.png",
   },
   {
     title: "Glitch",
     content: "WebGL / ThreeJS",
-    src: "/images/skills/3.webp",
-    pixelSrc: "/images/skills/3_pixel.png",
+    src: "/images/experiments/thumbnail/glitch.png",
   },
 
   {
     title: "Brush",
     content: "WebGL / Mouse",
-    src: "/images/skills/4.webp",
-    pixelSrc: "/images/skills/4_pixel.png",
+    src: "/images/experiments/thumbnail/brush.png",
   },
   {
     title: "Dot",
     content: "Processing / WebGL / ThreeJS",
-    src: "/images/skills/5.webp",
-    pixelSrc: "/images/skills/5_pixel.png",
+    src: "/images/experiments/thumbnail/dot.png",
   },
 
   {
     title: "Moebius",
     content: "Processing / WebGL / ThreeJS",
-    src: "/images/skills/6.webp",
-    pixelSrc: "/images/skills/6_pixel.png",
+    src: "/images/experiments/thumbnail/moebius.png",
   },
   {
     title: "Painterly",
     content: "Processing / WebGL / ThreeJS",
-    src: "/images/skills/7.webp",
-    pixelSrc: "/images/skills/7_pixel.png",
+    src: "/images/experiments/thumbnail/painterly.png",
   },
 
   {
     title: "Pencil",
     content: "Processing / WebGL / ThreeJS",
-    src: "/images/skills/8.webp",
-    pixelSrc: "/images/skills/8_pixel.png",
+    src: "/images/experiments/thumbnail/pencil.png",
   },
   {
     title: "Pixel",
     content: "Processing / WebGL / ThreeJS",
-    src: "/images/skills/9.webp",
-    pixelSrc: "/images/skills/9_pixel.png",
+    src: "/images/experiments/thumbnail/pixel.png",
   },
 ];
 export const sideMenuData = {

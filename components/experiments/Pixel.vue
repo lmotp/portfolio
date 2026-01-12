@@ -12,7 +12,7 @@ import usePublicAsset from "~/composables/usePublicAsset";
 
 const pixelRef = ref<HTMLCanvasElement | null>(null);
 const clock = new THREE.Clock();
-const gui = new dat.GUI();
+// const gui = new dat.GUI();
 const params = {
   pixelSize: 6,
 };
@@ -105,15 +105,6 @@ const setupPass = () => {
 
   const renderPixelatedPass = new RenderPixelatedPass(6, scene, camera);
   composer.addPass(renderPixelatedPass);
-
-  gui
-    .add(params, "pixelSize")
-    .min(1)
-    .max(16)
-    .step(1)
-    .onChange(() => {
-      renderPixelatedPass.setPixelSize(params.pixelSize);
-    });
 
   const outputPass = new OutputPass();
   composer.addPass(outputPass);

@@ -42,7 +42,7 @@ const handleMenuClick = (menuPath: string) => {
       break;
 
     case "/experiments":
-      lenisRef.value!.scrollTo(".skills-intro .intro-wrapper", {
+      lenisRef.value!.scrollTo(".experiments .intro-wrapper", {
         duration: 3.5,
       });
       break;

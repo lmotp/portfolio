@@ -13,9 +13,9 @@ const cursorRef = ref<HTMLDivElement | null>(null);
 const reqId = ref<number>(0);
 const baseFreq = ref(0.01);
 const filterScale = ref(0);
-const current = ref<string | number>(-1);
+const current = ref<string>("");
 
-const activeSrc = computed(() => usePublicAsset(`/images/skills/${current.value}.webp`));
+const activeSrc = computed(() => usePublicAsset(`/images/experiments/thumbnail/${current.value}.png`));
 
 const lerp = (a: number, b: number, t: number) => a * (1 - t) + b * t;
 
@@ -30,7 +30,7 @@ function updateCursor(x: number, y: number) {
   const elementUnderCursor = document.elementFromPoint(x, y) as HTMLElement;
   if (!!elementUnderCursor?.dataset) {
     isEntered.value = elementUnderCursor.dataset.detail;
-    current.value = elementUnderCursor.dataset.experimentsIndex ?? -1;
+    current.value = elementUnderCursor.dataset.experimentsSrc ?? "";
   }
 }
 
@@ -45,7 +45,7 @@ function animate() {
 }
 
 watch(current, (newVal) => {
-  if (newVal !== -1) {
+  if (newVal) {
     // 이미지가 바뀔 때 순간적으로 왜곡되었다가 제자리로 돌아옴
     gsap.fromTo(
       filterScale,
@@ -69,10 +69,10 @@ onUnmounted(() => {
 <template>
   <div ref="cursorRef" :aria-hidden="true" class="cursor">
     <div :class="['cursor-label', isEntered && 'active']">
-      <p :class="[+current > -1 && 'hidden']">Go into detail</p>
+      <p :class="[current && 'hidden']">Go into detail</p>
 
       <Transition name="fade">
-        <div v-if="+current > -1 && !isPageTransition" class="distort" :aria-label="`${current}`">
+        <div v-if="current && !isPageTransition" class="distort" :aria-label="`${current}`">
           <svg viewBox="0 0 350 450">
             <filter id="distortionFilter">
               <feTurbulence
