@@ -134,8 +134,8 @@ onMounted(() => {
           content: "";
           position: absolute;
           left: 0;
-          bottom: 0;
-          width: 100%;
+          bottom: -4px;
+          width: calc(100% + 6px);
           height: 2px;
           background-color: black;
           transform: scaleX(0);

@@ -3,7 +3,7 @@ import Side from "./Side.vue";
 </script>
 <template>
   <main>
-    <!-- <Side /> -->
+    <Side />
     <slot />
   </main>
 </template>

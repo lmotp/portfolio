@@ -5,6 +5,7 @@ type configType = {
   date: string;
   stack: string[];
   src: string;
+  link: string;
   content: { img: string; caption: string }[];
 };
 

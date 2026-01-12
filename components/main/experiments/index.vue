@@ -123,8 +123,8 @@ onMounted(async () => {
         &::after {
           content: "";
           position: absolute;
-          left: 0;
-          bottom: 0;
+          bottom: -4px;
+          width: calc(100% + 6px);
           width: 100%;
           height: 2px;
           background-color: black;

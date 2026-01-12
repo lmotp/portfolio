@@ -8,7 +8,7 @@ import GL from "./imageBlur/GL.js";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
-const { id, title, desc, date, stack, src, content } = config;
+const { id, title, desc, date, stack, src, link } = config;
 const { nextTitle, nextSrc } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
@@ -198,13 +198,23 @@ onUnmounted(() => {
       </div>
 
       <div ref="infoWrapRef" class="info-wrap">
-        <p>{{ desc }}</p>
+        <div class="info-text">
+          <p>{{ desc }}</p>
+          <NuxtLink :to="link" target="_blank" :aria-detail="true">View Live</NuxtLink>
+        </div>
         <slot></slot>
       </div>
     </article>
 
     <article ref="bottomRef" class="bottom-section" role="button" :data-detail="true" @click="handleClickNextWrok">
-      <strong>NEXT</strong>
+      <strong>
+        <span>NEXT</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 19">
+          <path
+            d="m10.392 16.88 7.232-7.264-7.264-7.232 1.696-1.76 8.992 8.992-8.96 8.992zM.568 8.304h18.4v2.656H.568z"
+          ></path>
+        </svg>
+      </strong>
 
       <div class="bottom-picture-wrap">
         <div class="picture-bg"></div>
@@ -317,11 +327,39 @@ onUnmounted(() => {
     padding-bottom: 250px;
     background-color: var(--gray);
 
-    p {
-      font-size: 18px;
+    .info-text {
       text-align: center;
-      color: var(--black);
-      white-space: pre-wrap;
+
+      p {
+        margin-bottom: 24px;
+        font-size: 18px;
+        color: var(--black);
+        white-space: pre-wrap;
+      }
+
+      a {
+        position: relative;
+        font-size: 24px;
+        text-transform: uppercase;
+        font-weight: bold;
+        cursor: pointer;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: -4px;
+          width: calc(100% + 6px);
+          height: 2px;
+          background-color: black;
+          transform: scaleX(0);
+          transition: transform 0.3s ease-in-out;
+        }
+
+        &:hover::after {
+          transform: scaleX(1);
+        }
+      }
     }
 
     :deep(.sticky-wrap) {
@@ -414,10 +452,23 @@ onUnmounted(() => {
     }
 
     strong {
-      line-height: 1;
-      font-size: min(120px, 12.15278vw);
-      color: var(--black);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
       pointer-events: none;
+
+      span {
+        line-height: 1;
+        font-size: min(120px, 12.15278vw);
+        color: var(--black);
+      }
+
+      svg {
+        width: 154px;
+        height: 130px;
+        color: var(--black);
+      }
     }
   }
 
@@ -443,8 +494,13 @@ onUnmounted(() => {
     }
 
     .info-wrap {
-      p {
-        font-size: 12px;
+      .info-text {
+        p {
+          font-size: 12px;
+        }
+        a {
+          font-size: 16px;
+        }
       }
       .sticky-wrap {
         article {
@@ -454,14 +510,23 @@ onUnmounted(() => {
     }
 
     .bottom-section {
+      strong {
+        span {
+          font-size: min(72px, 12.5vw);
+          white-space: nowrap;
+        }
+
+        svg {
+          flex-shrink: 0;
+          width: 58px;
+          height: 50px;
+        }
+      }
+
       .bottom-picture-wrap {
         h3 {
           font-size: 56px;
         }
-      }
-
-      strong {
-        font-size: 72px;
       }
     }
   }
