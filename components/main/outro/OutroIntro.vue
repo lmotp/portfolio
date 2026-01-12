@@ -153,7 +153,7 @@ onMounted(() => {
 @media screen and (max-width: 768px) {
   .outro-intro .outro-intro-wrapper .title-wrap {
     h2 {
-      font-size: 72px;
+      font-size: min(72px, 12.5vw);
     }
   }
 }

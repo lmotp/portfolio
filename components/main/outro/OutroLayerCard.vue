@@ -411,7 +411,10 @@ onMounted(() => {
         padding: 0 8px 20px;
 
         .title {
-          font-size: 40px;
+          font-size: 32px;
+        }
+        button {
+          font-size: 12px;
         }
       }
 

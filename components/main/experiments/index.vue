@@ -71,7 +71,7 @@ onMounted(async () => {
           :key="`experiments-${index}`"
           @mouseenter="handleMouseEnter(data.src)"
         >
-          <button :data-experiments-index="index"  :data-detail="true" @click="handleClickRouter(data.title)">
+          <button :data-experiments-index="index" :data-detail="true" @click="handleClickRouter(data.title)">
             <p>
               <strong>{{ data.title }}</strong>
               <span>{{ data.content }}</span>
@@ -226,7 +226,7 @@ onMounted(async () => {
 
       .title-wrap {
         h2 {
-          font-size: 72px;
+          font-size: min(72px, 12.5vw);
         }
       }
     }

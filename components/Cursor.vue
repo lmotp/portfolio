@@ -28,8 +28,10 @@ function updateCursor(x: number, y: number) {
   gsap.set(cursorRef.value, { x, y, xPercent: -50, yPercent: -50 });
 
   const elementUnderCursor = document.elementFromPoint(x, y) as HTMLElement;
-  isEntered.value = elementUnderCursor.dataset.detail;
-  current.value = elementUnderCursor.dataset.experimentsIndex ?? -1;
+  if (!!elementUnderCursor?.dataset) {
+    isEntered.value = elementUnderCursor.dataset.detail;
+    current.value = elementUnderCursor.dataset.experimentsIndex ?? -1;
+  }
 }
 
 function animate() {

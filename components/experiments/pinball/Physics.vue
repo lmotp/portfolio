@@ -164,6 +164,7 @@ const init = async () => {
     cardConfig.map(async (card, index) => {
       const y = 1000 + card.y;
       const imageUrl = `/images/experiments/card/image-${index + 1}.jpg`;
+      const publicUrl = usePublicAsset(imageUrl);
       const img = await loadImage(imageUrl);
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;
@@ -174,7 +175,7 @@ const init = async () => {
         isStatic: true,
         angle: useTransferDgreeToRadia(card.angle),
         render: {
-          sprite: { texture: imageUrl, xScale: xScale, yScale: yScale },
+          sprite: { texture: publicUrl, xScale: xScale, yScale: yScale },
         },
         label: "card-body",
       });
@@ -186,13 +187,14 @@ const init = async () => {
     textConfig.map(async (text) => {
       const y = sensorBars.at(-1)!.position.y + 550;
       const imageUrl = `/images/experiments/pinball/test_text.png`;
+      const publicUrl = usePublicAsset(imageUrl);
       const img = await loadImage(imageUrl);
       const originalWidth = img.naturalWidth;
       const originalHeight = img.naturalHeight;
 
       const body = Bodies.rectangle(centerX + text.x, y, originalWidth, originalHeight, {
         render: {
-          sprite: { texture: imageUrl, xScale: 1, yScale: 1 },
+          sprite: { texture: publicUrl, xScale: 1, yScale: 1 },
         },
         density: 0.001,
         restitution: 0.5,
