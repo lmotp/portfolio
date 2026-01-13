@@ -71,14 +71,7 @@ onMounted(() => {
 <template>
   <footer :style="{ paddingBottom: `${footerPaddingBottom}px` }">
     <div class="footer-gutter">
-      <button>
-        <strong>Let's Talk </strong>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 19">
-          <path
-            d="m10.392 16.88 7.232-7.264-7.264-7.232 1.696-1.76 8.992 8.992-8.96 8.992zM.568 8.304h18.4v2.656H.568z"
-          ></path>
-        </svg>
-      </button>
+      <ArrowButton class="arrow-button" text="Let's Talk" />
     </div>
 
     <div class="footer-wrapper">
@@ -153,17 +146,10 @@ footer {
     background-color: var(--gray);
     z-index: 1;
 
-    button {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 30px;
-      width: 100%;
-
+    :deep(.arrow-button) {
       strong {
         line-height: 0.8;
         font-size: min(165px, 12.15278vw);
-        font-weight: 700;
         color: var(--black);
       }
 
@@ -349,7 +335,7 @@ footer {
     .footer-gutter {
       padding: 18px 8px 0;
 
-      button {
+      :deep(.arrow-button) {
         strong {
           font-size: min(72px, 12.5vw);
           white-space: nowrap;

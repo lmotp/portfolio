@@ -85,6 +85,7 @@ onMounted(async () => {
   position: relative;
   margin-top: -25dvh;
   padding-bottom: 250px;
+  background-color: var(--gray);
   isolation: isolate;
 
   .intro-wrapper {
@@ -123,8 +124,8 @@ onMounted(async () => {
         &::after {
           content: "";
           position: absolute;
+          left: 0;
           bottom: -4px;
-          width: calc(100% + 6px);
           width: 100%;
           height: 2px;
           background-color: black;
@@ -185,6 +186,7 @@ onMounted(async () => {
 
             strong {
               font-size: clamp(28px, 4vw, 42px);
+              line-height: 1;
             }
             span {
               color: var(--dark-gray);
@@ -228,9 +230,13 @@ onMounted(async () => {
     }
 
     .content ul li {
-      button p {
-        span {
-          font-size: 12px;
+      button {
+        padding-right: 28px;
+
+        p {
+          span {
+            font-size: 12px;
+          }
         }
       }
     }

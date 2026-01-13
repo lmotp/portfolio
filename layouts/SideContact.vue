@@ -109,7 +109,7 @@ const handleClickAbout = () => {
       svg {
         width: 20px;
         height: 15px;
-        stroke: var(--black);
+        stroke: var(--white);
         stroke-width: 2px;
         transform: rotate(45deg);
 

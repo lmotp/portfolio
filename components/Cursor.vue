@@ -11,7 +11,6 @@ const mousePosition = ref({ x: 0, y: 0 });
 const cursorPosition = ref({ x: 0, y: 0 });
 const cursorRef = ref<HTMLDivElement | null>(null);
 const reqId = ref<number>(0);
-const baseFreq = ref(0.01);
 const filterScale = ref(0);
 const current = ref<string>("");
 
@@ -76,11 +75,11 @@ onUnmounted(() => {
           <svg viewBox="0 0 350 450">
             <filter id="distortionFilter">
               <feTurbulence
-                type="turbulence"
-                :baseFrequency="`0.07 ${baseFreq}`"
+                type="fractalNoise"
+                baseFrequency="0.1"
                 numOctaves="5"
                 seed="2"
-                stitchTiles="stitch"
+                stitchTiles="noStitch"
                 x="0%"
                 y="0%"
                 width="100%"

@@ -206,17 +206,10 @@ onUnmounted(() => {
       </div>
     </article>
 
-    <article ref="bottomRef" class="bottom-section" role="button" :data-detail="true" @click="handleClickNextWrok">
-      <strong>
-        <span>NEXT</span>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 19">
-          <path
-            d="m10.392 16.88 7.232-7.264-7.264-7.232 1.696-1.76 8.992 8.992-8.96 8.992zM.568 8.304h18.4v2.656H.568z"
-          ></path>
-        </svg>
-      </strong>
+    <article ref="bottomRef" class="bottom-section" :data-detail="true">
+      <ArrowButton class="arrow-button" text="NEXT" @onClick="handleClickNextWrok" />
 
-      <div class="bottom-picture-wrap">
+      <div role="button" class="bottom-picture-wrap" @click="handleClickNextWrok">
         <div class="picture-bg"></div>
         <img class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
         <h3>{{ nextTitle }}</h3>
@@ -349,7 +342,7 @@ onUnmounted(() => {
           position: absolute;
           left: 0;
           bottom: -4px;
-          width: calc(100% + 6px);
+          width: 100%;
           height: 2px;
           background-color: black;
           transform: scaleX(0);
@@ -416,6 +409,22 @@ onUnmounted(() => {
     cursor: pointer;
     background-color: var(--gray);
 
+    :deep(.arrow-button) {
+      padding-bottom: 20px;
+
+      strong {
+        line-height: 0.8;
+        font-size: min(165px, 12.15278vw);
+        color: var(--black);
+      }
+
+      svg {
+        width: 154px;
+        height: 130px;
+        color: var(--black);
+      }
+    }
+
     .bottom-picture-wrap {
       position: relative;
       display: flex;
@@ -448,26 +457,6 @@ onUnmounted(() => {
         transform: translate(-50%, -50%);
         text-transform: uppercase;
         white-space: nowrap;
-      }
-    }
-
-    strong {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      pointer-events: none;
-
-      span {
-        line-height: 1;
-        font-size: min(120px, 12.15278vw);
-        color: var(--black);
-      }
-
-      svg {
-        width: 154px;
-        height: 130px;
-        color: var(--black);
       }
     }
   }
@@ -510,8 +499,8 @@ onUnmounted(() => {
     }
 
     .bottom-section {
-      strong {
-        span {
+      :deep(.arrow-button) {
+        strong {
           font-size: min(72px, 12.5vw);
           white-space: nowrap;
         }

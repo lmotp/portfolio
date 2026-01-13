@@ -9,7 +9,7 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path } = storeToRefs(pageTransitionStore);
+const { isPageTransition } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);

@@ -8,7 +8,7 @@ export const archivesData = [
     date: `1차 / 2023.07.10 ~ 2024.04.10\n2차 / 2024.10.13 ~ 2025.06.15`,
     stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
     src: "/images/archives/3.png",
-    link: "https://www.monimo.com/monimo/homepage/main/PGIFPCCHomepageMainIndex001",
+    link: "monimo.com",
     content: [
       {
         img: "/images/archives/lisn/1.webp",
@@ -82,42 +82,6 @@ export const archivesData = [
     stack: ["Nuxt", "SCSS"],
     src: "/images/archives/4.png",
     link: "meum.me",
-    content: [
-      {
-        img: "/images/archives/lisn/1.webp",
-        caption: "테스트용입니다용가리",
-      },
-      {
-        img: "/images/archives/lisn/2.webp",
-        caption: "테스트용입니다용가리",
-      },
-      {
-        img: "/images/archives/lisn/3.webp",
-        caption: "테스트용입니다용가리",
-      },
-      {
-        img: "/images/archives/lisn/4.webp",
-        caption: "테스트용입니다용가리",
-      },
-      {
-        img: "/images/archives/lisn/5.webp",
-        caption: "테스트용입니다용가리",
-      },
-      {
-        img: "/images/archives/lisn/6.webp",
-        caption: "테스트용입니다용가리",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "NeweastArt",
-    desc: `Nuxt 3 프레임워크를 사용해 전체 UI를 구현
-    데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
-    date: `2023.01.01 ~ 2023.02.01`,
-    stack: ["Nuxt", "SCSS"],
-    src: "/images/archives/5.png",
-    link: "https://neweastart.com/",
     content: [
       {
         img: "/images/archives/lisn/1.webp",
@@ -221,12 +185,12 @@ export const sideMenuData = {
         name: "Lisn",
       },
       {
-        path: "/archives/neweastart",
-        name: "Neweast Art",
-      },
-      {
         path: "/archives/meum",
         name: "Meum",
+      },
+      {
+        path: "/archives/neweastart",
+        name: "Neweast Art",
       },
     ],
   },
