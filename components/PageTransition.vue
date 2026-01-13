@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
+const { hook } = useNuxtApp();
 const router = useRouter();
 const route = useRoute();
 
@@ -19,7 +20,6 @@ const coverPage = (url: string) => {
   const tl = gsap.timeline({
     onComplete: () => {
       router.push(url);
-      setTimeout(revealPage, 500);
     },
   });
 
@@ -48,6 +48,10 @@ const revealPage = () => {
     }
   );
 };
+
+hook("page:finish", () => {
+  revealPage();
+});
 
 watch(path, (url) => {
   if (route.path === "/" && (url === "/archives" || url === "/experiments" || url === "/")) {
