@@ -27,6 +27,7 @@ body {
 }
 body {
   overflow-x: hidden;
+  background: var(--black);
 }
 img,
 picture,

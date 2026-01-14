@@ -1,26 +1,36 @@
 <script setup lang="ts">
 import gsap from "gsap";
+import { usePageTransitionStore } from "@/stores/pageTransition";
+import { storeToRefs } from "pinia";
+import { sideMenuData } from "~/utils/data";
+
 import LineLogo from "../LineLogo.vue";
 
+const pageTransitionStore = usePageTransitionStore();
+const { path } = storeToRefs(pageTransitionStore);
+
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
-const footerCreditsRef = ref<HTMLElement | null>(null);
+const footerGridRef = ref<HTMLElement | null>(null);
 const footerPaddingBottom = ref(0);
+const archives = computed(() => sideMenuData.Archives.childs.map((v) => ({ name: v.name, path: v.path })));
+const experiments = computed(() => sideMenuData.Experiments.childs.map((v) => ({ name: v.name, path: v.path })));
+const skills = ["VUE", "NUXT", "GSAP", "CHARTJS", "THREEJS", "STORYBOOK"];
 
 const init = () => {
-  if (!footerCreditsRef.value) return;
+  if (!footerGridRef.value) return;
 
-  const OFFSET = 8;
-  const { height } = footerCreditsRef.value.getBoundingClientRect();
+  const OFFSET = 15;
+  const { height } = footerGridRef.value.getBoundingClientRect();
   footerPaddingBottom.value = OFFSET + height;
 
   if (!isMobile.value) {
     const wrapperTl = gsap.timeline({
-      id: "footer-wrapper",
       scrollTrigger: {
         trigger: ".footer-wrapper",
         start: "top top",
         end: "max",
         scrub: true,
+        markers: true,
       },
     });
 
@@ -48,6 +58,11 @@ const init = () => {
 
   scrollerTl.fromTo(".footer-sticky-inner", { yPercent: 15 }, { yPercent: 0 }, 0);
 };
+
+const handleClickRouter = (menuPath: string) => {
+  menuPath === path.value ? null : (path.value = menuPath);
+};
+
 onMounted(() => {
   nextTick(init);
 });
@@ -56,14 +71,7 @@ onMounted(() => {
 <template>
   <footer :style="{ paddingBottom: `${footerPaddingBottom}px` }">
     <div class="footer-gutter">
-      <button>
-        <strong>Let's Talk </strong>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 19">
-          <path
-            d="m10.392 16.88 7.232-7.264-7.264-7.232 1.696-1.76 8.992 8.992-8.96 8.992zM.568 8.304h18.4v2.656H.568z"
-          ></path>
-        </svg>
-      </button>
+      <ArrowButton class="arrow-button" text="Let's Talk" />
     </div>
 
     <div class="footer-wrapper">
@@ -73,17 +81,56 @@ onMounted(() => {
     <div class="footer-scroller">
       <div class="footer-sticky">
         <div class="footer-sticky-inner">
-          <figure>
-            <picture>
-              <img
-                src="https://www.datocms-assets.com/136821/1728381584-tshirtillustrationfinals_v05.png?fit=crop&fm=webp&w=900"
-                alt=""
-              />
-            </picture>
-          </figure>
+          <div ref="footerGridRef" class="footer-grid">
+            <div class="info-wrap">
+              <strong>/ Contact </strong>
+
+              <p>
+                <a href="mailto:unoeye22@gmail.com">unoeye22@gmail.com</a><br />
+                <em>/</em>
+                <a href="tel:01054086369">010 5408 6369</a><br />
+                <em>/</em>
+                <a href="https://github.com/lmotp">GitHub</a>
+              </p>
+            </div>
+
+            <div class="archives menu-wrap">
+              <strong>/ Archives</strong>
+              <ul>
+                <li v-for="(data, index) of archives" :key="`archive-${index}`">
+                  <button @click="handleClickRouter(data.path)">{{ data.name }}</button>
+                </li>
+              </ul>
+            </div>
+
+            <div class="experiments menu-wrap">
+              <strong>/ Experiments</strong>
+              <ul>
+                <li v-for="(data, index) of experiments" :key="`experiment-${index}`">
+                  <button @click="handleClickRouter(data.path)">{{ data.name }}</button>
+                </li>
+              </ul>
+            </div>
+
+            <div v-if="!isMobile" class="bottom-wrap">
+              <p>사카낙션(サカナクション)은 일본어 '물고기(魚, 사카나)'와 영어 '액션(Action)'</p>
+              <div class="skills-wrap">
+                <strong>/ Skills</strong>
+                <ul>
+                  <li v-for="(data, index) of skills" :key="`skill-${index}`">#{{ data }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <figure>
+              <picture>
+                <img src="@/public/images/footer/1728381584-tshirtillustrationfinals_v05.avif" alt="" />
+              </picture>
+            </figure>
+          </div>
         </div>
       </div>
-      <div ref="footerCreditsRef" class="footer-credits"></div>
+      <div class="footer-credits"></div>
     </div>
   </footer>
 </template>
@@ -100,17 +147,10 @@ footer {
     background-color: var(--gray);
     z-index: 1;
 
-    button {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 30px;
-      width: 100%;
-
+    :deep(.arrow-button) {
       strong {
         line-height: 0.8;
-        font-size: 165px;
-        font-weight: 700;
+        font-size: min(165px, 12.15278vw);
         color: var(--black);
       }
 
@@ -149,16 +189,132 @@ footer {
         align-items: flex-end;
         background-color: var(--dark-blue);
 
-        figure {
-          position: absolute;
-          left: 30%;
-          bottom: 0;
-          width: 486px;
-          mix-blend-mode: multiply;
-          pointer-events: none;
+        .footer-grid {
+          position: relative;
+          top: 1px;
+          display: grid;
+          grid-template-columns: repeat(9, 1fr);
+          column-gap: 10px;
+          padding: 0 10px 10px;
+          width: 100%;
+          color: var(--white);
+          isolation: isolate;
+
+          .info-wrap {
+            grid-column: 1 / span 3;
+
+            p {
+              font-size: clamp(16px, 1.85185vw, 26px);
+              line-height: 1.25;
+              text-transform: uppercase;
+
+              em {
+                margin-right: 10px;
+              }
+              a {
+                transition: opacity 0.25s ease-in-out;
+
+                &:has(~ a:hover),
+                &:hover ~ a {
+                  opacity: 0.5;
+                }
+                &:hover {
+                  opacity: 1;
+                }
+              }
+            }
+
+            strong {
+              display: flex;
+              font-size: 10px;
+              margin-bottom: 20px;
+              border-bottom: 1px solid var(--white);
+            }
+          }
+
+          .menu-wrap {
+            display: flex;
+            flex-direction: column;
+
+            &.archives {
+              grid-column: 7 / span 1;
+            }
+            &.experiments {
+              grid-column: 8 / span 2;
+
+              ul {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                column-gap: 10px;
+              }
+            }
+
+            ul {
+              li {
+                transition: opacity 0.25s ease-in-out;
+
+                &:has(~ li:hover),
+                &:hover ~ li {
+                  opacity: 0.5;
+                }
+                &:hover {
+                  opacity: 1;
+                }
+
+                button {
+                  font-size: clamp(10px, 1.15741vw, 16px);
+                }
+              }
+            }
+
+            strong {
+              font-size: 10px;
+              margin-bottom: 20px;
+              border-bottom: 1px solid var(--white);
+            }
+          }
+
+          .bottom-wrap {
+            grid-column: 1 / span 9;
+            padding: 130px 0 6px;
+
+            p {
+              text-align: right;
+            }
+
+            .skills-wrap {
+              display: flex;
+              align-items: flex-end;
+              justify-content: space-between;
+              gap: 10px;
+
+              strong {
+                font-size: 10px;
+              }
+
+              ul {
+                display: flex;
+                gap: 6px;
+
+                li {
+                  font-size: 16px;
+                }
+              }
+            }
+          }
+
+          figure {
+            position: absolute;
+            left: 35%;
+            bottom: 0;
+            width: 486px;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+          }
         }
       }
     }
+
     .footer-credits {
       height: 50lvh;
     }
@@ -167,13 +323,10 @@ footer {
 
 @media screen and (max-width: 1440px) {
   footer {
-    .footer-wrapper {
-      padding-top: 250px;
-    }
-
-    .footer-scroller {
-      .footer-sticky .footer-sticky-inner figure {
-        width: 375px;
+    .footer-scroller .footer-sticky .footer-sticky-inner .footer-grid {
+      figure {
+        width: clamp(325px, 30vw, 375px);
+        left: 30%;
       }
     }
   }
@@ -184,16 +337,60 @@ footer {
     .footer-gutter {
       padding: 18px 8px 0;
 
-      h2 {
-        font-size: 72px;
+      :deep(.arrow-button) {
+        strong {
+          font-size: min(72px, 12.5vw);
+          white-space: nowrap;
+        }
+        svg {
+          flex-shrink: 0;
+          width: 58px;
+          height: 50px;
+        }
       }
     }
 
     .footer-scroller {
-      .footer-sticky .footer-sticky-inner figure {
-        left: 20.51282vw;
-        opacity: 0.2;
-        width: 138.46154vw;
+      .footer-sticky .footer-sticky-inner .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 0 8px;
+        padding-inline: 8px;
+
+        & > * {
+          grid-column: auto !important;
+        }
+
+        .info-wrap {
+          padding-bottom: 30px;
+
+          p {
+            font-size: 24px;
+            line-height: 0.95;
+          }
+        }
+
+        .menu-wrap {
+          margin-bottom: 16px;
+
+          ul li {
+            button {
+              font-size: 16px;
+            }
+          }
+        }
+
+        .bottom-wrap {
+          padding-block: 48px 0;
+        }
+
+        figure {
+          left: 20%;
+          opacity: 0.2;
+          width: 138.46154vw;
+        }
+      }
+      .footer-credits {
+        height: 100dvh;
       }
     }
   }
