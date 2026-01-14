@@ -6,13 +6,14 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   css: ["@/assets/css/main.css"],
   ssr: false,
+  spaLoadingTemplate: true,
 
   modules: ["@pinia/nuxt", "@nuxt/image", "@vueuse/nuxt", "@nuxt/icon", "@nuxtjs/google-fonts"],
   googleFonts: {
     families: {
       Orbitron: [400, 700, 900],
       "Dela Gothic One": true,
-      // Inter: [300, 400, 700],
+      Inter: [300, 400, 700],
     },
     display: "swap", // 성능 최적화
     prefetch: true,

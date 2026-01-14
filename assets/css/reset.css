@@ -9,7 +9,7 @@
 :after,
 :before {
   box-sizing: border-box;
-  font-family: "Orbitron", cursive;
+  font-family: "Orbitron";
 }
 :root {
   -webkit-tap-highlight-color: transparent;

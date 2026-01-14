@@ -25,12 +25,12 @@ const init = () => {
 
   if (!isMobile.value) {
     const wrapperTl = gsap.timeline({
-      id: "footer-wrapper",
       scrollTrigger: {
         trigger: ".footer-wrapper",
         start: "top top",
         end: "max",
         scrub: true,
+        markers: true,
       },
     });
 
@@ -318,9 +318,6 @@ footer {
 
 @media screen and (max-width: 1440px) {
   footer {
-    .footer-wrapper {
-      padding-top: 250px;
-    }
     .footer-scroller .footer-sticky .footer-sticky-inner .footer-grid {
       figure {
         width: clamp(325px, 30vw, 375px);

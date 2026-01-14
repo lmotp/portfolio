@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Side from "./Side.vue";
 </script>
+
 <template>
   <main>
     <Side />
