@@ -13,7 +13,7 @@ const nextConfig = computed(() => {
 
 <template>
   <Archives :config="config" :nextConfig="nextConfig">
-    <div ref="stickyWrap" class="sticky-wrap">
+    <div class="sticky-wrap">
       <article class="inner-1">
         <div class="media-container">
           <figure class="media">
@@ -66,6 +66,34 @@ const nextConfig = computed(() => {
             <small>(06)</small>
           </figure>
         </div>
+
+        <div class="media-container">
+          <figure class="media">
+            <img :src="usePublicAsset(config.content[6].img)" alt="" />
+            <figcaption>{{ config.content[6].caption }}</figcaption>
+            <small>(07)</small>
+          </figure>
+        </div>
+      </article>
+
+      <hr />
+
+      <article class="inner-4">
+        <div class="media-container">
+          <figure class="media">
+            <img :src="usePublicAsset(config.content[7].img)" alt="" />
+            <figcaption>{{ config.content[7].caption }}</figcaption>
+            <small>(08)</small>
+          </figure>
+        </div>
+
+        <div class="media-container">
+          <figure class="media">
+            <img :src="usePublicAsset(config.content[8].img)" alt="" />
+            <figcaption>{{ config.content[8].caption }}</figcaption>
+            <small>(09)</small>
+          </figure>
+        </div>
       </article>
     </div>
   </Archives>
@@ -79,54 +107,18 @@ const nextConfig = computed(() => {
 
     .media-container {
       max-width: 800px;
-
-      .media {
-        aspect-ratio: 1 / 0.8596296296296297;
-      }
     }
   }
 
-  .inner-2 {
+  .inner-2,
+  .inner-3,
+  .inner-4 {
     display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
 
     .media-container {
-      .media {
-        height: 40.7142857vw;
-      }
-      &:nth-child(1) {
-        width: 32.0713235%;
-      }
-      &:nth-child(2) {
-        width: 51.8926471%;
-      }
-      &:nth-child(3) {
-        width: 15.9558824%;
-      }
-      &:not(:last-child) {
-        margin-right: var(--margin);
-      }
-    }
-  }
-
-  .inner-3 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    .media-container:first-child {
-      width: 20%;
-
-      .media {
-        aspect-ratio: 1 / 1;
-      }
-    }
-    .media-container:nth-child(2) {
-      width: 61.8033989%;
-      margin-top: var(--margin);
-      .media {
-        aspect-ratio: 376 / 400;
-      }
+      width: max(20%, 300px);
     }
   }
 

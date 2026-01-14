@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
-import * as THREE from "three";
 import gsap from "gsap";
 
-import GL from "./imageBlur/GL.js";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
@@ -15,16 +13,10 @@ const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
 const router = useRouter();
-let renderer: THREE.WebGLRenderer;
-let scene: THREE.Scene;
-let animationId: any;
-let onResize: any;
 
-const isDisposed = ref(false);
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
-const blurRef = ref<HTMLCanvasElement | null>(null);
-const blurWrapRef = ref<HTMLDivElement | null>(null);
+
 const titleWrapRef = ref<HTMLDivElement | null>(null);
 const bottomRef = ref<HTMLDivElement | null>(null);
 const infoWrapRef = ref<HTMLDivElement | null>(null);
@@ -47,7 +39,6 @@ const init = () => {
 
   setGsapAnimation();
   setTextObserver();
-  setDetailImage();
 };
 
 const setGsapAnimation = () => {
@@ -77,24 +68,6 @@ const setTextObserver = () => {
   };
   observer.value = new IntersectionObserver(callback, options);
   caoptions.forEach((el) => observer.value!.observe(el));
-};
-const setDetailImage = () => {
-  if (!blurRef.value || !blurWrapRef.value) return;
-
-  renderer = new THREE.WebGLRenderer({
-    canvas: blurRef.value,
-    alpha: true,
-    antialias: true,
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  scene = new THREE.Scene();
-
-  const gl = new GL(renderer, scene, isDisposed.value, blurWrapRef.value);
-  animationId = gl.animationId;
-  onResize = gl.onResize;
-  lenisRef.value?.on("scroll", (e) => {
-    gl.onScroll(e);
-  });
 };
 
 const handleClickNextWrok = () => {
@@ -135,42 +108,12 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  isDisposed.value = true;
-
   if (observer.value) observer.value.disconnect();
-  if (animationId) cancelAnimationFrame(animationId);
-
-  scene.traverse((obj: any) => {
-    if (obj.isMesh) {
-      if (obj.geometry) obj.geometry.dispose();
-
-      if (obj.material) {
-        // 배열 형태의 재질 대응
-        const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
-        for (const m of materials) {
-          // 텍스처 해제
-          Object.keys(m).forEach((key) => {
-            if (m[key] && m[key].isTexture) {
-              m[key].dispose();
-            }
-          });
-          m.dispose();
-        }
-      }
-    }
-  });
-
-  window.removeEventListener("resize", onResize);
-
-  renderer.renderLists.dispose();
-  renderer.dispose();
 });
 </script>
 
 <template>
   <div ref="blurWrapRef" class="detail-wrap" :style="{ '--pictureWrapHeight': `${pictureWrapHeight}px` }">
-    <canvas ref="blurRef" id="gl"></canvas>
-
     <article :id="`archive-${id}`">
       <div class="article-top">
         <div class="main-picture-wrap">
@@ -220,21 +163,15 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .detail-wrap {
-  canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    user-select: none;
-  }
-
   .article-top {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     height: 100dvh;
     isolation: isolate;
     background-color: var(--gray);
+    z-index: 1;
 
     .main-picture-wrap {
       position: relative;
@@ -357,7 +294,6 @@ onUnmounted(() => {
 
     :deep(.sticky-wrap) {
       .media-container {
-        width: 100%;
         display: inline-flex;
         flex-direction: column;
 
@@ -365,10 +301,6 @@ onUnmounted(() => {
           position: relative;
           display: inline-flex;
           flex-direction: column;
-
-          img {
-            visibility: hidden;
-          }
 
           figcaption {
             position: relative;
@@ -392,7 +324,7 @@ onUnmounted(() => {
             top: 10px;
             line-height: 0.8;
             font-size: 12px;
-            color: var(--white);
+            opacity: 0;
           }
         }
       }
@@ -483,6 +415,8 @@ onUnmounted(() => {
     }
 
     .info-wrap {
+      padding-bottom: 150px;
+
       .info-text {
         p {
           font-size: 12px;
@@ -491,9 +425,18 @@ onUnmounted(() => {
           font-size: 16px;
         }
       }
-      .sticky-wrap {
+
+      :deep(.sticky-wrap) {
         article {
           margin-top: 60px;
+
+          .media-container {
+            .media {
+              figcaption {
+                font-size: 12px;
+              }
+            }
+          }
         }
       }
     }

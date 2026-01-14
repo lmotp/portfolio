@@ -238,7 +238,7 @@ onMounted(() => {
               <span>Swimming fish.</span>
             </h2>
             <p class="desc">
-              <span>시장의 흐름에 먼저 반응하는 물고기처럼,</span>
+              <span>물의 흐름에 반응하는 물고기처럼,</span>
               <span><strong>기만한 움직임과 정교한 인터렉션</strong>으로 가치를 만듭니다.</span>
             </p>
           </div>
