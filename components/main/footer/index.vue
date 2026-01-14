@@ -10,6 +10,7 @@ const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const footerCreditsRef = ref<HTMLElement | null>(null);
 const footerGridRef = ref<HTMLElement | null>(null);
 const footerPaddingBottom = ref(0);
 const archives = computed(() => sideMenuData.Archives.childs.map((v) => ({ name: v.name, path: v.path })));
@@ -17,20 +18,22 @@ const experiments = computed(() => sideMenuData.Experiments.childs.map((v) => ({
 const skills = ["VUE", "NUXT", "GSAP", "CHARTJS", "THREEJS", "STORYBOOK"];
 
 const init = () => {
-  if (!footerGridRef.value) return;
+  if (!footerCreditsRef.value || !footerGridRef.value) return;
 
   const OFFSET = 15;
-  const { height } = footerGridRef.value.getBoundingClientRect();
+  const { height } = isMobile.value
+    ? footerGridRef.value.getBoundingClientRect()
+    : footerCreditsRef.value.getBoundingClientRect();
   footerPaddingBottom.value = OFFSET + height;
 
   if (!isMobile.value) {
     const wrapperTl = gsap.timeline({
+      id: "footer-wrapper",
       scrollTrigger: {
         trigger: ".footer-wrapper",
         start: "top top",
         end: "max",
         scrub: true,
-        markers: true,
       },
     });
 
@@ -130,7 +133,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="footer-credits"></div>
+      <div ref="footerCreditsRef" class="footer-credits"></div>
     </div>
   </footer>
 </template>
@@ -314,7 +317,6 @@ footer {
         }
       }
     }
-
     .footer-credits {
       height: 50lvh;
     }
@@ -323,6 +325,9 @@ footer {
 
 @media screen and (max-width: 1440px) {
   footer {
+    .footer-wrapper {
+      padding-top: 275px;
+    }
     .footer-scroller .footer-sticky .footer-sticky-inner .footer-grid {
       figure {
         width: clamp(325px, 30vw, 375px);
@@ -331,7 +336,6 @@ footer {
     }
   }
 }
-
 @media screen and (max-width: 768px) {
   footer {
     .footer-gutter {
@@ -348,6 +352,10 @@ footer {
           height: 50px;
         }
       }
+    }
+
+    .footer-wrapper {
+      padding-top: 200px;
     }
 
     .footer-scroller {
