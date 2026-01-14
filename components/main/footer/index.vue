@@ -23,28 +23,26 @@ const init = () => {
   const { height } = footerGridRef.value.getBoundingClientRect();
   footerPaddingBottom.value = OFFSET + height;
 
-  if (!isMobile.value) {
-    const wrapperTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".footer-wrapper",
-        start: "top top",
-        end: "max",
-        scrub: true,
-        markers: true,
-      },
-    });
+  const wrapperTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".footer-wrapper",
+      start: "top top",
+      end: "max",
+      scrub: true,
+      markers: true,
+    },
+  });
 
-    wrapperTl.to(
-      ".footer-wrapper",
-      {
-        xPercent: -7,
-        rotate: -6,
-        transformOrigin: "top left",
-        ease: "power1.inOut",
-      },
-      0
-    );
-  }
+  wrapperTl.to(
+    ".footer-wrapper",
+    {
+      xPercent: -7,
+      rotate: -6,
+      transformOrigin: "top left",
+      ease: "power1.inOut",
+    },
+    0
+  );
 
   const scrollerTl = gsap.timeline({
     id: "footer-scroller",
