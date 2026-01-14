@@ -89,7 +89,7 @@ onMounted(() => {
   position: relative;
 
   &::after {
-    background-color: var(--white);
+    background-color: var(--gray);
     content: "";
     height: 100dvh;
     left: 0;
@@ -101,7 +101,7 @@ onMounted(() => {
   .outro-intro-wrapper {
     position: relative;
     padding-inline: 6px;
-    background-color: var(--white);
+    background-color: var(--gray);
 
     .title-wrap {
       padding-top: 6px;
