@@ -27,6 +27,8 @@ const handleToggleButton = () => {
 const handleMenuClick = (menuPath: string) => {
   if (menuPath === path.value) return;
 
+  lenisRef.value?.start();
+
   switch (menuPath) {
     case "/":
       lenisRef.value!.scrollTo(0, {

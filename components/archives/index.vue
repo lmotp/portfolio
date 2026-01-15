@@ -98,12 +98,12 @@ onMounted(async () => {
   setTimeout(() => {
     lenisRef.value!.start();
     lenisRef.value!.resize();
+    lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
     scrollTrigger.value!.refresh();
   }, 1250);
 
   setTimeout(() => {
     window.scrollTo(0, 0); // 브라우저 위치 초기화
-    lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
   }, 50);
 
   await nextTick(init);
