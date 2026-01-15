@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { gsap } from "gsap";
 import { usePageTransitionStore } from "@/stores/pageTransition";
+import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const { hook } = useNuxtApp();
@@ -9,6 +10,9 @@ const route = useRoute();
 
 const pageTransitionStore = usePageTransitionStore();
 const { isPageTransition, path } = storeToRefs(pageTransitionStore);
+
+const scrollTriggerStore = useScrollTriggerStore();
+const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
 const blocksRef = ref<HTMLElement[]>([]);
 const BLOCK_COUNT = computed(() => (window.innerWidth <= 768 ? 10 : 20));
@@ -44,6 +48,8 @@ const revealPage = () => {
       transformOrigin: "right",
       onComplete: () => {
         isPageTransition.value = false;
+        lenisRef.value!.resize();
+        scrollTrigger.value!.refresh();
       },
     }
   );
