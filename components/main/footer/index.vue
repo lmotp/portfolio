@@ -65,6 +65,9 @@ const init = () => {
 const handleClickRouter = (menuPath: string) => {
   menuPath === path.value ? null : (path.value = menuPath);
 };
+const handleClickArrowButton = () => {
+  window.open("https://github.com/lmotp?tab=repositories", "_blank");
+};
 
 onMounted(() => {
   nextTick(init);
@@ -74,7 +77,7 @@ onMounted(() => {
 <template>
   <footer :style="{ paddingBottom: `${footerPaddingBottom}px` }">
     <div class="footer-gutter">
-      <ArrowButton class="arrow-button" text="Let's Talk" />
+      <ArrowButton class="arrow-button" text="Let's Talk" @onClick="handleClickArrowButton" />
     </div>
 
     <div class="footer-wrapper">

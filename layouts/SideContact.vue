@@ -10,7 +10,7 @@ const handleClickCopy = (text: string, type: string) => {
 
     setTimeout(() => {
       copiedList.value = copiedList.value.filter((item) => item !== type);
-    }, 2000);
+    }, 1000);
   });
 };
 

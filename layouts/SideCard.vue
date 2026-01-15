@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import gsap from "gsap";
+const copiedList = ref<string[]>([]);
 
 const init = () => {
   gsap.to(".namecard", {
@@ -14,6 +15,18 @@ const init = () => {
   });
 };
 
+const handleClickCopy = (text: string, type: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    if (copiedList.value.includes(type)) return;
+
+    copiedList.value.push(type);
+
+    setTimeout(() => {
+      copiedList.value = copiedList.value.filter((item) => item !== type);
+    }, 2000);
+  });
+};
+
 onMounted(() => {
   init();
 });
@@ -21,20 +34,20 @@ onMounted(() => {
 
 <template>
   <div class="namecard">
-    <img class="profile-img" src="https://i.imgur.com/SMfYDvL.png" />
+    <img class="profile-img" src="@/public/images/profile.jpg" alt="" />
     <strong class="job">Publisher</strong>
     <h3 class="name">박철순</h3>
 
     <div class="line"></div>
 
     <div class="icon">
-      <img class="ig" src="https://i.imgur.com/9ZZwYaU.png" alt="" />
-      <img class="mail" src="https://i.imgur.com/Rk00gq9.png" alt="" />
+      <button @click="handleClickCopy('unoeye22@gmail.com', 'mail')"><Icon name="basil:envelope-solid" size="14" style="color: #ffffff" /></button>
+      <button @click="handleClickCopy('010-5408-6369', 'phone')"><Icon name="basil:phone-solid" size="14" style="color: #ffffff" /></button>
     </div>
 
     <div class="info">
-      <p>Publisher:arkell.shen</p>
-      <p>unoeye22@gmail.com</p>
+      <p>{{copiedList.includes('phone') ? "Copied" : "010-5408-6369"}}</p>
+      <p>{{copiedList.includes('mail') ? "Copied" : "unoeye22@gmail.com"}}</p>
     </div>
   </div>
 </template>
@@ -60,6 +73,8 @@ onMounted(() => {
     width: 200px;
     height: 200px;
     max-width: initial;
+    object-fit: cover;
+    border-radius: 50%;
     z-index: 1;
   }
 
@@ -101,9 +116,14 @@ onMounted(() => {
     gap: 5px;
     margin-top: 30px;
 
-    > * {
-      width: 20px;
-      height: 20px;
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background-color: #3c352d;
     }
   }
 
