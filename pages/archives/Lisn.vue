@@ -40,7 +40,9 @@ const nextConfig = computed(() => {
             <small>(03)</small>
           </figure>
         </div>
+      </article>
 
+      <article class="inner-3">
         <div class="media-container">
           <figure class="media">
             <img :src="usePublicAsset(config.content[3].img)" alt="" />
@@ -48,9 +50,7 @@ const nextConfig = computed(() => {
             <small>(04)</small>
           </figure>
         </div>
-      </article>
 
-      <article class="inner-3">
         <div class="media-container">
           <figure class="media">
             <img :src="usePublicAsset(config.content[4].img)" alt="" />
@@ -58,7 +58,9 @@ const nextConfig = computed(() => {
             <small>(05)</small>
           </figure>
         </div>
+      </article>
 
+      <article class="inner-4">
         <div class="media-container">
           <figure class="media">
             <img :src="usePublicAsset(config.content[5].img)" alt="" />
@@ -78,7 +80,7 @@ const nextConfig = computed(() => {
 
       <hr />
 
-      <article class="inner-4">
+      <article class="inner-5">
         <div class="media-container">
           <figure class="media">
             <img :src="usePublicAsset(config.content[7].img)" alt="" />
@@ -118,7 +120,17 @@ const nextConfig = computed(() => {
     gap: 10px;
 
     .media-container {
-      width: max(20%, 300px);
+      width: min(50%, 600px);
+    }
+  }
+
+  .inner-5 {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+
+    .media-container {
+      width: min(50%, 350px);
     }
   }
 
@@ -127,6 +139,10 @@ const nextConfig = computed(() => {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+  }
+
+  hr {
+    margin-block: 125px;
   }
 }
 </style>

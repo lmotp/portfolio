@@ -56,16 +56,14 @@ const handleContactClick = () => {
 };
 
 watch(isClose, (status) => {
-  if (status) audio.value?.play();
+  if (status) {
+    audio.value?.play();
+    lenisRef.value?.stop();
+  } else lenisRef.value?.start();
 });
 
 onMounted(() => {
-  lenisRef.value?.stop();
   audio.value = new Audio(usePublicAsset("/sounds/drawer.mp3"));
-});
-
-onUnmounted(() => {
-  lenisRef.value?.start();
 });
 </script>
 

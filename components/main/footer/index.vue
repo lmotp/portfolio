@@ -207,7 +207,7 @@ footer {
             grid-column: 1 / span 3;
 
             p {
-              font-size: clamp(16px, 1.85185vw, 26px);
+              font-size: 35px;
               line-height: 1.25;
               text-transform: uppercase;
 
@@ -229,7 +229,7 @@ footer {
 
             strong {
               display: flex;
-              font-size: 10px;
+              font-size: 14px;
               margin-bottom: 20px;
               border-bottom: 1px solid var(--white);
             }
@@ -265,13 +265,13 @@ footer {
                 }
 
                 button {
-                  font-size: clamp(10px, 1.15741vw, 16px);
+                  font-size: 22px;
                 }
               }
             }
 
             strong {
-              font-size: 10px;
+              font-size: 14px;
               margin-bottom: 20px;
               border-bottom: 1px solid var(--white);
             }
@@ -282,6 +282,7 @@ footer {
             padding: 130px 0 6px;
 
             p {
+              font-size: 24px;
               text-align: right;
             }
 
@@ -292,7 +293,7 @@ footer {
               gap: 10px;
 
               strong {
-                font-size: 10px;
+                font-size: 14px;
               }
 
               ul {
@@ -300,7 +301,7 @@ footer {
                 gap: 6px;
 
                 li {
-                  font-size: 16px;
+                  font-size: 24px;
                 }
               }
             }
@@ -329,6 +330,64 @@ footer {
       padding-top: 275px;
     }
     .footer-scroller .footer-sticky .footer-sticky-inner .footer-grid {
+      .info-wrap {
+        p {
+          font-size: clamp(16px, 1.85185vw, 26px);
+          line-height: 1.25;
+        }
+
+        strong {
+          font-size: 10px;
+          margin-bottom: 20px;
+        }
+      }
+
+      .menu-wrap {
+        &.experiments {
+          ul {
+            grid-template-columns: repeat(2, 1fr);
+            column-gap: 10px;
+          }
+        }
+
+        ul {
+          button {
+            font-size: clamp(10px, 1.15741vw, 16px);
+          }
+        }
+
+        strong {
+          font-size: 10px;
+          margin-bottom: 20px;
+          border-bottom: 1px solid var(--white);
+        }
+      }
+
+      .bottom-wrap {
+        padding: 130px 0 6px;
+
+        .skills-wrap {
+          gap: 10px;
+
+          p {
+            font-size: 16px;
+          }
+
+          strong {
+            font-size: 10px;
+          }
+
+          ul {
+            display: flex;
+            gap: 6px;
+
+            li {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+
       figure {
         width: clamp(325px, 30vw, 375px);
         left: 30%;

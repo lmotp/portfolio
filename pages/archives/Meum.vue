@@ -118,7 +118,7 @@ const nextConfig = computed(() => {
     gap: 10px;
 
     .media-container {
-      width: max(20%, 300px);
+      width: min(50%, 600px);
     }
   }
 
