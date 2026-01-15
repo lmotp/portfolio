@@ -9,7 +9,7 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path } = storeToRefs(pageTransitionStore);
+const { isPageTransition, isLoading, path } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
@@ -76,6 +76,10 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <transition name="fade">
+    <Loading v-if="isLoading" />
+  </transition>
+
   <NuxtLayout>
     <PageTransition v-show="isPageTransition" />
     <Cursor />

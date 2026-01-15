@@ -27,7 +27,7 @@ body {
 }
 body {
   overflow-x: hidden;
-  background: var(--black);
+  background: #dddee2;
 }
 img,
 picture,

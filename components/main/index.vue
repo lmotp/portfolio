@@ -15,24 +15,24 @@ const { path } = storeToRefs(pageTransitionStore);
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
 onMounted(() => {
-  gsap.delayedCall(0.1, () => {
+  gsap.delayedCall(0.2, () => {
     switch (path.value) {
       case "/":
         lenisRef.value!.scrollTo(0, {
-          duration: 3.5,
+          immediate: true,
         });
         break;
 
       case "/archives":
         lenisRef.value!.scrollTo(".outro .top-view-container", {
           offset: window.innerHeight,
-          duration: 3.5,
+          immediate: true,
         });
         break;
 
       case "/experiments":
         lenisRef.value!.scrollTo(".experiments .intro-wrapper", {
-          duration: 3.5,
+          immediate: true,
         });
         break;
     }
