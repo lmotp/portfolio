@@ -105,6 +105,7 @@ onMounted(async () => {
   await nextTick(init);
 
   scrollTrigger.value!.refresh();
+  lenisRef.value?.resize();
 });
 
 onUnmounted(() => {

@@ -366,12 +366,12 @@ footer {
       .bottom-wrap {
         padding: 130px 0 6px;
 
+        p {
+          font-size: 16px;
+        }
+
         .skills-wrap {
           gap: 10px;
-
-          p {
-            font-size: 16px;
-          }
 
           strong {
             font-size: 10px;
