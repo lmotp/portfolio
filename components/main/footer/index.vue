@@ -282,7 +282,7 @@ footer {
             padding: 130px 0 6px;
 
             p {
-              font-size: 24px;
+              font-size: 18px;
               text-align: right;
             }
 
@@ -301,7 +301,7 @@ footer {
                 gap: 6px;
 
                 li {
-                  font-size: 24px;
+                  font-size: 20px;
                 }
               }
             }
@@ -350,7 +350,7 @@ footer {
           }
         }
 
-        ul {
+        ul li {
           button {
             font-size: clamp(10px, 1.15741vw, 16px);
           }
