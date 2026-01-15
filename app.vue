@@ -57,8 +57,10 @@ watch(
     else isPopState.value = false;
 
     pathCookie.value = url;
-    lenis!.resize();
-    ScrollTrigger.refresh();
+    setTimeout(() => {
+      lenis!.resize();
+      ScrollTrigger.refresh();
+    }, 100);
   },
   { immediate: true }
 );
