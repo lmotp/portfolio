@@ -2,154 +2,187 @@ export const archivesData = [
   {
     id: 1,
     title: "Monimo",
-    desc: `Nuxt 3 기반 프레임워크 전환 및 핵심 메인(자산/혜택 등) 퍼블리싱
-    디자인 시스템 구축 및 Storybook 기반 협업 프로세스 도입
-    데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
-    date: `1차 / 2023.07.10 ~ 2024.04.10\n2차 / 2024.10.13 ~ 2025.06.15`,
-    stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
     src: "/images/archives/3.png",
-    link: "https://www.monimo.com",
-    content: [
+    stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
+    data: [
       {
-        img: "/images/archives/monimo/monimo_home.png",
-        caption: "모니모_홈페이지",
+        desc: `디자인 시스템 구축 및 Storybook 기반 협업 프로세스 도입`,
+        date: `2023.07.10 ~ 2024.04.10`,
+        link: "",
+        content: [],
       },
       {
-        img: "/images/archives/monimo/monimo_more_gif.gif",
-        caption: "모니모_더보기_GIF",
-      },
-      {
-        img: "/images/archives/monimo/monimo_more_1.jpeg",
-        caption: "모니모_더보기_더보기_1",
-      },
-      {
-        img: "/images/archives/monimo/monimo_more_2.jpeg",
-        caption: "모니모_더보기_더보기_2",
-      },
-      {
-        img: "/images/archives/monimo/monimo_asset_gif_1.gif",
-        caption: "모니모_자산_GIF_1",
-      },
-      {
-        img: "/images/archives/monimo/monimo_asset_gif_2.gif",
-        caption: "모니모_자산_GIF_2",
-      },
-      {
-        img: "/images/archives/monimo/monimo_asset_1.jpeg",
-        caption: "모니모_자산_1",
-      },
-      {
-        img: "/images/archives/monimo/monimo_benefit_gif.gif",
-        caption: "모니모_혜택_GIF",
-      },
-      {
-        img: "/images/archives/monimo/monimo_benefit_1.jpeg",
-        caption: "모니모_혜택_1",
-      },
-      {
-        img: "/images/archives/monimo/monimo_benefit_2.jpeg",
-        caption: "모니모_혜택_2",
+        desc: `Nuxt 3 기반 프레임워크 전환 및 핵심 메인(자산/혜택 등) 퍼블리싱\n데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
+        date: `2024.10.13 ~ 2025.06.15`,
+        link: "https://www.monimo.com",
+        content: [
+          {
+            img: "/images/archives/monimo/monimo_home.png",
+            caption: "모니모_홈페이지",
+          },
+          {
+            img: "/images/archives/monimo/monimo_more_gif.gif",
+            caption: "모니모_더보기_GIF",
+          },
+          {
+            img: "/images/archives/monimo/monimo_more_1.jpeg",
+            caption: "모니모_더보기_더보기_1",
+          },
+          {
+            img: "/images/archives/monimo/monimo_more_2.jpeg",
+            caption: "모니모_더보기_더보기_2",
+          },
+          {
+            img: "/images/archives/monimo/monimo_asset_gif_1.gif",
+            caption: "모니모_자산_GIF_1",
+          },
+          {
+            img: "/images/archives/monimo/monimo_asset_gif_2.gif",
+            caption: "모니모_자산_GIF_2",
+          },
+          {
+            img: "/images/archives/monimo/monimo_asset_1.jpeg",
+            caption: "모니모_자산_1",
+          },
+          {
+            img: "/images/archives/monimo/monimo_benefit_gif.gif",
+            caption: "모니모_혜택_GIF",
+          },
+          {
+            img: "/images/archives/monimo/monimo_benefit_1.jpeg",
+            caption: "모니모_혜택_1",
+          },
+          {
+            img: "/images/archives/monimo/monimo_benefit_2.jpeg",
+            caption: "모니모_혜택_2",
+          },
+        ],
       },
     ],
   },
   {
     id: 2,
     title: "Lisn",
-    desc: `Nuxt 3 기반 프레임워크 전환 및 홈페이지 리뉴얼 퍼블리싱
-    사내 프로젝트 Nuxt 3 + Express 개발`,
-    date: `2024.04.10 ~ 2024.10.10`,
-    stack: ["Nuxt", "SCSS", "Express"],
     src: "/images/archives/1.png",
-    link: "https://thelisn.com/",
-    content: [
+    stack: ["Nuxt", "SCSS", "Express"],
+    data: [
       {
-        img: "/images/archives/lisn/thelisn_gif.gif",
-        caption: "리즌디자인_GIF",
+        desc: `Nuxt 3 기반 프레임워크 전환 및 홈페이지 리뉴얼 퍼블리싱`,
+        date: `2024.04.10 ~ 2024.08.10`,
+        link: "https://thelisn.com/",
+        content: [
+          {
+            img: "/images/archives/lisn/thelisn_gif.gif",
+            caption: "리즌디자인_GIF",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_1.png",
+            caption: "리즌디자인_1",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_2.png",
+            caption: "리즌디자인_2",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_3.png",
+            caption: "리즌디자인_3",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_4.png",
+            caption: "리즌디자인_4",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_5.png",
+            caption: "리즌디자인_5",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_6.png",
+            caption: "리즌디자인_6",
+          },
+        ],
       },
       {
-        img: "/images/archives/lisn/thelisn_1.png",
-        caption: "리즌디자인_1",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_2.png",
-        caption: "리즌디자인_2",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_3.png",
-        caption: "리즌디자인_3",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_4.png",
-        caption: "리즌디자인_4",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_5.png",
-        caption: "리즌디자인_5",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_6.png",
-        caption: "리즌디자인_6",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_receipt_gif.gif",
-        caption: "리즌디자인_영수증_GIF",
-      },
-      {
-        img: "/images/archives/lisn/thelisn_receipt.png",
-        caption: "리즌디자인_영수증_1",
+        desc: "사내 프로젝트 Nuxt 3 + Express 개발",
+        date: `2024.08.11 ~ 2024.10.10`,
+        link: "",
+        content: [
+          {
+            img: "/images/archives/lisn/thelisn_receipt_gif.gif",
+            caption: "리즌디자인_영수증_GIF",
+          },
+          {
+            img: "/images/archives/lisn/thelisn_receipt.png",
+            caption: "리즌디자인_영수증_1",
+          },
+        ],
       },
     ],
   },
   {
     id: 3,
     title: "Meum",
-    desc: `Nuxt 3 기반 프레임워크 전환 및 핵심 메인(자산/혜택 등) 퍼블리싱
-    디자인 시스템 구축 및 Storybook 기반 협업 프로세스 도입
-    데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
-    date: `2022.04.10 ~ 2023.04.10`,
-    stack: ["Nuxt", "SCSS"],
     src: "/images/archives/4.png",
-    link: "https://meum.me",
-    content: [
+    stack: ["Nuxt", "SCSS"],
+    data: [
       {
-        img: "/images/archives/meum/meum_gif_1.gif",
-        caption: "믐_메인_GIF",
+        desc: `해상도에 따른 화면 구현\n전체 UI/UX 작업 진행\nQA진행 후 오류사항 수정\n콘텐츠 구성 기획\n전체적으로 모달 > 페이지화 시키는 작업 진행`,
+        date: `2022.04.10 ~ 2023.03.10`,
+        link: "https://meum.me",
+        content: [
+          {
+            img: "/images/archives/meum/meum_gif_1.gif",
+            caption: "믐_메인_GIF",
+          },
+          {
+            img: "/images/archives/meum/meum_1.png",
+            caption: "믐_메인_1",
+          },
+          {
+            img: "/images/archives/meum/meum_2.png",
+            caption: "믐_메인_2",
+          },
+          {
+            img: "/images/archives/meum/meum_gif_2.gif",
+            caption: "믐_전시구매_GIF",
+          },
+          {
+            img: "/images/archives/meum/meum_3.png",
+            caption: "믐_전시구매",
+          },
+          {
+            img: "/images/archives/meum/meum_4.png",
+            caption: "믐_고객센터",
+          },
+        ],
       },
       {
-        img: "/images/archives/meum/meum_1.png",
-        caption: "믐_메인_1",
+        desc: `해상도에 따른 화면 기획 구성\n전체 UI/UX 작업 진행\nQA진행 후 오류사항 수정`,
+        date: `2023.02.10 ~ 2023.03.10`,
+        link: "",
+        content: [],
       },
       {
-        img: "/images/archives/meum/meum_2.png",
-        caption: "믐_메인_2",
-      },
-      {
-        img: "/images/archives/meum/meum_gif_2.gif",
-        caption: "믐_전시구매_GIF",
-      },
-      {
-        img: "/images/archives/meum/meum_3.png",
-        caption: "믐_전시구매",
-      },
-      {
-        img: "/images/archives/meum/meum_4.png",
-        caption: "믐_고객센터",
-      },
-      {
-        img: "/images/archives/meum/neweastart_gif.gif",
-        caption: "뉴이스트아트_GIF",
-      },
-      {
-        img: "/images/archives/meum/neweastart_1.png",
-        caption: "뉴이스트아트_1",
-      },
-      {
-        img: "/images/archives/meum/neweastart_2.png",
-        caption: "뉴이스트아트_2",
-      },
-      {
-        img: "/images/archives/meum/neweastart_3.png",
-        caption: "뉴이스트아트_3",
+        desc: `내부 퍼블리싱\n전체 UI작업 진행`,
+        date: `2023.01.10 ~ 2023.02.10`,
+        link: "https://neweastart.com/",
+        content: [
+          {
+            img: "/images/archives/meum/neweastart_gif.gif",
+            caption: "뉴이스트아트_GIF",
+          },
+          {
+            img: "/images/archives/meum/neweastart_1.png",
+            caption: "뉴이스트아트_1",
+          },
+          {
+            img: "/images/archives/meum/neweastart_2.png",
+            caption: "뉴이스트아트_2",
+          },
+          {
+            img: "/images/archives/meum/neweastart_3.png",
+            caption: "뉴이스트아트_3",
+          },
+        ],
       },
     ],
   },

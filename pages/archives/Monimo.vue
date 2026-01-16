@@ -13,95 +13,97 @@ const nextConfig = computed(() => {
 
 <template>
   <Archives :config="config" :nextConfig="nextConfig">
-    <div class="sticky-wrap">
-      <article class="inner-1">
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[0].img)" alt="" />
-            <figcaption>{{ config.content[0].caption }}</figcaption>
-            <small>(01)</small>
-          </figure>
-        </div>
-      </article>
+    <template #info-1>
+      <div class="sticky-wrap">
+        <article class="inner-1">
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[0].img)" alt="" />
+              <figcaption>{{ config.data[1].content[0].caption }}</figcaption>
+              <small>(01)</small>
+            </figure>
+          </div>
+        </article>
 
-      <article class="inner-2">
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[1].img)" alt="" />
-            <figcaption>{{ config.content[1].caption }}</figcaption>
-            <small>(02)</small>
-          </figure>
-        </div>
+        <article class="inner-2">
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[1].img)" alt="" />
+              <figcaption>{{ config.data[1].content[1].caption }}</figcaption>
+              <small>(02)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[2].img)" alt="" />
-            <figcaption>{{ config.content[2].caption }}</figcaption>
-            <small>(03)</small>
-          </figure>
-        </div>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[2].img)" alt="" />
+              <figcaption>{{ config.data[1].content[2].caption }}</figcaption>
+              <small>(03)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[3].img)" alt="" />
-            <figcaption>{{ config.content[3].caption }}</figcaption>
-            <small>(04)</small>
-          </figure>
-        </div>
-      </article>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[3].img)" alt="" />
+              <figcaption>{{ config.data[1].content[3].caption }}</figcaption>
+              <small>(04)</small>
+            </figure>
+          </div>
+        </article>
 
-      <article class="inner-3">
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[4].img)" alt="" />
-            <figcaption>{{ config.content[4].caption }}</figcaption>
-            <small>(05)</small>
-          </figure>
-        </div>
+        <article class="inner-3">
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[4].img)" alt="" />
+              <figcaption>{{ config.data[1].content[4].caption }}</figcaption>
+              <small>(05)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[5].img)" alt="" />
-            <figcaption>{{ config.content[5].caption }}</figcaption>
-            <small>(06)</small>
-          </figure>
-        </div>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[5].img)" alt="" />
+              <figcaption>{{ config.data[1].content[5].caption }}</figcaption>
+              <small>(06)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[6].img)" alt="" />
-            <figcaption>{{ config.content[6].caption }}</figcaption>
-            <small>(07)</small>
-          </figure>
-        </div>
-      </article>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[6].img)" alt="" />
+              <figcaption>{{ config.data[1].content[6].caption }}</figcaption>
+              <small>(07)</small>
+            </figure>
+          </div>
+        </article>
 
-      <article class="inner-4">
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[7].img)" alt="" />
-            <figcaption>{{ config.content[7].caption }}</figcaption>
-            <small>(08)</small>
-          </figure>
-        </div>
+        <article class="inner-4">
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[7].img)" alt="" />
+              <figcaption>{{ config.data[1].content[7].caption }}</figcaption>
+              <small>(08)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[8].img)" alt="" />
-            <figcaption>{{ config.content[8].caption }}</figcaption>
-            <small>(09)</small>
-          </figure>
-        </div>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[8].img)" alt="" />
+              <figcaption>{{ config.data[1].content[8].caption }}</figcaption>
+              <small>(09)</small>
+            </figure>
+          </div>
 
-        <div class="media-container">
-          <figure class="media">
-            <img :src="usePublicAsset(config.content[9].img)" alt="" />
-            <figcaption>{{ config.content[9].caption }}</figcaption>
-            <small>(10)</small>
-          </figure>
-        </div>
-      </article>
-    </div>
+          <div class="media-container">
+            <figure class="media">
+              <img :src="usePublicAsset(config.data[1].content[9].img)" alt="" />
+              <figcaption>{{ config.data[1].content[9].caption }}</figcaption>
+              <small>(10)</small>
+            </figure>
+          </div>
+        </article>
+      </div>
+    </template>
   </Archives>
 </template>
 

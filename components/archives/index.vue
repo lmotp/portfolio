@@ -6,7 +6,7 @@ import gsap from "gsap";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
-const { id, title, desc, date, stack, src, link } = config;
+const { id, title, src, stack, data } = config;
 const { nextTitle, nextSrc } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
@@ -17,12 +17,11 @@ const router = useRouter();
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 
+const blurWrapRef = ref<HTMLDivElement | null>(null);
 const titleWrapRef = ref<HTMLDivElement | null>(null);
 const bottomRef = ref<HTMLDivElement | null>(null);
-const infoWrapRef = ref<HTMLDivElement | null>(null);
 const pictureWrapHeight = ref(window.innerHeight / 2);
 const observer = ref<IntersectionObserver | null>(null);
-
 const icons = computed(() => {
   return [
     { name: "Nuxt", src: "simple-icons:nuxtdotjs" },
@@ -54,8 +53,8 @@ const setGsapAnimation = () => {
   tl.fromTo(".article-top .picture", { transform: " scale(1)" }, { transform: "translateY(10%) scale(1)" });
 };
 const setTextObserver = () => {
-  if (!infoWrapRef.value) return;
-  const caoptions = infoWrapRef.value.querySelectorAll("figcaption");
+  if (!blurWrapRef.value) return;
+  const caoptions = blurWrapRef.value.querySelectorAll("figcaption");
   const callback = (entries: IntersectionObserverEntry[]) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) entry.target.classList.add("active");
@@ -138,16 +137,17 @@ onUnmounted(() => {
               <Icon :name="svg.src" :size="isMobile ? 30 : 40" :class="['icon', svg.isActive && 'active']" />
             </li>
           </ul>
-          <time :datetime="date">{{ date }}</time>
         </div>
       </div>
 
-      <div ref="infoWrapRef" class="info-wrap">
+      <div v-for="(info, index) of data" :key="`info-${index}`" class="info-wrap">
         <div class="info-text">
-          <p>{{ desc }}</p>
-          <NuxtLink :to="link" target="_blank" :aria-detail="true">View Live</NuxtLink>
+          <time :datetime="info.date">{{ info.date }}</time>
+          <p>{{ info.desc }}</p>
+          <NuxtLink :to="info.link" target="_blank" :aria-detail="true">View Live</NuxtLink>
         </div>
-        <slot></slot>
+
+        <slot v-if="info.content.length" :name="`info-${index}`"></slot>
       </div>
     </article>
 
@@ -246,12 +246,6 @@ onUnmounted(() => {
           }
         }
       }
-
-      time {
-        font-size: 14px;
-        color: var(--dark-gray);
-        white-space: pre-wrap;
-      }
     }
   }
 
@@ -261,6 +255,12 @@ onUnmounted(() => {
 
     .info-text {
       text-align: center;
+
+      time {
+        font-size: 14px;
+        color: var(--dark-gray);
+        white-space: pre-wrap;
+      }
 
       p {
         margin-bottom: 24px;
@@ -409,9 +409,6 @@ onUnmounted(() => {
         h2 {
           font-size: 56px;
         }
-        time {
-          font-size: 12px;
-        }
       }
     }
 
@@ -419,6 +416,9 @@ onUnmounted(() => {
       padding-bottom: 150px;
 
       .info-text {
+        time {
+          font-size: 12px;
+        }
         p {
           font-size: 12px;
         }

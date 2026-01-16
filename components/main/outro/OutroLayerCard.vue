@@ -9,10 +9,14 @@ import usePublicAsset from "~/composables/usePublicAsset";
 type configType = {
   id: number;
   title: string;
-  desc: string;
-  date: string;
-  stack: string[];
   src: string;
+  stack: string[];
+  data: {
+    desc: string;
+    date: string;
+    link: string;
+    content: { img: string; caption: string }[];
+  }[];
 };
 
 type cardType = configType & {
@@ -29,7 +33,6 @@ const props = defineProps<cardType>();
 const emits = defineEmits(["onClickCard"]);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const isInit = ref(false);
-const cardWrapRef = ref<HTMLElement | null>(null);
 const infoWrapperRef = ref<HTMLElement | null>(null);
 const imageWrapperRef = ref<HTMLElement | null>(null);
 
@@ -146,7 +149,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="cardWrapRef" :class="['layer-card-wrap', isInit ? 'active' : '']">
+  <div :class="['layer-card-wrap', isInit ? 'active' : '']">
     <div ref="infoWrapperRef" class="info-wrapper">
       <div class="info-wraaper-title">
         <strong class="title">{{ props.title }}</strong>

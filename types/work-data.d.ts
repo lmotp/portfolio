@@ -1,12 +1,14 @@
 type configType = {
   id: number;
   title: string;
-  desc: string;
-  date: string;
-  stack: string[];
   src: string;
-  link: string;
-  content: { img: string; caption: string }[];
+  stack: string[];
+  data: {
+    desc: string;
+    date: string;
+    link: string;
+    content: { img: string; caption: string }[];
+  }[];
 };
 
 type nextConfigType = {
