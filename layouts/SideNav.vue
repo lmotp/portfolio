@@ -115,11 +115,11 @@ const handleMenuClick = (menuPath: string) => {
   .nav-item-childs {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px 2.5px;
+    gap: 5px 10px;
 
     .child {
       display: flex;
-      width: calc(50% - 2.5px);
+      width: calc(50% - 10px);
 
       button {
         width: 100%;

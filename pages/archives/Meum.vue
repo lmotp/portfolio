@@ -41,7 +41,9 @@ const nextConfig = computed(() => {
               <small>(03)</small>
             </figure>
           </div>
+        </article>
 
+        <article class="inner-3">
           <div class="media-container">
             <figure class="media">
               <img :src="usePublicAsset(config.data[0].content[3].img)" alt="" />
@@ -51,7 +53,7 @@ const nextConfig = computed(() => {
           </div>
         </article>
 
-        <article class="inner-3">
+        <article class="inner-4">
           <div class="media-container">
             <figure class="media">
               <img :src="usePublicAsset(config.data[0].content[4].img)" alt="" />
@@ -70,6 +72,7 @@ const nextConfig = computed(() => {
         </article>
       </div>
     </template>
+
     <template #info-2>
       <div class="sticky-wrap wrap-2">
         <article class="inner-1">
@@ -98,14 +101,6 @@ const nextConfig = computed(() => {
               <small>(03)</small>
             </figure>
           </div>
-
-          <div class="media-container">
-            <figure class="media">
-              <img :src="usePublicAsset(config.data[2].content[3].img)" alt="" />
-              <figcaption>{{ config.data[2].content[3].caption }}</figcaption>
-              <small>(04)</small>
-            </figure>
-          </div>
         </article>
       </div>
     </template>
@@ -114,7 +109,8 @@ const nextConfig = computed(() => {
 
 <style scoped>
 .sticky-wrap {
-  .inner-1 {
+  .inner-1,
+  .inner-3 {
     display: flex;
     justify-content: center;
 
@@ -124,14 +120,15 @@ const nextConfig = computed(() => {
   }
 
   .inner-2,
-  .inner-3,
   .inner-4 {
     display: flex;
-    justify-content: space-evenly;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
 
     .media-container {
-      width: min(50%, 600px);
+      width: min(calc(50% - 15px), 600px);
     }
   }
 
@@ -140,6 +137,31 @@ const nextConfig = computed(() => {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sticky-wrap {
+    .inner-2,
+    .inner-4 {
+      gap: 20px;
+
+      .media-container {
+        width: calc(50% - 10px);
+        min-width: 250px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 574px) {
+  .sticky-wrap {
+    .inner-2,
+    .inner-4 {
+      .media-container {
+        width: 100%;
+      }
+    }
   }
 }
 </style>

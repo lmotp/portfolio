@@ -54,16 +54,17 @@ const setGsapAnimation = () => {
 };
 const setTextObserver = () => {
   if (!blurWrapRef.value) return;
-  const caoptions = blurWrapRef.value.querySelectorAll("figcaption");
+  const caoptions = blurWrapRef.value.querySelectorAll(".media");
   const callback = (entries: IntersectionObserverEntry[]) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add("active");
-      else entry.target.classList.remove("active");
+      if (entry.isIntersecting) {
+        entry.target.classList.add("active");
+        observer.value!.unobserve(entry.target);
+      }
     });
   };
   const options = {
-    rootMargin: "0px 0px -20px 0px",
-    threshold: 1,
+    threshold: 0.5,
   };
   observer.value = new IntersectionObserver(callback, options);
   caoptions.forEach((el) => observer.value!.observe(el));
@@ -144,7 +145,9 @@ onUnmounted(() => {
         <div class="info-text">
           <time :datetime="info.date">{{ info.date }}</time>
           <p>{{ info.desc }}</p>
-          <NuxtLink :to="info.link" target="_blank" :aria-detail="true">View Live</NuxtLink>
+          <NuxtLink :to="info.link" target="_blank" :aria-detail="!!info?.link" :class="[!info?.link && 'disabled']">
+            View Live
+          </NuxtLink>
         </div>
 
         <slot v-if="info.content.length" :name="`info-${index}`"></slot>
@@ -253,6 +256,10 @@ onUnmounted(() => {
     padding-bottom: 250px;
     background-color: var(--gray);
 
+    &:not(:last-child) {
+      padding-bottom: 125px;
+    }
+
     .info-text {
       text-align: center;
 
@@ -263,7 +270,7 @@ onUnmounted(() => {
       }
 
       p {
-        margin-bottom: 24px;
+        margin-block: 14px 24px;
         font-size: 18px;
         color: var(--black);
         white-space: pre-wrap;
@@ -283,13 +290,26 @@ onUnmounted(() => {
           bottom: -4px;
           width: 100%;
           height: 2px;
-          background-color: black;
+          background-color: currentColor;
           transform: scaleX(0);
           transition: transform 0.3s ease-in-out;
         }
 
         &:hover::after {
           transform: scaleX(1);
+        }
+
+        &.disabled {
+          color: var(--icon-gray);
+          pointer-events: none;
+          user-select: none;
+
+          &::after {
+            top: 50%;
+            bottom: auto;
+            width: calc(100% + 10px);
+            transform: translateY(-50%) scaleX(1);
+          }
         }
       }
     }
@@ -303,21 +323,16 @@ onUnmounted(() => {
           position: relative;
           display: inline-flex;
           flex-direction: column;
+          opacity: 0.9;
+          filter: blur(8px) grayscale(0.5);
+          transition: all 0.3s ease-in-out;
 
           figcaption {
             position: relative;
             padding: 6px 0 6px 2px;
             line-height: 1;
             font-size: 14px;
-            opacity: 0.1;
-            filter: blur(3px);
             color: var(--black);
-            transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
-
-            &.active {
-              opacity: 1;
-              filter: blur(0);
-            }
           }
 
           small {
@@ -328,12 +343,17 @@ onUnmounted(() => {
             font-size: 12px;
             opacity: 0;
           }
+
+          &.active {
+            opacity: 1;
+            filter: blur(0) grayscale(0);
+          }
         }
       }
 
       article {
-        margin: 125px auto 0;
-        padding: 0 var(--margin);
+        margin: 100px auto 0;
+        padding-inline: 20px;
       }
     }
   }
@@ -430,11 +450,12 @@ onUnmounted(() => {
       :deep(.sticky-wrap) {
         article {
           margin-top: 60px;
+          padding-inline: 14px;
 
           .media-container {
             .media {
               figcaption {
-                font-size: 12px;
+                font-size: 10px;
               }
             }
           }

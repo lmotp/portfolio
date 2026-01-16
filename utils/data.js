@@ -17,7 +17,7 @@ export const archivesData = [
         link: "https://www.monimo.com",
         content: [
           {
-            img: "/images/archives/monimo/monimo_home.png",
+            img: "/images/archives/monimo/monimo_home.webp",
             caption: "모니모_홈페이지",
           },
           {
@@ -25,12 +25,12 @@ export const archivesData = [
             caption: "모니모_더보기_GIF",
           },
           {
-            img: "/images/archives/monimo/monimo_more_1.jpeg",
-            caption: "모니모_더보기_더보기_1",
+            img: "/images/archives/monimo/monimo_more_1.webp",
+            caption: "모니모_더보기_1",
           },
           {
-            img: "/images/archives/monimo/monimo_more_2.jpeg",
-            caption: "모니모_더보기_더보기_2",
+            img: "/images/archives/monimo/monimo_more_2.webp",
+            caption: "모니모_더보기_2",
           },
           {
             img: "/images/archives/monimo/monimo_asset_gif_1.gif",
@@ -41,7 +41,7 @@ export const archivesData = [
             caption: "모니모_자산_GIF_2",
           },
           {
-            img: "/images/archives/monimo/monimo_asset_1.jpeg",
+            img: "/images/archives/monimo/monimo_asset_1.webp",
             caption: "모니모_자산_1",
           },
           {
@@ -49,11 +49,11 @@ export const archivesData = [
             caption: "모니모_혜택_GIF",
           },
           {
-            img: "/images/archives/monimo/monimo_benefit_1.jpeg",
+            img: "/images/archives/monimo/monimo_benefit_1.webp",
             caption: "모니모_혜택_1",
           },
           {
-            img: "/images/archives/monimo/monimo_benefit_2.jpeg",
+            img: "/images/archives/monimo/monimo_benefit_2.webp",
             caption: "모니모_혜택_2",
           },
         ],
@@ -76,27 +76,27 @@ export const archivesData = [
             caption: "리즌디자인_GIF",
           },
           {
-            img: "/images/archives/lisn/thelisn_1.png",
+            img: "/images/archives/lisn/thelisn_1.webp",
             caption: "리즌디자인_1",
           },
           {
-            img: "/images/archives/lisn/thelisn_2.png",
+            img: "/images/archives/lisn/thelisn_2.webp",
             caption: "리즌디자인_2",
           },
           {
-            img: "/images/archives/lisn/thelisn_3.png",
+            img: "/images/archives/lisn/thelisn_3.webp",
             caption: "리즌디자인_3",
           },
           {
-            img: "/images/archives/lisn/thelisn_4.png",
+            img: "/images/archives/lisn/thelisn_4.webp",
             caption: "리즌디자인_4",
           },
           {
-            img: "/images/archives/lisn/thelisn_5.png",
+            img: "/images/archives/lisn/thelisn_5.webp",
             caption: "리즌디자인_5",
           },
           {
-            img: "/images/archives/lisn/thelisn_6.png",
+            img: "/images/archives/lisn/thelisn_6.webp",
             caption: "리즌디자인_6",
           },
         ],
@@ -111,7 +111,7 @@ export const archivesData = [
             caption: "리즌디자인_영수증_GIF",
           },
           {
-            img: "/images/archives/lisn/thelisn_receipt.png",
+            img: "/images/archives/lisn/thelisn_receipt.webp",
             caption: "리즌디자인_영수증_1",
           },
         ],
@@ -134,11 +134,11 @@ export const archivesData = [
             caption: "믐_메인_GIF",
           },
           {
-            img: "/images/archives/meum/meum_1.png",
+            img: "/images/archives/meum/meum_1.webp",
             caption: "믐_메인_1",
           },
           {
-            img: "/images/archives/meum/meum_2.png",
+            img: "/images/archives/meum/meum_2.webp",
             caption: "믐_메인_2",
           },
           {
@@ -146,11 +146,11 @@ export const archivesData = [
             caption: "믐_전시구매_GIF",
           },
           {
-            img: "/images/archives/meum/meum_3.png",
+            img: "/images/archives/meum/meum_3.webp",
             caption: "믐_전시구매",
           },
           {
-            img: "/images/archives/meum/meum_4.png",
+            img: "/images/archives/meum/meum_4.webp",
             caption: "믐_고객센터",
           },
         ],
@@ -171,16 +171,12 @@ export const archivesData = [
             caption: "뉴이스트아트_GIF",
           },
           {
-            img: "/images/archives/meum/neweastart_1.png",
+            img: "/images/archives/meum/neweastart_1.webp",
             caption: "뉴이스트아트_1",
           },
           {
-            img: "/images/archives/meum/neweastart_2.png",
+            img: "/images/archives/meum/neweastart_2.webp",
             caption: "뉴이스트아트_2",
-          },
-          {
-            img: "/images/archives/meum/neweastart_3.png",
-            caption: "뉴이스트아트_3",
           },
         ],
       },

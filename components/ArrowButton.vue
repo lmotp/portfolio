@@ -72,4 +72,10 @@ button {
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  button {
+    padding-inline: 14px;
+  }
+}
 </style>

@@ -114,7 +114,7 @@ const nextConfig = computed(() => {
     justify-content: center;
 
     .media-container {
-      max-width: 800px;
+      max-width: 650px;
     }
   }
 
@@ -122,8 +122,9 @@ const nextConfig = computed(() => {
   .inner-3,
   .inner-4 {
     display: flex;
-    justify-content: space-evenly;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
 
     .media-container {
       width: max(20%, 300px);
@@ -135,6 +136,21 @@ const nextConfig = computed(() => {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sticky-wrap {
+    .inner-2,
+    .inner-3,
+    .inner-4 {
+      flex-wrap: wrap;
+      gap: 20px;
+
+      .media-container {
+        width: calc(50% - 10px);
+      }
+    }
   }
 }
 </style>

@@ -11,6 +11,7 @@
   box-sizing: border-box;
   font-family: "Orbitron";
 }
+
 :root {
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
@@ -21,6 +22,7 @@
   -moz-tab-size: 4;
   tab-size: 4;
 }
+
 html,
 body {
   height: 100%;

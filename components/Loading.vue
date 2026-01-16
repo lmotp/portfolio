@@ -92,4 +92,12 @@ onUnmounted(() => {
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .loading-wrap {
+    .mask-wrap .logo-wrap svg {
+      width: 80px;
+    }
+  }
+}
 </style>

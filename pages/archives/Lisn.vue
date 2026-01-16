@@ -49,9 +49,7 @@ const nextConfig = computed(() => {
               <small>(04)</small>
             </figure>
           </div>
-        </article>
 
-        <article class="inner-3">
           <div class="media-container">
             <figure class="media">
               <img :src="usePublicAsset(config.data[0].content[4].img)" alt="" />
@@ -78,6 +76,7 @@ const nextConfig = computed(() => {
         </article>
       </div>
     </template>
+
     <template #info-1>
       <div class="sticky-wrap wrap-2">
         <article class="inner-1">
@@ -113,14 +112,15 @@ const nextConfig = computed(() => {
       }
     }
 
-    .inner-2,
-    .inner-3 {
+    .inner-2 {
       display: flex;
-      justify-content: space-evenly;
-      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
 
       .media-container {
-        width: min(50%, 600px);
+        width: min(calc(50% - 15px), 600px);
       }
     }
   }
@@ -128,11 +128,11 @@ const nextConfig = computed(() => {
   &.wrap-2 {
     .inner-1 {
       display: flex;
-      justify-content: space-evenly;
-      gap: 10px;
+      justify-content: center;
+      gap: 30px;
 
       .media-container {
-        max-width: 400px;
+        width: max(20%, 300px);
       }
     }
   }
@@ -146,6 +146,39 @@ const nextConfig = computed(() => {
 
   hr {
     margin-block: 125px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sticky-wrap {
+    &.wrap-1 {
+      .inner-2 {
+        gap: 20px;
+
+        .media-container {
+          width: calc(50% - 10px);
+          min-width: 250px;
+        }
+      }
+    }
+
+    &.wrap-2 {
+      .inner-1 {
+        gap: 20px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 574px) {
+  .sticky-wrap {
+    &.wrap-1 {
+      .inner-2 {
+        .media-container {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 </style>
