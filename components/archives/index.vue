@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 import gsap from "gsap";
 
@@ -11,8 +12,8 @@ const { nextTitle, nextSrc } = nextConfig;
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
-
-const router = useRouter();
+const pageTransitionStore = usePageTransitionStore();
+const { isDisabled, path } = storeToRefs(pageTransitionStore);
 
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
@@ -72,6 +73,7 @@ const setTextObserver = () => {
 
 const handleClickNextWrok = () => {
   if (!bottomRef.value) return;
+  isDisabled.value = true;
 
   const tl = gsap.timeline({
     id: `archive-${id}`,
@@ -82,7 +84,7 @@ const handleClickNextWrok = () => {
       gsap.getById(`archives-${id}`)?.kill();
 
       const transformPath = nextTitle.toLowerCase();
-      router.push(`/archives/${transformPath}`);
+      path.value = `/archives/${transformPath}`;
     },
   });
   const mainTrigger = bottomRef.value?.querySelector(".bottom-picture-wrap");

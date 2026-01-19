@@ -9,7 +9,7 @@ const router = useRouter();
 const route = useRoute();
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path } = storeToRefs(pageTransitionStore);
+const { isPageTransition, path, isDisabled } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
@@ -60,6 +60,11 @@ hook("page:finish", () => {
 });
 
 watch(path, (url) => {
+  if (isDisabled.value) {
+    isDisabled.value = false;
+    return router.push(url);
+  }
+
   if (route.path === "/" && (url === "/archives" || url === "/experiments" || url === "/")) {
     return;
   } else if (route.path.split("/").length === 3 && (url === "/archives" || url === "/experiments")) {

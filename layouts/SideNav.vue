@@ -37,7 +37,7 @@ const handleMenuClick = (menuPath: string) => {
 
     <div class="nav-item-childs" v-if="menu?.childs">
       <div v-for="(child, index) in menu.childs" :key="index" class="child">
-        <button :class="child.path === $route.path ? 'active' : ''" @click="handleMenuClick(child.path)">
+        <button :class="child.path === path ? 'active' : ''" @click="handleMenuClick(child.path)">
           <span>{{ child.name }}</span>
         </button>
       </div>
