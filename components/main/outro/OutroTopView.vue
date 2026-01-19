@@ -2,10 +2,16 @@
 import gsap from "gsap";
 import LineLogo from "../LineLogo.vue";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
+import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { isIntroEnd } = storeToRefs(scrollTriggerStore);
+
+const pageTransitionStore = usePageTransitionStore();
+const { isPageSrcLoaded } = storeToRefs(pageTransitionStore);
+
+const videoPlayerRef = ref<HTMLVideoElement | null>(null);
 const videoSrc = usePublicAsset("/videos/archives/2.mp4");
 
 const init = () => {
@@ -28,8 +34,18 @@ const init = () => {
   });
 };
 
+const handleVideoLoad = () => {
+  if (isPageSrcLoaded.value) return;
+
+  isPageSrcLoaded.value = true;
+};
+
 onMounted(() => {
   nextTick(init);
+
+  if (videoPlayerRef.value && videoPlayerRef.value.readyState >= 3) {
+    handleVideoLoad();
+  }
 });
 </script>
 
@@ -37,6 +53,7 @@ onMounted(() => {
   <div class="video-scroller">
     <div class="video-wrapper">
       <video
+        ref="videoPlayerRef"
         playsinline
         muted
         autoplay
@@ -44,6 +61,7 @@ onMounted(() => {
         controlslist="nodownload noplaybackrate"
         disablepictureinpicture
         :src="videoSrc"
+        @canplaythrough="handleVideoLoad"
       ></video>
     </div>
   </div>

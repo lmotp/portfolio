@@ -4,7 +4,7 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const pageTransitionStore = usePageTransitionStore();
-const { isLoading } = storeToRefs(pageTransitionStore);
+const { isLoading, isPageSrcLoaded } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
@@ -12,6 +12,7 @@ const { lenisRef } = storeToRefs(scrollTriggerStore);
 const percent = ref(0);
 const maskIndex = ref(0);
 const interval = ref<any>(null);
+const isFade = ref(false);
 
 const init = () => {
   lenisRef.value?.stop();
@@ -26,9 +27,14 @@ const init = () => {
   }, 10);
 };
 
-onMounted(() => {
-  init();
-});
+watch(
+  isPageSrcLoaded,
+  () => {
+    isFade.value = true;
+    init();
+  },
+  { once: true }
+);
 
 onUnmounted(() => {
   clearInterval(interval.value);
@@ -37,7 +43,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div :class="['loading-wrap', !isLoading && 'fade']" :style="{ '--mask-index': maskIndex }">
+  <div :class="['loading-wrap', isFade && 'fade']" :style="{ '--mask-index': maskIndex }">
     <div class="mask-wrap">
       <div class="logo-wrap">
         <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 512 512">
@@ -60,7 +66,12 @@ onUnmounted(() => {
   pointer-events: none;
   overflow: hidden;
   backdrop-filter: blur(10px);
+  background-color: var(--gray);
   z-index: 2000;
+
+  &.fade {
+    background-color: transparent;
+  }
 
   .mask-wrap {
     position: absolute;

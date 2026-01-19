@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 export const usePageTransitionStore = defineStore("pageTransition", {
   state: () => ({
     isLoading: true,
+    isPageSrcLoaded: false,
     isPageTransition: false,
     isDisabled: false,
     path: useCookie("path", { default: () => "/", maxAge: 60 * 60 * 24 * 7 }).value,

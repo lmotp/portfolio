@@ -13,7 +13,7 @@ const { nextTitle, nextSrc } = nextConfig;
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 const pageTransitionStore = usePageTransitionStore();
-const { isDisabled, path } = storeToRefs(pageTransitionStore);
+const { isPageSrcLoaded, isDisabled, path } = storeToRefs(pageTransitionStore);
 
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
@@ -37,11 +37,12 @@ const init = () => {
   if (titleWrapRef.value) pictureWrapHeight.value = window.innerHeight - titleWrapRef.value.offsetHeight;
   isInit.value = true;
 
-  setGsapAnimation();
-  setTextObserver();
+  setupGsapAnimation();
+  setupTextObserver();
+  checkImagesLoaded();
 };
 
-const setGsapAnimation = () => {
+const setupGsapAnimation = () => {
   const tl = gsap.timeline({
     id: `archive-${id}-picture`,
     scrollTrigger: {
@@ -53,7 +54,7 @@ const setGsapAnimation = () => {
   });
   tl.fromTo(".article-top .picture", { transform: " scale(1)" }, { transform: "translateY(10%) scale(1)" });
 };
-const setTextObserver = () => {
+const setupTextObserver = () => {
   if (!blurWrapRef.value) return;
   const caoptions = blurWrapRef.value.querySelectorAll(".media");
   const callback = (entries: IntersectionObserverEntry[]) => {
@@ -69,6 +70,29 @@ const setTextObserver = () => {
   };
   observer.value = new IntersectionObserver(callback, options);
   caoptions.forEach((el) => observer.value!.observe(el));
+};
+const checkImagesLoaded = () => {
+  if (!blurWrapRef.value) return;
+  const images = blurWrapRef.value.querySelectorAll("img");
+
+  const promises = Array.from(images).map((img) => {
+    return new Promise<void>((resolve) => {
+      if (img.complete) {
+        resolve();
+      } else {
+        img.addEventListener("load", () => resolve(), { once: true });
+        img.addEventListener("error", () => resolve(), { once: true });
+      }
+    });
+  });
+
+  Promise.all(promises).then(() => {
+    isPageSrcLoaded.value = true;
+    lenisRef.value!.start();
+    lenisRef.value!.resize();
+    lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
+    scrollTrigger.value!.refresh();
+  });
 };
 
 const handleClickNextWrok = () => {
@@ -96,13 +120,6 @@ const handleClickNextWrok = () => {
 
 onMounted(async () => {
   lenisRef.value!.stop();
-
-  setTimeout(() => {
-    lenisRef.value!.start();
-    lenisRef.value!.resize();
-    lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
-    scrollTrigger.value!.refresh();
-  }, 1250);
 
   setTimeout(() => {
     window.scrollTo(0, 0); // 브라우저 위치 초기화
