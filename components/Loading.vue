@@ -4,47 +4,32 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
 const pageTransitionStore = usePageTransitionStore();
-const { isLoading, isPageSrcLoaded } = storeToRefs(pageTransitionStore);
+const { isLoading, downloadPercent } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { lenisRef } = storeToRefs(scrollTriggerStore);
 
-const percent = ref(0);
 const maskIndex = ref(0);
-const interval = ref<any>(null);
 const isFade = ref(false);
 
-const init = () => {
+watch(downloadPercent, (percent) => {
+  if (!isFade.value && percent >= 20) isFade.value = true;
   lenisRef.value?.stop();
-  interval.value = setInterval(() => {
-    percent.value += 1;
 
-    if (percent.value > 0 && percent.value % 10 === 0) maskIndex.value += 1;
-    if (maskIndex.value >= 7) {
-      clearInterval(interval.value);
-      isLoading.value = false;
-    }
-  }, 10);
-};
-
-watch(
-  isPageSrcLoaded,
-  () => {
-    isFade.value = true;
-    init();
-  },
-  { once: true }
-);
+  maskIndex.value = Math.floor(percent / 10);
+  if (maskIndex.value >= 10) isLoading.value = false;
+});
 
 onUnmounted(() => {
-  clearInterval(interval.value);
   lenisRef.value?.start();
+  downloadPercent.value = 0;
 });
 </script>
 
 <template>
   <div :class="['loading-wrap', isFade && 'fade']" :style="{ '--mask-index': maskIndex }">
     <div class="mask-wrap">
+      <strong class="percent">{{ downloadPercent }}% </strong>
       <div class="logo-wrap">
         <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 512 512">
           <path
@@ -63,10 +48,9 @@ onUnmounted(() => {
 
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  overflow: hidden;
   backdrop-filter: blur(10px);
   background-color: var(--gray);
+  overflow: hidden;
   z-index: 2000;
 
   &.fade {
@@ -90,7 +74,7 @@ onUnmounted(() => {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, calc(-50% + 100px));
       font-size: 32px;
       font-weight: bold;
       color: var(--black);
