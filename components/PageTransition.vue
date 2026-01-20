@@ -4,16 +4,16 @@ import { usePageTransitionStore } from "@/stores/pageTransition";
 import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { storeToRefs } from "pinia";
 
-const { hook } = useNuxtApp();
 const router = useRouter();
 const route = useRoute();
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path, isDisabled } = storeToRefs(pageTransitionStore);
+const { isPageTransition, path, isDisabled, downloadPercent } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 
+const isCovered = ref(false);
 const blocksRef = ref<HTMLElement[]>([]);
 const BLOCK_COUNT = computed(() => (window.innerWidth <= 768 ? 10 : 20));
 
@@ -23,6 +23,7 @@ const coverPage = (url: string) => {
 
   const tl = gsap.timeline({
     onComplete: () => {
+      isCovered.value = true;
       router.push(url);
     },
   });
@@ -47,6 +48,7 @@ const revealPage = () => {
       ease: "power2.out",
       transformOrigin: "right",
       onComplete: () => {
+        downloadPercent.value = 0;
         isPageTransition.value = false;
         lenisRef.value!.resize();
         scrollTrigger.value!.refresh();
@@ -54,10 +56,6 @@ const revealPage = () => {
     }
   );
 };
-
-hook("page:finish", () => {
-  revealPage();
-});
 
 watch(path, (url) => {
   if (isDisabled.value) {
@@ -73,12 +71,24 @@ watch(path, (url) => {
     coverPage(url!);
   }
 });
+
+watch(downloadPercent, (val) => {
+  if (val >= 100) {
+    setTimeout(() => {
+      isCovered.value = false;
+      setTimeout(revealPage, 500);
+    }, 500);
+  }
+});
 </script>
 
 <template>
   <div class="page-transition">
     <div class="page-overlay">
-      <div ref="blocksRef" v-for="n of BLOCK_COUNT" :key="n" class="block"></div>
+      <transition name="fade">
+        <strong v-if="isCovered" :class="['percent']">{{ downloadPercent }}% </strong>
+      </transition>
+      <div ref="blocksRef" v-for="n of BLOCK_COUNT" :key="n" :class="['block']"></div>
     </div>
     <slot />
   </div>
@@ -89,17 +99,30 @@ watch(path, (url) => {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 101;
+  z-index: 200;
 
   .page-overlay {
+    position: relative;
     display: flex;
     width: 100%;
     height: 100%;
+    isolation: isolate;
+
+    .percent {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--white);
+      z-index: 1;
+    }
 
     .block {
       flex: 1;
       min-width: 0;
-      width: 100%;
+      position: relative;
       height: 100%;
       background-color: var(--black);
       transform: scaleX(0);

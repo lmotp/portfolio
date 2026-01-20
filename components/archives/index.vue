@@ -13,7 +13,9 @@ const { nextTitle, nextSrc } = nextConfig;
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
 const pageTransitionStore = usePageTransitionStore();
-const { isPageSrcLoaded, isDisabled, path } = storeToRefs(pageTransitionStore);
+const { downloadPercent, isDisabled, path } = storeToRefs(pageTransitionStore);
+
+const { start, finish } = useLoadingIndicator();
 
 const isInit = ref(false);
 const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
@@ -73,25 +75,43 @@ const setupTextObserver = () => {
 };
 const checkImagesLoaded = () => {
   if (!blurWrapRef.value) return;
+  start();
+
   const images = blurWrapRef.value.querySelectorAll("img");
+  const total = images.length;
+
+  if (total === 0) {
+    downloadPercent.value = 100;
+    finish();
+    return;
+  }
+
+  let loadedCount = 0;
 
   const promises = Array.from(images).map((img) => {
     return new Promise<void>((resolve) => {
-      if (img.complete) {
+      const onImageLoad = () => {
+        loadedCount++;
+        downloadPercent.value = Math.round((loadedCount / total) * 100);
         resolve();
+      };
+
+      if (img.complete) {
+        onImageLoad();
       } else {
-        img.addEventListener("load", () => resolve(), { once: true });
-        img.addEventListener("error", () => resolve(), { once: true });
+        img.addEventListener("load", onImageLoad, { once: true });
+        img.addEventListener("error", onImageLoad, { once: true });
       }
     });
   });
 
   Promise.all(promises).then(() => {
-    isPageSrcLoaded.value = true;
-    lenisRef.value!.start();
-    lenisRef.value!.resize();
-    lenisRef.value!.scrollTo(0, { immediate: true }); // Lenis 내부 위치 초기화
-    scrollTrigger.value!.refresh();
+    lenisRef.value?.start();
+    lenisRef.value?.resize();
+    lenisRef.value?.scrollTo(0, { immediate: true });
+    scrollTrigger.value?.refresh();
+
+    finish();
   });
 };
 

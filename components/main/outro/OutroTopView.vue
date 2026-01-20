@@ -9,10 +9,9 @@ const scrollTriggerStore = useScrollTriggerStore();
 const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageSrcLoaded } = storeToRefs(pageTransitionStore);
+const { downloadPercent } = storeToRefs(pageTransitionStore);
 
-const videoPlayerRef = ref<HTMLVideoElement | null>(null);
-const videoSrc = usePublicAsset("/videos/archives/2.mp4");
+const videoSrc = ref("");
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -33,19 +32,37 @@ const init = () => {
     ease: "none",
   });
 };
+const setupVideoSrc = async () => {
+  const targetVideo = usePublicAsset("/videos/archives/2.mp4");
 
-const handleVideoLoad = () => {
-  if (isPageSrcLoaded.value) return;
+  try {
+    const response = await fetch(targetVideo);
+    const reader = response.body?.getReader();
+    const contentLength = +(response.headers.get("Content-Length") ?? "0");
 
-  isPageSrcLoaded.value = true;
+    let receivedLength = 0;
+    let chunks = [];
+
+    while (true) {
+      const { done, value }: any = await reader?.read();
+      if (done) break;
+
+      chunks.push(value);
+      receivedLength += value.length;
+
+      downloadPercent.value = Math.round((receivedLength / contentLength) * 100);
+    }
+
+    const blob = new Blob(chunks);
+    videoSrc.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error("데이터 로드 중 오류:", error);
+  }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await setupVideoSrc();
   nextTick(init);
-
-  if (videoPlayerRef.value && videoPlayerRef.value.readyState >= 3) {
-    handleVideoLoad();
-  }
 });
 </script>
 
@@ -53,7 +70,6 @@ onMounted(() => {
   <div class="video-scroller">
     <div class="video-wrapper">
       <video
-        ref="videoPlayerRef"
         playsinline
         muted
         autoplay
@@ -61,7 +77,6 @@ onMounted(() => {
         controlslist="nodownload noplaybackrate"
         disablepictureinpicture
         :src="videoSrc"
-        @canplaythrough="handleVideoLoad"
       ></video>
     </div>
   </div>
