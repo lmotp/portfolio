@@ -19,7 +19,7 @@ const init = () => {
     } else {
       downloadPercent.value += increment;
     }
-  }, 200);
+  }, 25);
 };
 
 onMounted(() => {
