@@ -19,6 +19,7 @@ import customNormalVertex from "@/shaders/processing/moebius/customNormalVertex.
 import groundNormalVertex from "@/shaders/processing/moebius/groundNormalVertex.glsl";
 
 const MoebiusRef = ref<HTMLCanvasElement | null>(null);
+const rafId = ref<number | null>(null);
 const lightPosition = new THREE.Vector3(-50, 50, 15);
 
 let renderer: THREE.WebGLRenderer;
@@ -38,6 +39,7 @@ let groundNormalMaterial: THREE.ShaderMaterial;
 let modelGroup: THREE.Group;
 
 let composer: EffectComposer;
+let dracoLoader: DRACOLoader;
 
 const clock = new THREE.Clock();
 // const gui = new dat.GUI();
@@ -227,7 +229,7 @@ const setupGround = () => {
 
         // https://upload.wikimedia.org/wikipedia/commons/d/d2/Right_hand_rule_cross_product.svg
         vec3 displacedNormal = normalize(cross(displacedTangent, displacedBitangent));
-        vNormal = displacedNormal;`
+        vNormal = displacedNormal;`,
     );
 
     groundMaterial.userData.shader = shader;
@@ -254,7 +256,7 @@ const setupModel = async () => {
 
   modelGroup = new THREE.Group();
 
-  const dracoLoader = new DRACOLoader();
+  dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
 
   const loader = new GLTFLoader();
@@ -327,7 +329,7 @@ const setupPass = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   renderer.setRenderTarget(depthRenderTarget);
   renderer.render(scene, camera);
@@ -370,6 +372,25 @@ const animate = () => {
 
 onMounted(() => {
   init();
+});
+
+onUnmounted(() => {
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+
+  const targets = [depthRenderTarget, normalRenderTarget];
+  targets.forEach((t) => {
+    if (t) {
+      t.texture.dispose();
+      t.dispose();
+    }
+  });
+  if (depthTexture) depthTexture.dispose();
+  if (composer) composer.dispose();
+
+  renderer.shadowMap.enabled = false;
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

@@ -10,6 +10,7 @@ import pencilFragment from "@/shaders/processing/pencilFragment.glsl";
 import pencilVertex from "@/shaders/processing/pencilVertex.glsl";
 
 const processingRef = ref<HTMLCanvasElement | null>(null);
+const rafId = ref<number | null>(null);
 
 let renderer: THREE.WebGLRenderer;
 
@@ -61,7 +62,7 @@ const setupMesh = () => {
 
   const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 10),
-    new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+    new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide }),
   );
   plane.receiveShadow = true;
   plane.rotation.x = -Math.PI / 2;
@@ -105,7 +106,7 @@ const setupPass = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   controls.update();
 
@@ -125,6 +126,19 @@ const animate = () => {
 
 onMounted(() => {
   nextTick(init);
+});
+
+onUnmounted(() => {
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  if (composer) composer.dispose();
+  if (normalBuffer) {
+    normalBuffer.texture.dispose();
+    normalBuffer.dispose();
+  }
+
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

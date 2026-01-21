@@ -71,6 +71,7 @@ const tileSize = ref({
 
 const container = ref<HTMLElement | null>(null);
 const observer = ref<IntersectionObserver | null>(null);
+const rafId = ref<number | null>(null);
 const items = ref<any[]>([]);
 const isDragging = ref(false);
 const scroll = ref({
@@ -130,13 +131,6 @@ const onResize = () => {
 
         const caption = document.createElement("small");
         caption.innerHTML = base.caption;
-
-        const split = new SplitText(caption, { type: "lines", mask: "lines", linesClass: "line" });
-
-        split.lines.forEach((line: any, i: number) => {
-          if (line) line.style.transitionDelay = `${i * 0.15}s`;
-          if (line.parentElement) line.parentElement.style.transitionDelay = `${i * 0.15}s`;
-        });
 
         wrapper.appendChild(caption);
         container.value?.appendChild(el);
@@ -244,7 +238,7 @@ const render = () => {
   scroll.value.last.x = scroll.value.current.x;
   scroll.value.last.y = scroll.value.current.y;
 
-  requestAnimationFrame(render);
+  rafId.value = requestAnimationFrame(render);
 };
 
 const initIntro = () => {
@@ -301,6 +295,8 @@ onUnmounted(() => {
   container.value?.removeEventListener("mousedown", onMouseDown);
   window.removeEventListener("mouseup", onMouseUp);
   observer.value?.disconnect();
+
+  if (rafId.value) cancelAnimationFrame(rafId.value);
 });
 </script>
 

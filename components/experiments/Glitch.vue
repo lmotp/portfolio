@@ -11,6 +11,7 @@ import usePublicAsset from "~/composables/usePublicAsset";
 
 const glitchRef = ref<HTMLElement | null>(null);
 const resolution = ref(new THREE.Vector2(document.body.clientWidth, window.innerHeight));
+const rafId = ref<number | null>(null);
 
 const clock = new THREE.Clock();
 let renderer: THREE.WebGLRenderer;
@@ -25,6 +26,7 @@ let cameraBack: THREE.PerspectiveCamera;
 let geometry: THREE.PlaneGeometry;
 let material: THREE.ShaderMaterial;
 let mesh: THREE.Mesh;
+let mainTexture: THREE.Texture;
 
 let effectGeometry: THREE.PlaneGeometry;
 let effectMaterial: THREE.ShaderMaterial;
@@ -49,6 +51,7 @@ const init = () => {
 
   const textureLoader = new THREE.TextureLoader();
   textureLoader.load(usePublicAsset("/images/experiments/glitch/osaka.jpg"), (tex) => {
+    mainTexture = tex;
     tex.magFilter = THREE.NearestFilter;
     tex.minFilter = THREE.NearestFilter;
 
@@ -103,10 +106,11 @@ const resizeWindow = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   const time = clock.getDelta();
-  effectMaterial.uniforms.time.value += time;
+
+  if (effectMaterial) effectMaterial.uniforms.time.value += time;
 
   renderer.render(scene, camera);
   renderer.setRenderTarget(renderTarget);
@@ -125,6 +129,16 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("resize", resizeWindow);
+
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  if (sceneBack) useDisposeScene(sceneBack);
+
+  if (renderTarget) renderTarget.dispose();
+  if (mainTexture) mainTexture.dispose();
+
+  renderer.renderLists.dispose();
+  renderer?.dispose();
 });
 </script>
 

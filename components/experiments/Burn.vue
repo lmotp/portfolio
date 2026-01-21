@@ -13,6 +13,7 @@ import ImagePointsFrag from "./shaders/burn/ImagePointsFrag.glsl";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const burnRef = ref<HTMLElement | null>(null);
+const rafId = ref<number | null>(null);
 const timeTransition = ref(0);
 const resolution = ref(new THREE.Vector2());
 const imgIndexPrev = ref(0);
@@ -36,6 +37,7 @@ let imagePointsMaterial: THREE.ShaderMaterial;
 let imagePoints: THREE.Points;
 
 let clock = new THREE.Clock();
+let noiseTex: Ref<THREE.Texture | null> = ref(null);
 let imgTexes: Ref<THREE.Texture[]> = ref([]);
 let imageGroup: THREE.Group = new THREE.Group();
 
@@ -63,15 +65,15 @@ const init = async () => {
     textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/image02.jpg")),
     textureLoader.loadAsync(usePublicAsset("/images/experiments/burn/image03.jpg")),
   ]).then((response) => {
-    const noiseTex = response[0];
+    noiseTex.value = response[0];
     imgTexes.value = response.slice(1);
 
-    noiseTex.wrapS = THREE.RepeatWrapping;
-    noiseTex.wrapT = THREE.RepeatWrapping;
+    noiseTex.value.wrapS = THREE.RepeatWrapping;
+    noiseTex.value.wrapT = THREE.RepeatWrapping;
 
-    imagePlane = setImagePlane(noiseTex);
-    imagePoints = setImagePoints(noiseTex);
-    imageFire = setImageFire(noiseTex);
+    imagePlane = setImagePlane(noiseTex.value);
+    imagePoints = setImagePoints(noiseTex.value);
+    imageFire = setImageFire(noiseTex.value);
 
     imageFire.renderOrder = 10;
     imagePoints.position.z = 5;
@@ -171,12 +173,12 @@ const resizeWindow = () => {
 
   margin.set(
     resolution.value.x > resolution.value.y ? resolution.value.y * 0.2 : resolution.value.x * 0.1,
-    resolution.value.x > resolution.value.y ? resolution.value.y * 0.2 : resolution.value.y * 0.333
+    resolution.value.x > resolution.value.y ? resolution.value.y * 0.2 : resolution.value.y * 0.333,
   );
   size.set(
     (width * (resolution.value.x - margin.x)) / resolution.value.x,
     (height * (resolution.value.y - margin.y)) / resolution.value.y,
-    1
+    1,
   );
 
   const imageRatio = new THREE.Vector2(Math.min(1, size.x / size.y), Math.min(1, size.y / size.x));
@@ -191,7 +193,7 @@ const resizeWindow = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
   let time = clock.getDelta();
   timeTransition.value += time;
 
@@ -229,6 +231,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("resize", resizeWindow);
+
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  if (noiseTex.value) noiseTex.value.dispose();
+  imgTexes.value.forEach((tex) => tex.dispose());
+
+  renderer.renderLists.dispose();
+  renderer?.dispose();
 });
 </script>
 

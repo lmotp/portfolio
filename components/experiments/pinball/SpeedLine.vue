@@ -9,12 +9,16 @@ import { useSpeedStore } from "@/stores/speed";
 const speedStore = useSpeedStore();
 
 const container = ref<HTMLDivElement | null>(null);
+const rafId = ref<number | null>(null);
 const LINE_COUNT = 100;
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let dummy: THREE.Object3D;
+
+let material: THREE.MeshBasicMaterial;
+let geometry: THREE.BufferGeometry;
 let lines: any[] = [];
 let instancedMesh: THREE.InstancedMesh;
 
@@ -27,19 +31,15 @@ const init = () => {
   container.value?.appendChild(renderer.domElement);
   camera.position.z = 20;
 
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+  window.addEventListener("resize", resizeWindow);
 
   const vertices = new Float32Array([-0.5, 0, 0, 0.5, 0, 0, 0, 0.9, 0]);
-  const material = new THREE.MeshBasicMaterial({
+  material = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true,
     opacity: 0.65,
   });
-  const geometry = new THREE.BufferGeometry();
+  geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
   geometry.translate(0, 0.5, 0);
 
@@ -80,7 +80,7 @@ const init = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   for (let i = 0; i < LINE_COUNT; i++) {
     const line = lines[i];
@@ -107,13 +107,23 @@ const animate = () => {
   renderer.render(scene, camera);
 };
 
+const resizeWindow = () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+};
+
 onMounted(() => {
   init();
   animate();
 });
 
 onUnmounted(() => {
-  renderer.dispose();
+  window.removeEventListener("resize", resizeWindow);
+
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  renderer?.dispose();
 });
 </script>
 

@@ -11,6 +11,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import usePublicAsset from "~/composables/usePublicAsset";
 
 const pixelRef = ref<HTMLCanvasElement | null>(null);
+const rafId = ref<number | null>(null);
 const clock = new THREE.Clock();
 // const gui = new dat.GUI();
 const params = {
@@ -22,6 +23,8 @@ let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
 
 let crystalMesh: THREE.Mesh;
+let texChecker: THREE.Texture;
+let texChecker2: THREE.Texture;
 
 let controls: OrbitControls;
 let composer: EffectComposer;
@@ -52,8 +55,8 @@ const init = () => {
 
 const setupMesh = () => {
   const loader = new THREE.TextureLoader();
-  const texChecker = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
-  const texChecker2 = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
+  texChecker = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
+  texChecker2 = pixelTexture(loader.load(usePublicAsset("/images/experiments/processing/checker.png")));
   texChecker.repeat.set(3, 3);
   texChecker2.repeat.set(1.5, 1.5);
 
@@ -74,7 +77,7 @@ const setupMesh = () => {
       emissive: 0x4f7e8b,
       shininess: 10,
       specular: 0xffffff,
-    })
+    }),
   );
   crystalMesh.receiveShadow = true;
   crystalMesh.castShadow = true;
@@ -153,7 +156,7 @@ function stopGoEased(x: number, downtime: number, period: number) {
 }
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   const t = clock.getElapsedTime();
 
@@ -165,6 +168,21 @@ const animate = () => {
 
 onMounted(() => {
   nextTick(init);
+});
+
+onUnmounted(() => {
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+
+  if (composer) {
+    composer.passes.forEach((pass) => {
+      if (pass.dispose) pass.dispose();
+    });
+    composer.dispose();
+  }
+
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

@@ -15,6 +15,7 @@ import painterlyFragment from "@/shaders/processing/painterlyFragment.glsl";
 import painterlyVertex from "@/shaders/processing/painterlyVertex.glsl";
 
 const painterlyRef = ref<HTMLCanvasElement | null>(null);
+const rafId = ref<number | null>(null);
 
 let dpi = Math.min(window.devicePixelRatio, 2);
 let width = window.innerWidth;
@@ -107,7 +108,7 @@ const setupLight = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   controls.update();
 
@@ -116,6 +117,15 @@ const animate = () => {
 
 onMounted(() => {
   nextTick(init);
+});
+
+onUnmounted(() => {
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  if (composer) composer.dispose();
+
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

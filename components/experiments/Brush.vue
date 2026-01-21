@@ -5,6 +5,7 @@ import vertexShader from "@/shaders/brush/vertex.glsl";
 import fragmentShader from "@/shaders/brush/fragment.glsl";
 
 const brushRef = ref<HTMLElement | null>(null);
+const rafId = ref<number | null>(null);
 const mouse = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 const canvasWidth = window.innerWidth;
@@ -107,32 +108,31 @@ const mouseEvents = () => {
   material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
   mesh = new THREE.Mesh(geometry, material);
 
-  // mouseGeometry = new THREE.PlaneGeometry(0.5, 0.5, 20, 20);
   mouseGeometry = new THREE.SphereGeometry(0.2, 20, 20);
   mouseMaterial = new THREE.MeshBasicMaterial({
     color: 0xffffff,
-    // transparent: true,
-    // map: new THREE.TextureLoader().load(usePublicAsset("/images/experiments/brush/ball.png")),
   });
   mouseMesh = new THREE.Mesh(mouseGeometry, mouseMaterial);
   scene.add(mouseMesh);
 
-  window.addEventListener("mousemove", (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  window.addEventListener("mousemove", setupMouseMove);
+};
 
-    raycaster.setFromCamera(mouse, camera);
+const setupMouseMove = (event: MouseEvent) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    const intersects = raycaster.intersectObject(mesh);
+  raycaster.setFromCamera(mouse, camera);
 
-    if (intersects.length > 0) {
-      mouseMesh.position.copy(intersects[0].point);
-    }
-  });
+  const intersects = raycaster.intersectObject(mesh);
+
+  if (intersects.length > 0) {
+    mouseMesh.position.copy(intersects[0].point);
+  }
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   time += 0.05;
 
@@ -156,6 +156,26 @@ const animate = () => {
 
 onMounted(() => {
   init();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("mousemove", setupMouseMove);
+
+  const scenes = [scene, whiteScene, fboScene, finalScene];
+  scenes.forEach((s) => {
+    if (s) useDisposeScene(s);
+  });
+
+  const targets = [whiteTarget, sourceTarget, targetA, targetB];
+  targets.forEach((t) => {
+    if (t) {
+      t.texture.dispose();
+      t.dispose();
+    }
+  });
+
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

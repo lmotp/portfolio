@@ -13,6 +13,7 @@ import dotFragment from "@/shaders/processing/dotFragment.glsl";
 import dotVertex from "@/shaders/processing/dotVertex.glsl";
 
 const dotRef = ref<HTMLCanvasElement | null>(null);
+const rafId = ref<number | null>(null);
 
 let renderer: THREE.WebGLRenderer;
 let scene: THREE.Scene;
@@ -92,13 +93,22 @@ const setupPass = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   composer.render();
 };
 
 onMounted(() => {
   nextTick(init);
+});
+
+onUnmounted(() => {
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+
+  composer.dispose();
+  renderer.renderLists.dispose();
+  renderer.dispose();
 });
 </script>
 

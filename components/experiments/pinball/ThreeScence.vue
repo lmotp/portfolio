@@ -3,21 +3,16 @@ import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { DotScreenPass } from "three/examples/jsm/Addons.js";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
-
-import * as dat from "lil-gui";
 
 import vertexShader from "./shaders/plane/vertexShader.glsl";
 import fragmentShader from "./shaders/plane/fragmentShader.glsl";
-
-// const gui = new dat.GUI();
-// const guiInfo = { value: 0.85 };
 
 const clock = new THREE.Clock();
 
 const props = defineProps<{ scrollPercentage: number; initPhysicsObj: InitPhysicsObj | null }>();
 const container = ref<HTMLElement | null>(null);
+const rafId = ref<number | null>(null);
 
 let scene: THREE.Scene;
 let camera: THREE.OrthographicCamera;
@@ -84,8 +79,6 @@ const init = () => {
     effectComposer.addPass(smaaPass);
   }
 
-  // gui.add(guiInfo, "value").min(0.5).max(1).step(0.01);
-
   // Animation
   animate();
 
@@ -94,7 +87,7 @@ const init = () => {
 };
 
 const animate = () => {
-  requestAnimationFrame(animate);
+  rafId.value = requestAnimationFrame(animate);
 
   // Update uniforms
   planeMaterial.uniforms.uTime.value = clock.getElapsedTime();
@@ -133,7 +126,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -142,6 +135,11 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("resize", handleWindowResize);
+
+  if (rafId.value) cancelAnimationFrame(rafId.value);
+  if (scene) useDisposeScene(scene);
+  effectComposer.dispose();
+  renderer?.dispose();
 });
 </script>
 
