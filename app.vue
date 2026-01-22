@@ -62,7 +62,7 @@ watch(
       ScrollTrigger.refresh();
     }, 100);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -82,8 +82,6 @@ onUnmounted(() => {
 
   <NuxtLayout>
     <PageTransition v-show="isPageTransition" />
-    <Cursor />
-
     <NuxtPage />
   </NuxtLayout>
 </template>

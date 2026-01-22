@@ -10,6 +10,7 @@ const { downloadPercent } = storeToRefs(pageTransitionStore);
 <template>
   <main :class="[downloadPercent > 0 && 'loading']">
     <Side />
+    <Cursor />
     <slot />
   </main>
 </template>

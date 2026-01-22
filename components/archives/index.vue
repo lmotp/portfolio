@@ -193,10 +193,10 @@ onUnmounted(() => {
       </div>
     </article>
 
-    <article ref="bottomRef" class="bottom-section" :data-detail="true">
-      <ArrowButton class="arrow-button" text="NEXT" @onClick="handleClickNextWrok" />
+    <article ref="bottomRef" class="bottom-section">
+      <ArrowButton class="arrow-button"  text="NEXT" @onClick="handleClickNextWrok" />
 
-      <div role="button" class="bottom-picture-wrap" @click="handleClickNextWrok">
+      <div role="button" :data-detail="true" class="bottom-picture-wrap" @click="handleClickNextWrok">
         <div class="picture-bg"></div>
         <img class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
         <h3>{{ nextTitle }}</h3>

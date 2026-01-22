@@ -6,13 +6,13 @@ export const archivesData = [
     stack: ["Nuxt", "Storybook", "SCSS", "Chart"],
     data: [
       {
-        desc: `디자인 시스템 구축 및 Storybook 기반 협업 프로세스 도입`,
+        desc: `모니모 원앱 표준 디자인 시스템(MDS) UI 컴포넌트 라이브러리 고도화 및 신규 설계\nStorybook 도입을 통한 UI 컴포넌트 문서화 및 원활한 디자인-개발 협업 환경 구축\n공통 컴포넌트 기반의 페이지 리뉴얼 퍼블리싱 및 확장 가능한 UI 구조 설계\nNuxt3 프레임워크 전환에 따른 Composition API 기반 코드 리팩토링 및 마이그레이션`,
         date: `2023.07.10 ~ 2024.04.10`,
         link: "",
         content: [],
       },
       {
-        desc: `Nuxt 3 기반 프레임워크 전환 및 핵심 메인(자산/혜택 등) 퍼블리싱\n데이터 시각화를 위한 고난도 차트 UI 구현 및 QA 대응`,
+        desc: `차트 컴포넌트 모듈화 및 데이터 바인딩 구조 개선\n전사 공통 UI 라이브러리(MDS) 고도화 및 신규 컴포넌트 설계\n메인 페이지 (혜택, 더보기, 자산) 간편모드 및 페이지 작업\n모니모 주니어 서비스 Nuxt3 전환 및 프레임워크 최적화\n약관 통합 관리 컴포넌트 설계 및 법적 필수 고지 사항 UI 구현\n크로스 브라우징 및 기기별 UI 최적화를 통한 결함 대응(QA)`,
         date: `2024.10.13 ~ 2025.06.15`,
         link: "https://www.monimo.com",
         content: [
@@ -67,7 +67,7 @@ export const archivesData = [
     stack: ["Nuxt", "SCSS", "Express"],
     data: [
       {
-        desc: `Nuxt 3 기반 프레임워크 전환 및 홈페이지 리뉴얼 퍼블리싱`,
+        desc: `리즌디자인 홈페이지 디자인 리뉴얼\nNuxt3 마이그레이션 및 반응형, 최적화 작업\n아티클 / 프로젝트 상세 페이지 작업\n리뉴얼 전 프로젝트 연결`,
         date: `2024.04.10 ~ 2024.08.10`,
         link: "https://thelisn.com/",
         content: [
