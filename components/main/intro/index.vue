@@ -303,7 +303,7 @@ onUnmounted(() => {
       <div v-show="!isShowMask" class="intro-bg"></div>
       <div class="intro-trigger"></div>
 
-      <div v-show="!isShowMask" class="intro-sticky">
+      <div :class="['intro-sticky', !isShowMask && 'is-show']" :aria-hidden="isShowMask">
         <h3 v-if="!isMobile" ref="introMainRef" class="intro-main-icon title">
           <p class="line line-1">
             <span class="left">상상을</span>
@@ -381,8 +381,11 @@ onUnmounted(() => {
           <Logo5 class="intro-icon icon-5" />
         </div>
       </div>
-
-      <div v-show="isShowMask" class="intro-mask" :style="{ '--mask-index': maskIndex }">
+      <div
+        :class="['intro-mask', isShowMask && 'is-show']"
+        :style="{ '--mask-index': maskIndex }"
+        :aria-hidden="!isShowMask"
+      >
         <h3 v-if="!isMobile" class="mask-wrap">
           <p class="mask-line mask-line-1">
             <span>상상을</span>
@@ -599,6 +602,12 @@ onUnmounted(() => {
       text-align: center;
       overflow: hidden;
 
+      opacity: 0;
+
+      &.is-show {
+        opacity: 1;
+      }
+
       .intro-main-icon {
         position: relative;
         pointer-events: none;
@@ -699,6 +708,13 @@ onUnmounted(() => {
     mask-position: calc(100% / (var(--mask-count, 1) - 1) * var(--mask-index, 0)) center;
     mask-size: calc(100vw * var(--mask-count, 8)) 100%;
     mask-repeat: no-repeat;
+
+    opacity: 0;
+
+    &.is-show {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     .mask-wrap {
       position: relative;
