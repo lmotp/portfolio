@@ -38,8 +38,8 @@ const icons = computed(() => {
 
 const init = () => {
   if (titleWrapRef.value) pictureWrapHeight.value = window.innerHeight - titleWrapRef.value.offsetHeight;
-  isInit.value = true;
 
+  setupGsapAnimation();
   setupTextObserver();
   checkImagesLoaded();
 };
@@ -107,12 +107,15 @@ const checkImagesLoaded = () => {
   });
 
   Promise.all(promises).then(() => {
-    lenisRef.value?.start();
     lenisRef.value?.resize();
     lenisRef.value?.scrollTo(0, { immediate: true });
     scrollTrigger.value?.refresh();
 
     finish();
+
+    setTimeout(() => {
+      lenisRef.value?.start();
+    }, 1000);
   });
 };
 
@@ -142,9 +145,7 @@ const handleClickNextWrok = () => {
 watch(
   downloadPercent,
   (val) => {
-    if (val === 100) {
-      setupGsapAnimation();
-    }
+    if (val === 100) isInit.value = true;
   },
   { immediate: true },
 );
