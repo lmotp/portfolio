@@ -9,7 +9,7 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, isLoading, path } = storeToRefs(pageTransitionStore);
+const { isPageTransition, isPopState, isLoading, path } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, scrollY, lenisRef } = storeToRefs(scrollTriggerStore);
@@ -20,8 +20,6 @@ const pathCookie = useCookie("path", {
 });
 const route = useRoute();
 const lenis = new Lenis();
-
-const isPopState = ref(false);
 
 const init = () => {
   lenis.on("scroll", () => {
@@ -36,9 +34,9 @@ const init = () => {
   lenisRef.value = lenis;
 };
 
-const handlePopState = () => {
-  isPopState.value = true;
-};
+// const handlePopState = () => {
+//   isPopState.value = true;
+// };
 
 watch(
   toRef(() => route.path),
@@ -53,8 +51,8 @@ watch(
       title: title,
     });
 
-    if (isPopState.value) path.value = url;
-    else isPopState.value = false;
+    // if (isPopState.value) path.value = url;
+    // else isPopState.value = false;
 
     pathCookie.value = url;
     setTimeout(() => {
@@ -68,10 +66,10 @@ watch(
 onMounted(() => {
   init();
 
-  window.addEventListener("popstate", handlePopState);
+  // window.addEventListener("popstate", handlePopState);
 });
 onUnmounted(() => {
-  window.removeEventListener("popstate", handlePopState);
+  // window.removeEventListener("popstate", handlePopState);
 });
 </script>
 

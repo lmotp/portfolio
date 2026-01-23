@@ -31,110 +31,77 @@ const { path } = storeToRefs(pageTransitionStore);
 
 const props = defineProps<cardType>();
 const emits = defineEmits(["onClickCard"]);
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const isInit = ref(false);
 const infoWrapperRef = ref<HTMLElement | null>(null);
 const imageWrapperRef = ref<HTMLElement | null>(null);
+const mm = shallowRef<gsap.MatchMedia | null>(null);
 
 const init = () => {
   const f = document.body.querySelector(`.layer-card-trigger:nth-child(${props.id})`) as HTMLElement;
+  mm.value = gsap.matchMedia();
+  mm.value.add(
+    {
+      // 중단점 설정
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
+    },
+    (context) => {
+      const { isMobile } = context.conditions as { isMobile: boolean };
 
-  scrollTrigger.value?.create({
-    trigger: f,
-    start: props.id === 0 ? "top bottom" : "top 55%",
-    end: "bottom top",
-    scrub: true,
-    onEnter: () => {
-      isInit.value = true;
-    },
-    onEnterBack: () => {
-      isInit.value = true;
-    },
-    onLeaveBack: () => {
-      isInit.value = false;
-    },
-    onLeave: () => {
-      isInit.value = false;
-    },
-  });
-  const r = gsap.timeline({
-    id: "outro-layer-card-right",
-    paused: !0,
-    scrollTrigger: {
-      trigger: f,
-      start: "top bottom",
-      end: "top top",
-      scrub: !0,
-    },
-  });
-  const l = gsap.timeline({
-    id: "outro-layer-card-left",
-    paused: !0,
-    scrollTrigger: {
-      trigger: f,
-      start: "top top+=1",
-      end: "bottom top",
-      scrub: !0,
-    },
-  });
+      scrollTrigger.value?.create({
+        trigger: f,
+        start: props.id === 0 ? "top bottom" : "top 55%",
+        end: "bottom top",
+        scrub: true,
+        onToggle: (self) => (isInit.value = self.isActive),
+      });
 
-  r.fromTo(
-    infoWrapperRef.value,
-    {
-      yPercent: 110,
-      xPercent: 15,
-      rotate: 15,
-      transformOrigin: "top left",
-    },
-    {
-      yPercent: 0,
-      xPercent: 0,
-      rotate: 0,
-      force3D: !0,
-      ease: "none",
-    },
-    0
-  );
+      const r = gsap.timeline({
+        scrollTrigger: {
+          trigger: f,
+          start: "top bottom",
+          end: "top top",
+          scrub: true,
+        },
+      });
 
-  r.fromTo(
-    imageWrapperRef.value,
-    {
-      yPercent: 130,
-      xPercent: 20,
-      rotate: 15,
-    },
-    {
-      yPercent: 0,
-      xPercent: 0,
-      rotate: 0,
-      force3D: !0,
-      ease: "none",
-    },
-    0.06
-  );
+      r.fromTo(
+        infoWrapperRef.value,
+        { yPercent: 110, xPercent: 15, rotate: 15, transformOrigin: "top left" },
+        { yPercent: 0, xPercent: 0, rotate: 0, force3D: true, ease: "none" },
+        0,
+      );
 
-  l.to(
-    infoWrapperRef.value,
-    {
-      yPercent: props.isLast ? 0 : isMobile.value ? 0 : -80,
-      xPercent: props.isLast ? 0 : isMobile.value ? 0 : -25,
-      rotate: props.isLast ? 0 : isMobile.value ? 0 : -7,
-      force3D: !0,
-      ease: "none",
-    },
-    0
-  );
+      r.fromTo(
+        imageWrapperRef.value,
+        { yPercent: 130, xPercent: 20, rotate: 15 },
+        { yPercent: 0, xPercent: 0, rotate: 0, force3D: true, ease: "none" },
+        0.06,
+      );
 
-  l.to(
-    imageWrapperRef.value,
-    {
-      yPercent: props.isLast ? 0 : isMobile.value ? 0 : -50,
-      xPercent: props.isLast ? 0 : isMobile.value ? 0 : -5,
-      rotate: props.isLast ? 0 : isMobile.value ? 0 : -5,
-      force3D: !0,
-      ease: "none",
+      const l = gsap.timeline({
+        scrollTrigger: {
+          trigger: f,
+          start: "top top+=1",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      // 모바일/데스크탑 수치 분기 처리
+      const moveProps =
+        isMobile || props.isLast
+          ? { yPercent: 0, xPercent: 0, rotate: 0 }
+          : { yPercent: -80, xPercent: -25, rotate: -7 };
+
+      const imgMoveProps =
+        isMobile || props.isLast
+          ? { yPercent: 0, xPercent: 0, rotate: 0 }
+          : { yPercent: -50, xPercent: -5, rotate: -5 };
+
+      l.to(infoWrapperRef.value, { ...moveProps, force3D: true, ease: "none" }, 0);
+      l.to(imageWrapperRef.value, { ...imgMoveProps, force3D: true, ease: "none" }, 0);
     },
-    0
   );
 };
 
@@ -145,6 +112,10 @@ const handleClickRouter = (menuPath: string) => {
 
 onMounted(() => {
   nextTick(init);
+});
+
+onUnmounted(() => {
+  if (mm.value) mm.value.revert();
 });
 </script>
 

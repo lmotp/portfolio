@@ -6,6 +6,7 @@ export const usePageTransitionStore = defineStore("pageTransition", {
     downloadPercent: 0,
     isPageTransition: false,
     isDisabled: false,
+    isPopState: false,
     path: useCookie("path", { default: () => "/", maxAge: 60 * 60 * 24 * 7 }).value,
   }),
   actions: {},

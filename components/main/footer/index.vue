@@ -9,9 +9,10 @@ import LineLogo from "../LineLogo.vue";
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const isMobile = useMediaQuery();
 const footerCreditsRef = ref<HTMLElement | null>(null);
 const footerGridRef = ref<HTMLElement | null>(null);
+const mm = shallowRef<gsap.MatchMedia | null>(null);
 const footerPaddingBottom = ref(0);
 const archives = computed(() => sideMenuData.Archives.childs.map((v) => ({ name: v.name, path: v.path })));
 const experiments = computed(() => sideMenuData.Experiments.childs.map((v) => ({ name: v.name, path: v.path })));
@@ -20,15 +21,9 @@ const skills = ["VUE", "NUXT", "GSAP", "CHARTJS", "THREEJS", "STORYBOOK"];
 const init = () => {
   if (!footerCreditsRef.value || !footerGridRef.value) return;
 
-  const OFFSET = 15;
-  const { height } = isMobile.value
-    ? footerGridRef.value.getBoundingClientRect()
-    : footerCreditsRef.value.getBoundingClientRect();
-  footerPaddingBottom.value = OFFSET + height;
-
-  if (!isMobile.value) {
+  mm.value = gsap.matchMedia();
+  mm.value.add("(min-width: 769px)", () => {
     const wrapperTl = gsap.timeline({
-      id: "footer-wrapper",
       scrollTrigger: {
         trigger: ".footer-wrapper",
         start: "top top",
@@ -37,17 +32,13 @@ const init = () => {
       },
     });
 
-    wrapperTl.to(
-      ".footer-wrapper",
-      {
-        xPercent: -7,
-        rotate: -6,
-        transformOrigin: "top left",
-        ease: "power1.inOut",
-      },
-      0
-    );
-  }
+    wrapperTl.to(".footer-wrapper", {
+      xPercent: -7,
+      rotate: -6,
+      transformOrigin: "top left",
+      ease: "power1.inOut",
+    });
+  });
 
   const scrollerTl = gsap.timeline({
     id: "footer-scroller",
@@ -58,8 +49,15 @@ const init = () => {
       scrub: true,
     },
   });
-
   scrollerTl.fromTo(".footer-sticky-inner", { yPercent: 15 }, { yPercent: 0 }, 0);
+};
+const calculatePadding = () => {
+  if (!footerGridRef.value || !footerCreditsRef.value) return;
+
+  const OFFSET = 15;
+  const height = isMobile.value ? footerGridRef.value.clientHeight : footerCreditsRef.value.clientHeight;
+
+  footerPaddingBottom.value = OFFSET + height;
 };
 
 const handleClickRouter = (menuPath: string) => {
@@ -69,8 +67,18 @@ const handleClickArrowButton = () => {
   window.open("https://github.com/lmotp?tab=repositories", "_blank");
 };
 
-onMounted(() => {
-  nextTick(init);
+watch(isMobile, async () => {
+  await nextTick();
+  calculatePadding();
+});
+
+onMounted(async () => {
+  await nextTick(init);
+  calculatePadding();
+});
+
+onUnmounted(() => {
+  if (mm.value) mm.value.revert();
 });
 </script>
 

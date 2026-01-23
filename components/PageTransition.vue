@@ -8,7 +8,7 @@ const router = useRouter();
 const route = useRoute();
 
 const pageTransitionStore = usePageTransitionStore();
-const { isPageTransition, path, isDisabled, downloadPercent } = storeToRefs(pageTransitionStore);
+const { isPageTransition, path, isPopState, isDisabled, downloadPercent } = storeToRefs(pageTransitionStore);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, lenisRef } = storeToRefs(scrollTriggerStore);
@@ -50,14 +50,16 @@ const revealPage = () => {
       onComplete: () => {
         downloadPercent.value = 0;
         isPageTransition.value = false;
-        lenisRef.value!.resize();
-        scrollTrigger.value!.refresh();
+        if (lenisRef.value) lenisRef.value.resize();
+        if (scrollTrigger.value) scrollTrigger.value.refresh();
       },
-    }
+    },
   );
 };
 
 watch(path, (url) => {
+  if (!url) return;
+
   if (isDisabled.value) {
     isDisabled.value = false;
     return router.push(url);

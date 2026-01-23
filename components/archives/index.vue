@@ -18,7 +18,8 @@ const { downloadPercent, isDisabled, path } = storeToRefs(pageTransitionStore);
 const { start, finish } = useLoadingIndicator();
 
 const isInit = ref(false);
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const isMobile = useMediaQuery();
+const iconSize = computed(() => (isMobile.value ? 30 : 40));
 
 const blurWrapRef = ref<HTMLDivElement | null>(null);
 const titleWrapRef = ref<HTMLDivElement | null>(null);
@@ -39,7 +40,6 @@ const init = () => {
   if (titleWrapRef.value) pictureWrapHeight.value = window.innerHeight - titleWrapRef.value.offsetHeight;
   isInit.value = true;
 
-  setupGsapAnimation();
   setupTextObserver();
   checkImagesLoaded();
 };
@@ -93,6 +93,7 @@ const checkImagesLoaded = () => {
       const onImageLoad = () => {
         loadedCount++;
         downloadPercent.value = Math.round((loadedCount / total) * 100);
+
         resolve();
       };
 
@@ -138,6 +139,16 @@ const handleClickNextWrok = () => {
   tl.to(textTrigger, { opacity: 0 }, 0);
 };
 
+watch(
+  downloadPercent,
+  (val) => {
+    if (val === 100) {
+      setupGsapAnimation();
+    }
+  },
+  { immediate: true },
+);
+
 onMounted(async () => {
   lenisRef.value!.stop();
 
@@ -174,7 +185,7 @@ onUnmounted(() => {
 
           <ul>
             <li v-for="(svg, id) of icons" :key="`stack-${id}`">
-              <Icon :name="svg.src" :size="isMobile ? 30 : 40" :class="['icon', svg.isActive && 'active']" />
+              <Icon :name="svg.src" :size="iconSize" :class="['icon', svg.isActive && 'active']" />
             </li>
           </ul>
         </div>
@@ -194,7 +205,7 @@ onUnmounted(() => {
     </article>
 
     <article ref="bottomRef" class="bottom-section">
-      <ArrowButton class="arrow-button"  text="NEXT" @onClick="handleClickNextWrok" />
+      <ArrowButton class="arrow-button" text="NEXT" @onClick="handleClickNextWrok" />
 
       <div role="button" :data-detail="true" class="bottom-picture-wrap" @click="handleClickNextWrok">
         <div class="picture-bg"></div>

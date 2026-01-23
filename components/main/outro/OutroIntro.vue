@@ -7,53 +7,58 @@ import { archivesData } from "~/utils/data";
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
 const linkData = computed(() => archivesData.map((v) => v.title));
+const mm = shallowRef<gsap.MatchMedia | null>(null);
 
 const init = () => {
-  const mainTl = gsap.timeline({
-    id: "outro-intro-main",
-    scrollTrigger: {
-      trigger: ".outro-intro",
-      start: "top bottom",
-      end: "top center",
-      scrub: true,
+  mm.value = gsap.matchMedia();
+  mm.value.add(
+    {
+      // 중단점 설정
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
     },
-  });
-  const subTl = gsap.timeline({
-    id: "outro-intro-sub",
-    scrollTrigger: {
-      trigger: ".outro-intro",
-      start: "top 35%",
-      end: "bottom top-=50%",
-      scrub: true,
-    },
-  });
+    (context) => {
+      const { isMobile } = context.conditions as { isMobile: boolean };
 
-  mainTl.fromTo(
-    ".outro-intro-wrapper",
-    {
-      xPercent: -10,
-      rotate: 8,
-      transformOrigin: "left",
-    },
-    {
-      xPercent: 0,
-      rotate: 0,
-    },
-    0
-  );
+      const mainTl = gsap.timeline({
+        id: "outro-intro-main",
+        scrollTrigger: {
+          trigger: ".outro-intro",
+          start: "top bottom",
+          end: "top center",
+          scrub: true,
+        },
+      });
+      mainTl.fromTo(
+        ".outro-intro-wrapper",
+        { xPercent: -10, rotate: 8, transformOrigin: "left" },
+        { xPercent: 0, rotate: 0 },
+        0,
+      );
 
-  subTl.to(
-    ".outro-intro",
-    {
-      xPercent: isMobile.value ? 0 : -10,
-      rotate: isMobile.value ? 0 : -4,
-      yPercent: isMobile.value ? 0 : 5,
-      transformOrigin: "right",
-      ease: "power1.out",
+      const subTl = gsap.timeline({
+        id: "outro-intro-sub",
+        scrollTrigger: {
+          trigger: ".outro-intro",
+          start: "top 35%",
+          end: "bottom top-=50%",
+          scrub: true,
+        },
+      });
+
+      subTl.to(
+        ".outro-intro",
+        {
+          xPercent: isMobile ? 0 : -10,
+          rotate: isMobile ? 0 : -4,
+          yPercent: isMobile ? 0 : 5,
+          transformOrigin: "right",
+          ease: "power1.out",
+        },
+        0,
+      );
     },
-    0
   );
 };
 
@@ -62,8 +67,13 @@ const handleClickRouter = (menuPath: string) => {
   transformPath === path.value ? null : (path.value = `/archives/${transformPath}`);
 };
 
-onMounted(() => {
-  nextTick(init);
+onMounted(async () => {
+  await nextTick();
+  init();
+});
+
+onUnmounted(() => {
+  if (mm.value) mm.value.revert();
 });
 </script>
 

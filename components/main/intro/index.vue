@@ -10,7 +10,7 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
-const isMobile = ref(window.innerWidth === 0 ? null : window.innerWidth <= 768);
+const isMobile = useMediaQuery();
 const heroIconsRef = ref<HTMLElement | null>(null);
 const introContainerRef = ref<HTMLElement | null>(null);
 const introMainRef = ref<HTMLElement | null>(null);
@@ -18,6 +18,7 @@ const introDumyRef = ref<HTMLElement | null>(null);
 
 const isShowMask = ref(false);
 const maskIndex = ref(0);
+const mm = shallowRef<gsap.MatchMedia | null>(null);
 
 const pageTransitionStore = usePageTransitionStore();
 const { isPageTransition } = storeToRefs(pageTransitionStore);
@@ -38,46 +39,59 @@ const heroInit = () => {
   gsap.set(".hero-text .title", { y: 50, opacity: 0 });
   gsap.set(".hero-text .desc", { y: 30, opacity: 0 });
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      id: "section-heading",
-      trigger: ".hero-trigger",
-      start: "top top",
-      end: "bottom top",
-      scrub: !0,
-      onEnter: () => {
-        introInit();
-      },
+  mm.value = gsap.matchMedia();
+  mm.value.add(
+    {
+      // 중단점 설정
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
     },
-    defaults: { overwrite: "auto" },
-  });
+    (context) => {
+      let { isDesktop, isMobile } = context.conditions as { isDesktop: boolean; isMobile: boolean };
 
-  tl.add("start");
-  tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          id: "section-heading",
+          trigger: ".hero-trigger",
+          start: "top top",
+          end: "bottom top",
+          scrub: !0,
+          onEnter: () => {
+            introInit();
+          },
+        },
+        defaults: { overwrite: "auto" },
+      });
 
-  if (isMobile.value) {
-    tl.to(".hero-text", { opacity: 0, y: 50 }, "start");
-    tl.to(heroIconsRef.value, { y: heroCenter, immediateRender: false }, "start");
-    tl.to(".hero-container .scale", { scale: 0.355555, duration: 1 }, "start+=0.5");
+      tl.add("start");
+      tl.set(heroIconsRef.value, { y: 0, immediateRender: false });
 
-    tl.add("icons", "start+=0.5");
-    tl.to(heroIcons[0], { y: "-174px" }, "icons");
-    tl.to(heroIcons[1], { y: "7px" }, "icons");
-    tl.to(heroIcons[2], { y: "7px" }, "icons");
-    tl.to(heroIcons[3], { y: "188px" }, "icons");
-    tl.to([heroIcons[0], heroIcons[2]], { x: "90px" }, "icons+=0.5");
-    tl.to([heroIcons[1], heroIcons[3]], { x: "-90px" }, "icons+=0.5");
-    tl.to(".hero-bg", { opacity: 0, duration: 1e-4 });
-  } else {
-    tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
-    tl.fromTo(heroIcons, { y: 0 }, { y: heroCenter, stagger: 0.1, immediateRender: false }, "start");
-    tl.add("out", "-=0.2");
-    tl.to(".hero-container .scale", { scale: 8.3 / 30 }, "out");
-    tl.to(".hero-bg", { opacity: 0, duration: 1e-4 }, "out+=0.3");
-  }
+      if (isDesktop) {
+        tl.to(".hero-text", { y: -50, opacity: 0 }, "start");
+        tl.fromTo(heroIcons, { y: 0 }, { y: heroCenter, stagger: 0.1, immediateRender: false }, "start");
+        tl.add("out", "-=0.2");
+        tl.to(".hero-container .scale", { scale: 8.3 / 30 }, "out");
+        tl.to(".hero-bg", { opacity: 0, duration: 1e-4 }, "out+=0.3");
+      }
+      if (isMobile) {
+        tl.to(".hero-text", { opacity: 0, y: 50 }, "start");
+        tl.to(heroIconsRef.value, { y: heroCenter, immediateRender: false }, "start");
+        tl.to(".hero-container .scale", { scale: 0.355555, duration: 1 }, "start+=0.5");
+
+        tl.add("icons", "start+=0.5");
+        tl.to(heroIcons[0], { y: "-174px" }, "icons");
+        tl.to(heroIcons[1], { y: "7px" }, "icons");
+        tl.to(heroIcons[2], { y: "7px" }, "icons");
+        tl.to(heroIcons[3], { y: "188px" }, "icons");
+        tl.to([heroIcons[0], heroIcons[2]], { x: "90px" }, "icons+=0.5");
+        tl.to([heroIcons[1], heroIcons[3]], { x: "-90px" }, "icons+=0.5");
+        tl.to(".hero-bg", { opacity: 0, duration: 1e-4 });
+      }
+    },
+  );
 };
 const introInit = () => {
-  if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value) return;
+  if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value || !mm.value) return;
 
   const lineTexts = [...introContainerRef.value.querySelectorAll(".line span")];
   const icons = [...introMainRef.value.querySelectorAll(".intro-icon")];
@@ -99,92 +113,104 @@ const introInit = () => {
     gsap.set(icon, { x, y });
   }
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      id: "section-intro",
-      trigger: ".intro-trigger",
-      start: "top top",
-      end: "bottom bottom",
-      scrub: !0,
-      onLeave: () => {
-        isShowMask.value = true;
-      },
-      onEnterBack: () => {
-        isShowMask.value = false;
-      },
+  mm.value.add(
+    {
+      isMobile: "(max-width: 767px)",
+      isDesktop: "(min-width: 768px)",
     },
-    defaults: {
-      overwrite: "auto",
-    },
-  });
+    (context) => {
+      let { isDesktop, isMobile } = context.conditions as { isDesktop: boolean; isMobile: boolean };
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          id: "section-intro",
+          trigger: ".intro-trigger",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: !0,
+          onLeave: () => {
+            isShowMask.value = true;
+          },
+          onEnterBack: () => {
+            isShowMask.value = false;
+          },
+        },
+        defaults: {
+          overwrite: "auto",
+        },
+      });
 
-  tl.add("start");
+      tl.add("start");
 
-  if (isMobile.value) {
-    tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
-    tl.add("lines");
+      if (isDesktop) {
+        tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
 
-    const m = 0.25;
+        tl.add("song", "start");
+        tl.to(".intro-icon.icon-1", { y: 0, duration: 0.3, ease: "power2.out" }, "song");
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const left = line.querySelector("span.left");
-      const right = line.querySelector("span.right");
-      const icon = line.querySelector(".intro-icon");
-      tl.add(`line-${i + 1}`, `lines+=${m * i}`);
-      if (left) tl.fromTo(left, { x: 50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
-      if (right) tl.fromTo(right, { x: -50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
-      if (icon) {
-        tl.to(icon, { x: 0, duration: 0.5 }, `line-${i + 1}`);
-        tl.to(icon, { y: 0, duration: 0.5, ease: "power2.out" }, `line-${i + 1}`);
+        tl.add("song2");
+        tl.to(".intro-icon.icon-1", { x: 0 }, "song2");
+        tl.fromTo(".line-1 span:last-child", { x: -50 }, { x: 0 }, "song2+=0.1");
+        tl.set(".line-1 span:last-child", { opacity: 1 }, "song2+=0.2");
+        tl.fromTo(".line-1 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.3");
+        tl.set(".line-1 span:first-child", { opacity: 1 }, "song2+=0.4");
+
+        tl.add("watch", "song2+=0.5");
+        tl.to(".intro-icon.icon-2", { y: 0, duration: 0.3 }, "song2");
+        tl.to(".intro-icon.icon-2", { x: 0 }, "watch");
+        tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "watch+=0.2");
+        tl.set(".line-2 span:first-child", { opacity: 1 }, "watch+=0.3");
+        tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "watch+=0.4");
+        tl.set(".line-2 span:last-child", { opacity: 1 }, "watch+=0.5");
+
+        tl.add("game", "watch+=0.5");
+        tl.to(".intro-icon.icon-3", { x: 0, duration: 0.5, ease: "power1.inOut" }, "game");
+        tl.fromTo(".line-3 span:first-child", { x: -50 }, { x: 0 }, "game+=0.2");
+        tl.set(".line-3 span:first-child", { opacity: 1 }, "game+=0.3");
+        tl.fromTo(".line-3 span:last-child", { x: 50 }, { x: 0 }, "game+=0.4");
+        tl.set(".line-3 span:last-child", { opacity: 1 }, "game+=0.5");
+
+        tl.add("shop", "game+=0.5");
+        tl.to(".intro-icon.icon-4", { y: 0, duration: 0.3 }, "game");
+        tl.to(".intro-icon.icon-4", { x: 0 }, "shop");
+        tl.fromTo(".line-4 span:last-child", { x: -50 }, { x: 0 }, "shop+=0.2");
+        tl.set(".line-4 span:last-child", { opacity: 1 }, "shop+=0.3");
+        tl.fromTo(".line-4 span:first-child", { x: 50 }, { x: 0 }, "shop+=0.4");
+        tl.set(".line-4 span:first-child", { opacity: 1 }, "shop+=0.5");
+
+        tl.add("cloth", "shop+=0.5");
+        tl.to(".intro-icon.icon-5", { y: 0, duration: 0.3 }, "shop");
+        tl.to(".intro-icon.icon-5", { x: 0 }, "cloth");
+        tl.fromTo(".line-5 span:last-child", { x: -50 }, { x: 0 }, "cloth+=0.2");
+        tl.set(".line-5 span:last-child", { opacity: 1 }, "cloth+=0.3");
+        tl.fromTo(".line-5 span:first-child", { x: 50 }, { x: 0 }, "cloth+=0.4");
+        tl.set(".line-5 span:first-child", { opacity: 1 }, "cloth+=0.5");
       }
-      tl.set([...line.querySelectorAll("span")], { opacity: 1 }, `${`line-${i + 1}`}+=0.2`);
-    }
-  } else {
-    tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
 
-    tl.add("song", "start");
-    tl.to(".intro-icon.icon-1", { y: 0, duration: 0.3, ease: "power2.out" }, "song");
+      if (isMobile) {
+        tl.to(".intro-container", { opacity: 1, duration: 1e-4 }, "start");
+        tl.add("lines");
 
-    tl.add("song2");
-    tl.to(".intro-icon.icon-1", { x: 0 }, "song2");
-    tl.fromTo(".line-1 span:last-child", { x: -50 }, { x: 0 }, "song2+=0.1");
-    tl.set(".line-1 span:last-child", { opacity: 1 }, "song2+=0.2");
-    tl.fromTo(".line-1 span:first-child", { x: -50 }, { x: 0 }, "song2+=0.3");
-    tl.set(".line-1 span:first-child", { opacity: 1 }, "song2+=0.4");
+        const m = 0.25;
 
-    tl.add("watch", "song2+=0.5");
-    tl.to(".intro-icon.icon-2", { y: 0, duration: 0.3 }, "song2");
-    tl.to(".intro-icon.icon-2", { x: 0 }, "watch");
-    tl.fromTo(".line-2 span:first-child", { x: -50 }, { x: 0 }, "watch+=0.2");
-    tl.set(".line-2 span:first-child", { opacity: 1 }, "watch+=0.3");
-    tl.fromTo(".line-2 span:last-child", { x: 50 }, { x: 0 }, "watch+=0.4");
-    tl.set(".line-2 span:last-child", { opacity: 1 }, "watch+=0.5");
-
-    tl.add("game", "watch+=0.5");
-    tl.to(".intro-icon.icon-3", { x: 0, duration: 0.5, ease: "power1.inOut" }, "game");
-    tl.fromTo(".line-3 span:first-child", { x: -50 }, { x: 0 }, "game+=0.2");
-    tl.set(".line-3 span:first-child", { opacity: 1 }, "game+=0.3");
-    tl.fromTo(".line-3 span:last-child", { x: 50 }, { x: 0 }, "game+=0.4");
-    tl.set(".line-3 span:last-child", { opacity: 1 }, "game+=0.5");
-
-    tl.add("shop", "game+=0.5");
-    tl.to(".intro-icon.icon-4", { y: 0, duration: 0.3 }, "game");
-    tl.to(".intro-icon.icon-4", { x: 0 }, "shop");
-    tl.fromTo(".line-4 span:last-child", { x: -50 }, { x: 0 }, "shop+=0.2");
-    tl.set(".line-4 span:last-child", { opacity: 1 }, "shop+=0.3");
-    tl.fromTo(".line-4 span:first-child", { x: 50 }, { x: 0 }, "shop+=0.4");
-    tl.set(".line-4 span:first-child", { opacity: 1 }, "shop+=0.5");
-
-    tl.add("cloth", "shop+=0.5");
-    tl.to(".intro-icon.icon-5", { y: 0, duration: 0.3 }, "shop");
-    tl.to(".intro-icon.icon-5", { x: 0 }, "cloth");
-    tl.fromTo(".line-5 span:last-child", { x: -50 }, { x: 0 }, "cloth+=0.2");
-    tl.set(".line-5 span:last-child", { opacity: 1 }, "cloth+=0.3");
-    tl.fromTo(".line-5 span:first-child", { x: 50 }, { x: 0 }, "cloth+=0.4");
-    tl.set(".line-5 span:first-child", { opacity: 1 }, "cloth+=0.5");
-  }
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const left = line.querySelector("span.left");
+          const right = line.querySelector("span.right");
+          const icon = line.querySelector(".intro-icon");
+          tl.add(`line-${i + 1}`, `lines+=${m * i}`);
+          if (left) tl.fromTo(left, { x: 50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
+          if (right) tl.fromTo(right, { x: -50 }, { x: 0, duration: 0.4 }, `${`line-${i + 1}`}+=0.1`);
+          if (icon) {
+            tl.to(icon, { x: 0, duration: 0.5 }, `line-${i + 1}`);
+            tl.to(icon, { y: 0, duration: 0.5, ease: "power2.out" }, `line-${i + 1}`);
+          }
+          tl.set([...line.querySelectorAll("span")], { opacity: 1 }, `${`line-${i + 1}`}+=0.2`);
+        }
+      }
+    },
+  );
 };
+
 const maskInit = () => {
   scrollTrigger.value?.create({
     trigger: ".intro-mask",
@@ -193,10 +219,21 @@ const maskInit = () => {
     scrub: !0,
     onUpdate: (self: any) => {
       const progress = self.progress;
-      maskIndex.value = Math.floor(progress * 10);
+      const nextIndex = Math.floor(progress * 10);
+      maskIndex.value = Math.min(nextIndex, 10);
 
-      if (maskIndex.value === 10) isIntroEnd.value = true;
-      else isIntroEnd.value = false;
+      if (maskIndex.value >= 10 || progress >= 0.99) {
+        isIntroEnd.value = true;
+      } else {
+        isIntroEnd.value = false;
+      }
+    },
+    onLeave: () => {
+      isIntroEnd.value = true;
+      maskIndex.value = 10;
+    },
+    onEnterBack: () => {
+      isIntroEnd.value = false;
     },
   });
 };
@@ -216,12 +253,18 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
+
   heroInit();
   maskInit();
+});
+
+onUnmounted(() => {
+  if (mm.value) mm.value.revert();
 });
 </script>
 
