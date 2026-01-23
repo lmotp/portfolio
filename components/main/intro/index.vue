@@ -133,6 +133,9 @@ const introInit = () => {
           onEnterBack: () => {
             isShowMask.value = false;
           },
+          onLeaveBack: () => {
+            isShowMask.value = false;
+          },
         },
         defaults: {
           overwrite: "auto",
