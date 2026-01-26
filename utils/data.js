@@ -195,11 +195,11 @@ export const experimentsData = [
     src: "/images/experiments/thumbnail/card.png",
   },
 
-  {
-    title: "Burn",
-    content: "WebGL / ThreeJS",
-    src: "/images/experiments/thumbnail/burn.png",
-  },
+  // {
+  //   title: "Burn",
+  //   content: "WebGL / ThreeJS",
+  //   src: "/images/experiments/thumbnail/burn.png",
+  // },
   {
     title: "Glitch",
     content: "WebGL / ThreeJS",
@@ -275,10 +275,10 @@ export const sideMenuData = {
         name: "Card",
         path: "/experiments/card",
       },
-      {
-        name: "Burn",
-        path: "/experiments/burn",
-      },
+      // {
+      //   name: "Burn",
+      //   path: "/experiments/burn",
+      // },
       {
         name: "Glitch",
         path: "/experiments/glitch",
