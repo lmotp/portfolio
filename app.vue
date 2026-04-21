@@ -45,7 +45,7 @@ watch(
 
     if (url.includes("/archives")) title = `Archives | ${url.split("/").at(-1)?.toUpperCase()}`;
     else if (url.includes("/experiments")) title = `Experiments | ${url.split("/").at(-1)?.toUpperCase()}`;
-    else title = "CHEOLSOON | UI Publisher Portfolio";
+    else title = "CHEOLSOON | UI Portfolio";
 
     useHead({
       title: title,
