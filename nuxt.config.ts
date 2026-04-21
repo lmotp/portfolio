@@ -45,7 +45,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: "description",
-          content: "UI Publisher CHEOLSOON의 포트폴리오입니다. 반응형 웹 퍼블리싱과 깔끔한 UI 구현을 소개합니다.",
+          content: "Nuxt 3 / GSAP / Responsive Web / UI Publishing",
         },
         { property: "og:type", content: "website" },
         { property: "og:title", content: "CHEOLSOON | UI Portfolio" },
@@ -53,16 +53,16 @@ export default defineNuxtConfig({
           property: "og:description",
           content: "Nuxt 3 / GSAP / Responsive Web / UI Publishing",
         },
-        { property: "og:image", content: "https://lmotp.github.io/portfolio/og-image.png" },
+        { property: "og:image", content: "https://lmotp.github.io/portfolio/og_img.png" },
         { property: "og:url", content: "https://lmotp.github.io/portfolio/" },
         { property: "og:site_name", content: "CHEOLSOON Portfolio" },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: "CHEOLSOON | UI Publisher Portfolio" },
+        { name: "twitter:title", content: "CHEOLSOON | UI Portfolio" },
         {
           name: "twitter:description",
           content: "Nuxt 3 / GSAP / Responsive Web / UI Publishing",
         },
-        { name: "twitter:image", content: "https://lmotp.github.io/portfolio/og-image.png" },
+        { name: "twitter:image", content: "https://lmotp.github.io/portfolio/og_img.png" },
       ],
       link: [
         {
