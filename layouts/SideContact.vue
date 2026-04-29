@@ -101,9 +101,6 @@ const handleClickAbout = () => {
         margin-top: auto;
       }
 
-      min-height: 44px;
-      padding-block: 10px;
-
       span {
         font-size: 16px;
         color: var(--white);
@@ -147,7 +144,9 @@ const handleClickAbout = () => {
 
         &.copy-fade-enter-active,
         &.copy-fade-leave-active {
-          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+          transition:
+            transform 0.3s ease-in-out,
+            opacity 0.3s ease-in-out;
         }
 
         &.copy-fade-enter-from,

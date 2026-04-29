@@ -3,6 +3,10 @@
 Nuxt 3 기반의 개인 포트폴리오 사이트입니다.  
 GSAP, Lenis, Three.js, Matter.js 등을 활용해 스크롤 인터랙션, 애니메이션, 3D/물리 기반 실험 페이지를 담고 있습니다.
 
+## 미리보기
+
+![Portfolio Preview](public/og-image.png)
+
 ## 주요 특징
 
 - 포트폴리오 메인 랜딩 페이지
@@ -96,4 +100,3 @@ npm run deploy
 
 이 저장소는 GitHub Pages 배포를 염두에 두고 구성되어 있습니다.
 정적 배포 시 `generate` 결과물과 `deploy` 스크립트를 사용합니다.
-

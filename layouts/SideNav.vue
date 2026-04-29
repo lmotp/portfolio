@@ -127,15 +127,15 @@ const handleMenuClick = (menuPath: string) => {
         width: 100%;
         text-align: left;
         background-color: transparent;
-        min-height: 44px;
-        padding-block: 10px;
         transition: background-color 200ms cubic-bezier(0.19, 1, 0.22, 1);
 
         span {
           display: inline-block;
           color: var(--black);
           transform: none;
-          transition: color 200ms cubic-bezier(0.19, 1, 0.22, 1), transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
+          transition:
+            color 200ms cubic-bezier(0.19, 1, 0.22, 1),
+            transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         &:hover,
