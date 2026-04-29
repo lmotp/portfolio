@@ -68,6 +68,8 @@ const handleMenuClick = (menuPath: string) => {
       align-items: center;
       gap: 10px;
       width: 100%;
+      min-height: 44px;
+      padding-block: 10px;
 
       strong {
         font-size: 24px;
@@ -125,6 +127,8 @@ const handleMenuClick = (menuPath: string) => {
         width: 100%;
         text-align: left;
         background-color: transparent;
+        min-height: 44px;
+        padding-block: 10px;
         transition: background-color 200ms cubic-bezier(0.19, 1, 0.22, 1);
 
         span {

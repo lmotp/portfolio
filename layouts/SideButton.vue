@@ -1,12 +1,20 @@
 <script setup lang="ts">
 const props = defineProps<{ isClose: boolean }>();
 const emit = defineEmits(["toggle"]);
+const buttonRef = ref<HTMLButtonElement | null>(null);
 
 const toggleLabel = computed(() => (props.isClose ? "Close navigation menu" : "Open navigation menu"));
+
+const focusToggle = () => {
+  buttonRef.value?.focus();
+};
+
+defineExpose({ focusToggle });
 </script>
 
 <template>
   <button
+    ref="buttonRef"
     type="button"
     :class="['side-toggle', isClose && 'is-close']"
     :aria-label="toggleLabel"

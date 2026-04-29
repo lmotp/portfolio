@@ -11,6 +11,8 @@ const { isIntroEnd } = storeToRefs(scrollTriggerStore);
 const pageTransitionStore = usePageTransitionStore();
 const { downloadPercent } = storeToRefs(pageTransitionStore);
 
+const prefersReducedMotion = useReducedMotion();
+const posterSrc = usePublicAsset("/images/archives/2.png");
 const videoSrc = ref("");
 
 const init = () => {
@@ -61,6 +63,11 @@ const setupVideoSrc = async () => {
 };
 
 onMounted(async () => {
+  if (prefersReducedMotion.value) {
+    isIntroEnd.value = true;
+    return;
+  }
+
   await setupVideoSrc();
   nextTick(init);
 });
@@ -69,7 +76,9 @@ onMounted(async () => {
 <template>
   <div class="video-scroller">
     <div class="video-wrapper">
+      <img v-if="prefersReducedMotion" :src="posterSrc" alt="Archive preview still for the outro section" />
       <video
+        v-else
         playsinline
         muted
         autoplay
@@ -100,6 +109,12 @@ onMounted(async () => {
     overflow: hidden;
 
     video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    img {
       width: 100%;
       height: 100%;
       object-fit: cover;

@@ -3,6 +3,7 @@ import { archivesData } from "~/utils/data";
 
 const index = computed(() => archivesData.findIndex((v) => v.title === "Lisn"));
 const config = computed(() => archivesData[index.value]);
+const getAltText = (caption: string) => `${caption.replaceAll("_", " ")} 스크린샷`;
 const nextConfig = computed(() => {
   const nextIndex = archivesData.length - 1 === index.value ? 0 : index.value + 1;
   const { src, title } = archivesData[nextIndex];
@@ -18,7 +19,7 @@ const nextConfig = computed(() => {
         <article class="inner-1">
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[0].img)" :alt="config.data[0].content[0].caption" />
+              <img :src="usePublicAsset(config.data[0].content[0].img)" :alt="getAltText(config.data[0].content[0].caption)" />
               <figcaption>{{ config.data[0].content[0].caption }}</figcaption>
               <small>(01)</small>
             </figure>
@@ -28,7 +29,7 @@ const nextConfig = computed(() => {
         <article class="inner-2">
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[1].img)" :alt="config.data[0].content[1].caption" />
+              <img :src="usePublicAsset(config.data[0].content[1].img)" :alt="getAltText(config.data[0].content[1].caption)" />
               <figcaption>{{ config.data[0].content[1].caption }}</figcaption>
               <small>(02)</small>
             </figure>
@@ -36,7 +37,7 @@ const nextConfig = computed(() => {
 
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[2].img)" :alt="config.data[0].content[2].caption" />
+              <img :src="usePublicAsset(config.data[0].content[2].img)" :alt="getAltText(config.data[0].content[2].caption)" />
               <figcaption>{{ config.data[0].content[2].caption }}</figcaption>
               <small>(03)</small>
             </figure>
@@ -44,7 +45,7 @@ const nextConfig = computed(() => {
 
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[3].img)" :alt="config.data[0].content[3].caption" />
+              <img :src="usePublicAsset(config.data[0].content[3].img)" :alt="getAltText(config.data[0].content[3].caption)" />
               <figcaption>{{ config.data[0].content[3].caption }}</figcaption>
               <small>(04)</small>
             </figure>
@@ -52,7 +53,7 @@ const nextConfig = computed(() => {
 
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[4].img)" :alt="config.data[0].content[4].caption" />
+              <img :src="usePublicAsset(config.data[0].content[4].img)" :alt="getAltText(config.data[0].content[4].caption)" />
               <figcaption>{{ config.data[0].content[4].caption }}</figcaption>
               <small>(05)</small>
             </figure>
@@ -60,7 +61,7 @@ const nextConfig = computed(() => {
 
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[5].img)" :alt="config.data[0].content[5].caption" />
+              <img :src="usePublicAsset(config.data[0].content[5].img)" :alt="getAltText(config.data[0].content[5].caption)" />
               <figcaption>{{ config.data[0].content[5].caption }}</figcaption>
               <small>(06)</small>
             </figure>
@@ -68,7 +69,7 @@ const nextConfig = computed(() => {
 
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[0].content[6].img)" :alt="config.data[0].content[6].caption" />
+              <img :src="usePublicAsset(config.data[0].content[6].img)" :alt="getAltText(config.data[0].content[6].caption)" />
               <figcaption>{{ config.data[0].content[6].caption }}</figcaption>
               <small>(07)</small>
             </figure>
@@ -82,14 +83,14 @@ const nextConfig = computed(() => {
         <article class="inner-1">
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[1].content[0].img)" :alt="config.data[1].content[0].caption" />
+              <img :src="usePublicAsset(config.data[1].content[0].img)" :alt="getAltText(config.data[1].content[0].caption)" />
               <figcaption>{{ config.data[1].content[0].caption }}</figcaption>
               <small>(01)</small>
             </figure>
           </div>
           <div class="media-container">
             <figure class="media">
-              <img :src="usePublicAsset(config.data[1].content[1].img)" :alt="config.data[1].content[1].caption" />
+              <img :src="usePublicAsset(config.data[1].content[1].img)" :alt="getAltText(config.data[1].content[1].caption)" />
               <figcaption>{{ config.data[1].content[1].caption }}</figcaption>
               <small>(02)</small>
             </figure>

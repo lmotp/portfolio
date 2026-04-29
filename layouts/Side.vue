@@ -15,11 +15,70 @@ const prefersReducedMotion = useReducedMotion();
 const isClose = ref(false);
 const isAsideOpen = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
+const navRef = ref<HTMLElement | null>(null);
+const sideButtonRef = ref<{ focusToggle?: () => void } | null>(null);
+const lastFocusedElement = ref<HTMLElement | null>(null);
 
 const scrollTriggerStore = useScrollTriggerStore();
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 const { lenisRef } = storeToRefs(scrollTriggerStore);
+
+const focusableSelector = [
+  "button:not([disabled])",
+  '[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
+
+const getFocusableElements = () => {
+  if (!navRef.value) return [];
+
+  return [...navRef.value.querySelectorAll<HTMLElement>(focusableSelector)].filter((element) => {
+    return element.offsetParent !== null && !element.hasAttribute("aria-hidden");
+  });
+};
+
+const focusFirstDrawerItem = async () => {
+  await nextTick();
+
+  const focusables = getFocusableElements();
+  focusables[0]?.focus();
+};
+
+const restoreToggleFocus = async () => {
+  await nextTick();
+  if (lastFocusedElement.value && document.contains(lastFocusedElement.value)) {
+    lastFocusedElement.value.focus();
+    return;
+  }
+
+  sideButtonRef.value?.focusToggle?.();
+};
+
+const handleDrawerKeydown = (event: KeyboardEvent) => {
+  if (!isClose.value || event.key !== "Tab") return;
+
+  const focusables = getFocusableElements();
+  if (!focusables.length) return;
+
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const active = document.activeElement as HTMLElement | null;
+
+  if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+    return;
+  }
+
+  if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+};
 
 const handleToggleButton = () => {
   isClose.value = !isClose.value;
@@ -68,13 +127,24 @@ const handleCloseAside = () => {
 
 watch(isClose, (status) => {
   if (status) {
+    lastFocusedElement.value = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     audio.value?.play();
     lenisRef.value?.stop();
-  } else lenisRef.value?.start();
+    focusFirstDrawerItem();
+  } else {
+    lenisRef.value?.start();
+    restoreToggleFocus();
+    lastFocusedElement.value = null;
+  }
 });
 
 onMounted(() => {
   audio.value = new Audio(usePublicAsset("/sounds/drawer.mp3"));
+  window.addEventListener("keydown", handleDrawerKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleDrawerKeydown);
 });
 </script>
 
@@ -92,7 +162,7 @@ onMounted(() => {
   </header>
 
   <Transition :duration="prefersReducedMotion ? { enter: 0, leave: 0 } : { enter: 700, leave: 800 }">
-    <nav id="site-navigation" :class="['nav-wrap']" v-show="isClose">
+    <nav id="site-navigation" ref="navRef" :class="['nav-wrap']" v-show="isClose">
       <SideNav
         v-for="(menu, name, index) in sideMenuData"
         :key="index"

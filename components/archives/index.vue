@@ -331,7 +331,7 @@ onUnmounted(() => {
 
       time {
         font-size: 14px;
-        color: var(--dark-gray);
+        color: var(--meta-text);
         white-space: pre-wrap;
       }
 

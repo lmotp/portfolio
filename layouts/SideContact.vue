@@ -101,6 +101,9 @@ const handleClickAbout = () => {
         margin-top: auto;
       }
 
+      min-height: 44px;
+      padding-block: 10px;
+
       span {
         font-size: 16px;
         color: var(--white);

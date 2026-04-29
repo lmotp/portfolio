@@ -192,7 +192,7 @@ onMounted(async () => {
               line-height: 1;
             }
             span {
-              color: var(--dark-gray);
+              color: var(--meta-text);
               font-size: 14px;
             }
           }
