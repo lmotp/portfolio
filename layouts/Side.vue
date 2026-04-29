@@ -11,6 +11,7 @@ import SideContact from "./SideContact.vue";
 import SideNav from "./SideNav.vue";
 import SideCard from "./SideCard.vue";
 
+const prefersReducedMotion = useReducedMotion();
 const isClose = ref(false);
 const isAsideOpen = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
@@ -57,6 +58,14 @@ const handleContactClick = () => {
   isAsideOpen.value = true;
 };
 
+const handleCloseMenu = () => {
+  isClose.value = false;
+};
+
+const handleCloseAside = () => {
+  isAsideOpen.value = false;
+};
+
 watch(isClose, (status) => {
   if (status) {
     audio.value?.play();
@@ -71,17 +80,19 @@ onMounted(() => {
 
 <template>
   <header :class="['header-container']">
-    <div
+    <button
+      v-show="isClose"
+      type="button"
       :class="['overlay', isClose && 'is-close']"
-      :aria-hidden="!isClose"
-      @click.self="() => (isClose = false)"
-    ></div>
+      aria-label="Close navigation menu"
+      @click="handleCloseMenu"
+    ></button>
 
     <SideButton @toggle="handleToggleButton" :isClose="isClose" />
   </header>
 
-  <Transition :duration="{ enter: 700, leave: 800 }">
-    <nav :class="['nav-wrap']" v-show="isClose">
+  <Transition :duration="prefersReducedMotion ? { enter: 0, leave: 0 } : { enter: 700, leave: 800 }">
+    <nav id="site-navigation" :class="['nav-wrap']" v-show="isClose">
       <SideNav
         v-for="(menu, name, index) in sideMenuData"
         :key="index"
@@ -94,7 +105,7 @@ onMounted(() => {
   </Transition>
 
   <aside :class="['aside', isAsideOpen && 'is-open']">
-    <div @click="isAsideOpen = false" class="dim"></div>
+    <button type="button" class="dim" aria-label="Close contact card" @click="handleCloseAside"></button>
 
     <SideCard v-if="isAsideOpen" />
   </aside>
@@ -113,6 +124,8 @@ onMounted(() => {
     user-select: none;
 
     transition: opacity 0.3s ease-out;
+    border: 0;
+    padding: 0;
 
     &.is-close {
       opacity: 1;
@@ -197,15 +210,17 @@ onMounted(() => {
   z-index: 10000;
   pointer-events: none;
 
-  .dim {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-color: rgba(11, 13, 15, 0.305);
-    backdrop-filter: blur(10px);
-    opacity: 0;
-    transition: opacity 1s ease-out;
-  }
+    .dim {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-color: rgba(11, 13, 15, 0.305);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 1s ease-out;
+      border: 0;
+      padding: 0;
+    }
 
   &.is-open {
     pointer-events: auto;

@@ -1,10 +1,19 @@
 <script setup lang="ts">
 const props = defineProps<{ isClose: boolean }>();
 const emit = defineEmits(["toggle"]);
+
+const toggleLabel = computed(() => (props.isClose ? "Close navigation menu" : "Open navigation menu"));
 </script>
 
 <template>
-  <button :class="['side-toggle', isClose && 'is-close']" @click="emit('toggle')">
+  <button
+    type="button"
+    :class="['side-toggle', isClose && 'is-close']"
+    :aria-label="toggleLabel"
+    aria-controls="site-navigation"
+    :aria-expanded="isClose"
+    @click="emit('toggle')"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 45 25" aria-hidden="true" class="svg-menu close">
       <path d="M0 .5h45"></path>
       <path d="M0 12.5h45"></path>
@@ -150,6 +159,11 @@ const emit = defineEmits(["toggle"]);
 @media screen and (max-width: 768px) {
   .side-toggle {
     zoom: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 4px;
   }
 }
 </style>

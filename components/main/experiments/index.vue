@@ -4,12 +4,15 @@ import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 import { experimentsData } from "~/utils/data";
 
+const prefersReducedMotion = useReducedMotion();
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
 const linkData = computed(() => experimentsData.map((v) => v.title));
 
 const init = () => {
+  if (prefersReducedMotion.value) return;
+
   const mainTl = gsap.timeline({
     id: "main-experiments",
     scrollTrigger: {

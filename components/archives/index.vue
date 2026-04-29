@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import gsap from "gsap";
 
 import usePublicAsset from "~/composables/usePublicAsset";
+const prefersReducedMotion = useReducedMotion();
 
 const { config, nextConfig } = defineProps<{ config: configType; nextConfig: nextConfigType }>();
 const { id, title, src, stack, data } = config;
@@ -37,6 +38,8 @@ const icons = computed(() => {
 });
 
 const init = () => {
+  if (prefersReducedMotion.value) return;
+
   if (titleWrapRef.value) pictureWrapHeight.value = window.innerHeight - titleWrapRef.value.offsetHeight;
 
   setupGsapAnimation();
@@ -196,7 +199,13 @@ onUnmounted(() => {
         <div class="info-text">
           <time :datetime="info.date">{{ info.date }}</time>
           <p>{{ info.desc }}</p>
-          <NuxtLink :to="info.link" target="_blank" :aria-detail="!!info?.link" :class="[!info?.link && 'disabled']">
+          <NuxtLink
+            v-if="info.link"
+            :to="info.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="`View live project for ${title}`"
+          >
             View Live
           </NuxtLink>
         </div>
@@ -208,11 +217,17 @@ onUnmounted(() => {
     <article ref="bottomRef" class="bottom-section">
       <ArrowButton class="arrow-button" text="NEXT" @onClick="handleClickNextWrok" />
 
-      <div role="button" :data-detail="true" class="bottom-picture-wrap" @click="handleClickNextWrok">
+      <button
+        type="button"
+        :data-detail="true"
+        class="bottom-picture-wrap"
+        :aria-label="`Open next project: ${nextTitle}`"
+        @click="handleClickNextWrok"
+      >
         <div class="picture-bg"></div>
         <img class="picture" :src="usePublicAsset(nextSrc)" :alt="nextTitle" />
         <h3>{{ nextTitle }}</h3>
-      </div>
+      </button>
     </article>
   </div>
 </template>

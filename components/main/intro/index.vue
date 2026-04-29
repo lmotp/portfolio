@@ -10,6 +10,7 @@ import { useScrollTriggerStore } from "@/stores/scrollTrigger";
 import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 
+const prefersReducedMotion = useReducedMotion();
 const isMobile = useMediaQuery();
 const heroIconsRef = ref<HTMLElement | null>(null);
 const introContainerRef = ref<HTMLElement | null>(null);
@@ -27,6 +28,8 @@ const scrollTriggerStore = useScrollTriggerStore();
 const { scrollTrigger, isIntroEnd } = storeToRefs(scrollTriggerStore);
 
 const heroInit = () => {
+  if (prefersReducedMotion.value) return;
+
   if (!heroIconsRef.value) return;
 
   const heroIconsSize = heroIconsRef.value.getBoundingClientRect();
@@ -91,6 +94,8 @@ const heroInit = () => {
   );
 };
 const introInit = () => {
+  if (prefersReducedMotion.value) return;
+
   if (!introContainerRef.value || !introMainRef.value || !introDumyRef.value || !mm.value) return;
 
   const lineTexts = [...introContainerRef.value.querySelectorAll(".line span")];
@@ -215,6 +220,12 @@ const introInit = () => {
 };
 
 const maskInit = () => {
+  if (prefersReducedMotion.value) {
+    isIntroEnd.value = true;
+    maskIndex.value = 10;
+    return;
+  }
+
   scrollTrigger.value?.create({
     trigger: ".intro-mask",
     start: `top top`,
@@ -244,6 +255,7 @@ const maskInit = () => {
 watch(
   [isPageTransition, heroIconsRef],
   ([status, ref]) => {
+    if (prefersReducedMotion.value) return;
     if (!ref) return;
 
     if (!status) {

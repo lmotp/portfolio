@@ -4,6 +4,7 @@ import { usePageTransitionStore } from "@/stores/pageTransition";
 import { storeToRefs } from "pinia";
 import { archivesData } from "~/utils/data";
 
+const prefersReducedMotion = useReducedMotion();
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
@@ -11,6 +12,8 @@ const linkData = computed(() => archivesData.map((v) => v.title));
 const mm = shallowRef<gsap.MatchMedia | null>(null);
 
 const init = () => {
+  if (prefersReducedMotion.value) return;
+
   mm.value = gsap.matchMedia();
   mm.value.add(
     {

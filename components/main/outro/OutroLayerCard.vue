@@ -29,6 +29,7 @@ const { scrollTrigger } = storeToRefs(scrollTriggerStore);
 const pageTransitionStore = usePageTransitionStore();
 const { path } = storeToRefs(pageTransitionStore);
 
+const prefersReducedMotion = useReducedMotion();
 const props = defineProps<cardType>();
 const emits = defineEmits(["onClickCard"]);
 const isInit = ref(false);
@@ -37,6 +38,11 @@ const imageWrapperRef = ref<HTMLElement | null>(null);
 const mm = shallowRef<gsap.MatchMedia | null>(null);
 
 const init = () => {
+  if (prefersReducedMotion.value) {
+    isInit.value = true;
+    return;
+  }
+
   const f = document.body.querySelector(`.layer-card-trigger:nth-child(${props.id})`) as HTMLElement;
   mm.value = gsap.matchMedia();
   mm.value.add(

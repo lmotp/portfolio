@@ -34,15 +34,19 @@ onMounted(() => {
 
 <template>
   <div class="namecard">
-    <img class="profile-img" src="@/public/images/profile.jpg" alt="" />
+    <img class="profile-img" src="@/public/images/profile.jpg" alt="Portrait of Cheolsoon Park" />
     <strong class="job">Publisher</strong>
     <h3 class="name">박철순</h3>
 
     <div class="line"></div>
 
     <div class="icon">
-      <button @click="handleClickCopy('unoeye22@gmail.com', 'mail')"><Icon name="basil:envelope-solid" size="14" style="color: #ffffff" /></button>
-      <button @click="handleClickCopy('010-5408-6369', 'phone')"><Icon name="basil:phone-solid" size="14" style="color: #ffffff" /></button>
+      <button type="button" aria-label="Copy email address" @click="handleClickCopy('unoeye22@gmail.com', 'mail')">
+        <Icon name="basil:envelope-solid" size="16" style="color: #ffffff" />
+      </button>
+      <button type="button" aria-label="Copy phone number" @click="handleClickCopy('010-5408-6369', 'phone')">
+        <Icon name="basil:phone-solid" size="16" style="color: #ffffff" />
+      </button>
     </div>
 
     <div class="info">
@@ -120,10 +124,15 @@ onMounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background-color: #3c352d;
+
+      &:focus-visible {
+        outline: 2px solid var(--black);
+        outline-offset: 3px;
+      }
     }
   }
 
@@ -132,7 +141,8 @@ onMounted(() => {
 
     p {
       text-align: center;
-      font-size: 8px;
+      font-size: 14px;
+      line-height: 1.3;
       color: var(--black);
     }
   }
