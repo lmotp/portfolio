@@ -13,7 +13,29 @@ const { downloadPercent } = storeToRefs(pageTransitionStore);
 
 const prefersReducedMotion = useReducedMotion();
 const posterSrc = usePublicAsset("/images/archives/2.png");
+const videoRef = ref<HTMLVideoElement | null>(null);
 const videoSrc = ref("");
+const videoObjectUrl = ref("");
+let videoRequest: XMLHttpRequest | null = null;
+
+const revokeVideoObjectUrl = () => {
+  if (!videoObjectUrl.value) return;
+
+  URL.revokeObjectURL(videoObjectUrl.value);
+  videoObjectUrl.value = "";
+};
+
+const syncVideoPlayback = async () => {
+  if (!videoRef.value || !videoSrc.value) return;
+
+  videoRef.value.load();
+
+  try {
+    await videoRef.value.play();
+  } catch (error) {
+    console.warn("비디오 자동 재생을 시작하지 못했습니다:", error);
+  }
+};
 
 const init = () => {
   const mainTl = gsap.timeline({
@@ -38,27 +60,55 @@ const setupVideoSrc = async () => {
   const targetVideo = usePublicAsset("/videos/archives/2.mp4");
 
   try {
-    const response = await fetch(targetVideo);
-    const reader = response.body?.getReader();
-    const contentLength = +(response.headers.get("Content-Length") ?? "0");
+    revokeVideoObjectUrl();
 
-    let receivedLength = 0;
-    let chunks = [];
+    await new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      videoRequest = xhr;
 
-    while (true) {
-      const { done, value }: any = await reader?.read();
-      if (done) break;
+      xhr.open("GET", targetVideo, true);
+      xhr.responseType = "blob";
 
-      chunks.push(value);
-      receivedLength += value.length;
+      xhr.onprogress = (event) => {
+        if (!event.lengthComputable || event.total <= 0) return;
 
-      downloadPercent.value = Math.round((receivedLength / contentLength) * 100);
-    }
+        downloadPercent.value = Math.round((event.loaded / event.total) * 100);
+      };
 
-    const blob = new Blob(chunks);
-    videoSrc.value = URL.createObjectURL(blob);
+      xhr.onload = async () => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+          reject(new Error(`Unexpected status code: ${xhr.status}`));
+          return;
+        }
+
+        const responseBlob = xhr.response;
+        const blob =
+          responseBlob instanceof Blob && responseBlob.type
+            ? responseBlob
+            : new Blob([responseBlob], { type: "video/mp4" });
+
+        videoObjectUrl.value = URL.createObjectURL(blob);
+        videoSrc.value = videoObjectUrl.value;
+        downloadPercent.value = 100;
+
+        await nextTick();
+        await syncVideoPlayback();
+        resolve();
+      };
+
+      xhr.onerror = () => reject(new Error("Video request failed"));
+      xhr.onabort = () => reject(new DOMException("Video request aborted", "AbortError"));
+      xhr.send();
+    });
   } catch (error) {
     console.error("데이터 로드 중 오류:", error);
+    videoSrc.value = targetVideo;
+    downloadPercent.value = 100;
+
+    await nextTick();
+    await syncVideoPlayback();
+  } finally {
+    videoRequest = null;
   }
 };
 
@@ -71,6 +121,11 @@ onMounted(async () => {
   await setupVideoSrc();
   nextTick(init);
 });
+
+onUnmounted(() => {
+  videoRequest?.abort();
+  revokeVideoObjectUrl();
+});
 </script>
 
 <template>
@@ -78,7 +133,9 @@ onMounted(async () => {
     <div class="video-wrapper">
       <img v-if="prefersReducedMotion" :src="posterSrc" alt="Archive preview still for the outro section" />
       <video
+        ref="videoRef"
         v-else
+        preload="auto"
         playsinline
         muted
         autoplay
