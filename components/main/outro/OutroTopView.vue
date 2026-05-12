@@ -13,10 +13,18 @@ const { downloadPercent } = storeToRefs(pageTransitionStore);
 
 const prefersReducedMotion = useReducedMotion();
 const posterSrc = usePublicAsset("/images/archives/2.png");
+const targetVideoSrc = usePublicAsset("/videos/archives/2.mp4");
 const videoRef = ref<HTMLVideoElement | null>(null);
 const videoSrc = ref("");
 const videoObjectUrl = ref("");
 let videoRequest: XMLHttpRequest | null = null;
+
+const isSafariBrowser = () => {
+  if (!import.meta.client) return false;
+
+  const ua = navigator.userAgent;
+  return /Safari/i.test(ua) && !/Chrome|CriOS|Chromium|Edg|OPR|FxiOS|Firefox/i.test(ua);
+};
 
 const revokeVideoObjectUrl = () => {
   if (!videoObjectUrl.value) return;
@@ -35,6 +43,12 @@ const syncVideoPlayback = async () => {
   } catch (error) {
     console.warn("비디오 자동 재생을 시작하지 못했습니다:", error);
   }
+};
+
+const syncVideoLoad = () => {
+  if (!videoRef.value || !videoSrc.value) return;
+
+  videoRef.value.load();
 };
 
 const init = () => {
@@ -56,8 +70,17 @@ const init = () => {
     ease: "none",
   });
 };
+
 const setupVideoSrc = async () => {
-  const targetVideo = usePublicAsset("/videos/archives/2.mp4");
+  if (isSafariBrowser()) {
+    revokeVideoObjectUrl();
+    videoSrc.value = targetVideoSrc;
+    downloadPercent.value = 100;
+
+    await nextTick();
+    syncVideoLoad();
+    return;
+  }
 
   try {
     revokeVideoObjectUrl();
@@ -66,7 +89,7 @@ const setupVideoSrc = async () => {
       const xhr = new XMLHttpRequest();
       videoRequest = xhr;
 
-      xhr.open("GET", targetVideo, true);
+      xhr.open("GET", targetVideoSrc, true);
       xhr.responseType = "blob";
 
       xhr.onprogress = (event) => {
@@ -102,7 +125,7 @@ const setupVideoSrc = async () => {
     });
   } catch (error) {
     console.error("데이터 로드 중 오류:", error);
-    videoSrc.value = targetVideo;
+    videoSrc.value = targetVideoSrc;
     downloadPercent.value = 100;
 
     await nextTick();
